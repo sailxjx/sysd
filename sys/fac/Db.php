@@ -32,22 +32,23 @@ class Fac_Db {
 	}
 
 	protected $aPdos = array();
+	protected $aRedis = array();
 
 	/**
-	 *
+	 * 初始化PDO
 	 * @param string $sCKey
 	 * @return PDO
 	 * @throws Exception
 	 */
 	public function loadPdo($sCKey) {
 		if (!isset($this->aPdos[$sCKey])) {
-			$aConfig = Util::getConfig($sCKey,'Database');
-			if (empty($aConfig) || empty($aConfig['dsn']) || empty($aConfig['user']) || empty($aConfig['pwd'])) {
+			$aConf = Util::getConfig($sCKey, 'Database');
+			if (empty($aConf)) {
 				throw new Exception('error, db config not found');
 			}
-			$oPdo = new PDO($aConfig['dsn'], $aConfig['user'], $aConfig['pwd'], $aConfig['options']);
-			if (!empty($aConfig['statments'])) {
-				foreach ($aConfig['statments'] as $sStmt) {
+			$oPdo = new PDO($aConf['dsn'], $aConf['user'], $aConf['pwd'], $aConf['options']);
+			if (!empty($aConf['statments'])) {
+				foreach ($aConf['statments'] as $sStmt) {
 					$oPdo->exec($sStmt);
 				}
 			}
@@ -58,6 +59,27 @@ class Fac_Db {
 
 	public function closePdo($sCKey) {
 		unset($this->aPdos[$sCKey]);
+	}
+
+	/**
+	 * 初始化Redis
+	 * @param string $sCKey
+	 * @return Redis
+	 * @throws Exception
+	 */
+	public function loadRedis($sCKey = 'REDIS') {
+		if (!isset($this->aRedis[$sCKey])) {
+			$aConf = Util::getConfig($sCKey, 'Database');
+			if (empty($aConf)) {
+				throw new Exception('error, redis config not found');
+			}
+			$oRedis = new Redis();
+			if (!$oRedis->connect($aConf['host'], $aConf['port'])) {
+				throw new Exception('error, redis connection failed');
+			}
+			$this->aRedis[$sCKey] = $oRedis;
+		}
+		return $this->aRedis[$sCKey];
 	}
 
 }

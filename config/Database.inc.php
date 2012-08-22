@@ -16,3 +16,8 @@ $config['MYSQL'] = array(
 		'SET CHARACTER SET utf8'
 	)
 );
+
+$config['REDIS'] = array(
+	'host' => '192.168.100.60',
+	'port' => 6379
+);
