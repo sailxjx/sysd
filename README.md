@@ -1,7 +1,7 @@
-##Job Unity Management Platform
+##daemon io system
 Usage: 
 ------
 `launcher.php [Command] [ClassName] [Options] [Arguments]`
 Version: 
 ------
-0.2 ALPHA
+0.3 ALPHA
