@@ -1,0 +1,47 @@
+{
+    "name":"daemon io system",
+    "version":"0.3 ALPHA",
+    "help":{
+        "Usage":"launcher.php [Command] [ClassName] [Options] [Arguments]",
+        "Params" : [
+        "--help                  显示帮助信息",
+        "-d --daemon             以守护进程方式启动",
+        "--log-file              设置日志文件",
+        "--daemon-num            daemon进程数量",
+        "--min-daemon-num        最小daemon进程数量,有监控时低于这个数量将重启,默认为1",
+        "--pid                   进程ID,Kill时需要",
+        "-l --log                显示修订记录",
+        "-v --version            显示版本",
+        "-w --listen             需要监控",
+        "--pre-hook              前置钩子",
+        "--post-hook             后置钩子",
+        "--async                 异步(NOTCOMPLETE)",
+        "-q --quiet              不显示任何输出",
+        "--other                 执行外部PHP文件"
+        ],
+        "Commands":[
+        "start                   开启作业",
+        "stop                    结束作业",
+        "restart                 重启作业",
+        "kill                    根据进程ID结束作业"
+        ]
+    },
+    "changelog":{
+        "2012-04-06":["增加Core,Base,Util"],
+        "2012-04-08":["增加Daemon,选择日志文件开关,fork数量开关"],
+        "2012-04-16":["增加shutdown方法,增加Start类,增加批量启动,修改启动方式"],
+        "2012-04-17":["增加Stop类,批量停止。","增加Kill类,根据进程ID停止任务"],
+        "2012-05-17":["增加Listener类","系统调用Util移入Util_Sys","Deamonize类改为单例调用"],
+        "2012-05-21":["增加hook","启动命令方法移入Util_Sys中","Listener增加Daemon进程","增加进程监控,相关参数,-w --listen --min-daemon-num"],
+        "2012-05-22":["fix Listener退出bug,fix Listener重启数量bug","更正shutdown方法pid读取错误的bug","增加restart方法","alpha 0.2"],
+        "2012-05-23":["去除Daemon中的信号控制","增加ZReq,发送消息入口"],
+        "2012-05-25":["增加bash_completion和一个launchershell脚本","修复Restart对于--daemon-num参数错误使用的bug"],
+        "2012-05-29":["执行外部PHP文件","完善bash_complete"],
+        "2012-05-30":["静默模式改进,daemon方式下自动进入静默模式。"],
+        "2012-06-04":["修改目录名称","增加Db工厂"]
+    },
+    "todo":{
+        "99":["ZReq改为Noblock异步调用"],
+        "5":["stop,restart,kill改为单进程(免锁)"]
+    }
+}
