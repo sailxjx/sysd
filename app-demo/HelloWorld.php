@@ -11,6 +11,7 @@ class HelloWorld extends Base {
 	protected function main() {
 		Util::logInfo('HelloWorld');
 		for ($i = 0; $i < 17; $i++) {
+			Util::output('count: ' . $i);
 			Util::output($this->aParams);
 			sleep(3);
 		}
