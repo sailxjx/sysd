@@ -17,7 +17,8 @@ final class Core {
 		Const_Common::OS_DAEMON => 'daemon',
 		Const_Common::OL_DAEMON => 'daemon',
 		Const_Common::OL_QUIET => 'setQuiet',
-		Const_Common::OS_QUIET => 'setQuiet'
+		Const_Common::OS_QUIET => 'setQuiet',
+		Const_Common::OL_TODO => 'showTodo'
 	);
 	protected $aDCmds = array(
 		Const_Common::C_START,
@@ -147,9 +148,9 @@ final class Core {
 		foreach ($aCLog as $sDate => $aLog) {
 			echo $sDate, PHP_EOL;
 			foreach ($aLog as $sLog) {
-				echo $sLog, PHP_EOL;
+				echo Const_Common::R_TAB, $sLog, PHP_EOL;
 			}
-			echo '========================================================', PHP_EOL;
+			echo Const_Common::R_HR, PHP_EOL;
 		}
 		exit;
 	}
@@ -186,7 +187,7 @@ final class Core {
 			else {
 				echo PHP_EOL;
 				foreach ($v as $vv) {
-					echo "  ", $vv, PHP_EOL;
+					echo Const_Common::R_TAB, $vv, PHP_EOL;
 				}
 			}
 		}
@@ -217,6 +218,20 @@ final class Core {
 			}
 		}
 		return $this->sLogFile;
+	}
+
+	public function showTodo() {
+		$aMan = $this->getMan();
+		$aTodo = isset($aMan['todo']) ? $aMan['todo'] : array();
+		ksort($aTodo);
+		foreach ($aTodo as $iLv => $aDoList) {
+			echo "优先级:", $iLv, PHP_EOL;
+			foreach ($aDoList as $sDo) {
+				echo Const_Common::R_TAB, $sDo, PHP_EOL;
+			}
+			echo Const_Common::R_HR, PHP_EOL;
+		}
+		exit;
 	}
 
 }

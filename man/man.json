@@ -17,7 +17,8 @@
         "--post-hook             后置钩子",
         "--async                 异步(NOTCOMPLETE)",
         "-q --quiet              不显示任何输出",
-        "--other                 执行外部PHP文件"
+        "--other                 执行外部PHP文件",
+        "--todo                  显示TODO"
         ],
         "Commands":[
         "start                   开启作业",
@@ -42,7 +43,14 @@
         "2012-08-23":["编写代码约定","开始知会系统"]
     },
     "todo":{
-        "99":["ZReq改为Noblock异步调用"],
-        "5":["stop,restart,kill改为单进程(免锁)"]
+        "5":[
+        "管理后台开发[fun?]",
+        "守护进程开发[sysd]"
+        ],
+        "10":[
+        "接口开发[fun?]",
+        "多进程邮件发送"
+        ],
+        "99":["ZReq改为Noblock异步调用","stop,restart,kill改为单进程"]
     }
 }

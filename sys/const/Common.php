@@ -26,6 +26,7 @@ abstract class Const_Common {
 	const OL_LISTEN = '--listen';
 	const OS_QUIET = '-q';
 	const OL_QUIET = '--quiet';
+	const OL_TODO = '--todo';
 
 	//params
 	const P_DAEMON_NUM = 'daemon_num';
@@ -35,5 +36,9 @@ abstract class Const_Common {
 	const P_MIN_DAEMON_NUM = 'min_daemon_num';
 	const P_PID = 'pid';
 	const P_OTHER = 'other';
+
+	//print
+	const R_HR = '========================================================';
+	const R_TAB = '    ';
 
 }
