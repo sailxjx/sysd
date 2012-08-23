@@ -29,7 +29,7 @@ class Start extends Base {
 	}
 
 	protected function startAll() {
-		$aJList = Util::getConfig('cmd', 'List');
+		$aJList = Util::getConfig('cmd', 'list');
 		$sCmd = '';
 		foreach ($aJList as $sOriCmd) {
 			$sCmd = APP_PATH . 'launcher.php start ' . $sOriCmd;

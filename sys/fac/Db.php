@@ -42,7 +42,7 @@ class Fac_Db {
 	 */
 	public function loadPdo($sCKey) {
 		if (!isset($this->aPdos[$sCKey])) {
-			$aConf = Util::getConfig($sCKey, 'Database');
+			$aConf = Util::getConfig($sCKey, 'database');
 			if (empty($aConf)) {
 				throw new Exception('error, db config not found');
 			}
@@ -69,7 +69,7 @@ class Fac_Db {
 	 */
 	public function loadRedis($sCKey = 'REDIS') {
 		if (!isset($this->aRedis[$sCKey])) {
-			$aConf = Util::getConfig($sCKey, 'Database');
+			$aConf = Util::getConfig($sCKey, 'database');
 			if (empty($aConf)) {
 				throw new Exception('error, redis config not found');
 			}

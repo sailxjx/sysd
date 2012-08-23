@@ -9,7 +9,7 @@
 class MailList extends Base {
 
 	protected function main() {
-		
+		print_r(Redis_Key::mailId());
 	}
 
 }

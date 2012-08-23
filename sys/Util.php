@@ -16,7 +16,7 @@ abstract class Util {
 	 * @param string $sFile
 	 * @return mix
 	 */
-	public static function getConfig($sKey, $sFile = 'Common') {
+	public static function getConfig($sKey, $sFile = 'common') {
 		if (!isset(self::$aConfigs[$sFile])) {
 			$sRealFile = APP_PATH . "config/{$sFile}.inc.php";
 			if (is_file($sRealFile)) {

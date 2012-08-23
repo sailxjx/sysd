@@ -21,7 +21,7 @@ class Stop extends Base {
 	}
 
 	protected function stopAll() {
-		$aJList = Util::getConfig('cmd', 'List');
+		$aJList = Util::getConfig('cmd', 'list');
 		$aCList = array(); //Class list
 		foreach ((array) $aJList as $sOCmd) {
 			$aOCmd = explode(' ', trim($sOCmd));

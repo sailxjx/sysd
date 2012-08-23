@@ -1,8 +1,8 @@
 <?php
 
-spl_autoload_register('jumpAutoLoad');
+spl_autoload_register('uAutoLoad');
 
-function jumpAutoLoad($sName) {
+function uAutoLoad($sName) {
 	return reqClass($sName);
 }
 
@@ -25,4 +25,11 @@ function reqClass($sClass) {
 		}
 	}
 	return false;
+}
+
+function uErrorHandler($etype, $msg, $file, $line) {
+	if ($etype === E_USER_ERROR) {
+		debug_backtrace();
+	}
+	return true;
 }
