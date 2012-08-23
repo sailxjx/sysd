@@ -16,7 +16,7 @@ class Model_Base {
 
 	/**
 	 * get a new instance
-	 * @return Model_Base|Model_User
+	 * @return Model_Base|Model_User|Log_Log
 	 */
 	public static function &getIns() {
 		$sClass = get_called_class();
