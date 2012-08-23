@@ -8,12 +8,6 @@
  */
 class Queue_Mail extends Queue_Queue {
 
-	public function pop() {
-
-	}
-
-	public function push() {
-
-	}
+	protected $sQueue = 'mail';
 
 }

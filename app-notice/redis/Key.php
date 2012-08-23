@@ -9,29 +9,27 @@
  */
 abstract class Redis_Key {
 
+	protected static $sPrefix = 'notice:';
 	protected static $aMap = array(
-		'logid' => 'notice:log:id',
-		'logtable' => 'notice:log:table:$id',
-		'mailid' => 'notice:mail:id',
-		'mailwait' => 'notice:mail:wait',
-		'mailsend' => 'notice:mail:send',
-		'mailfail' => 'notice:mail:fail',
-		'mailerror' => 'notice:mail:error',
-		'smsid' => 'notice:sms:id'
+		'logtable' => 'notice:log:table:$id'
 	);
 
 	public static function __callStatic($name, $args) {
-		$name = strtolower($name);
-		if (!isset(self::$aMap[$name])) {
-			trigger_error('code: called method not found', E_USER_ERROR);
-			return false;
+		$sName = strtolower($name);
+		if (!isset(self::$aMap[$sName])) {
+			return self::autoKey($name);
 		}
 		if (isset($args[0])) {
 			extract($args[0]);
 		}
-		$sKey = self::$aMap[$name];
+		$sKey = self::$aMap[$sName];
 		@eval("\$sKey = \"$sKey\";");
 		return $sKey;
 	}
 
+	protected static function autoKey($name) {
+		return self::$sPrefix . strtolower(preg_replace('/([a-z])([A-Z])/', '$1:$2', $name));
+	}
+
 }
+
