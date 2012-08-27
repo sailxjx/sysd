@@ -121,7 +121,7 @@ class Listener extends Base {
 	}
 
 	protected function readJList() {
-		$aCmds = Util::getConfig('cmd', 'list');
+		$aCmds = Util::getConfig('cmd');
 		$aJClass = array();
 		foreach ($aCmds as $sConfCmd) {
 			$aArgvs = explode(' ', $sConfCmd);
