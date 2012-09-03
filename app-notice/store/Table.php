@@ -97,7 +97,7 @@ abstract class Store_Table extends Model_Base {
             if (empty($sTable)) {
                 trigger_error('could not find the called table', E_USER_ERROR);
             }
-            $this->sTable = strtolower($sTable);
+            $this->sTable = $sTable;
         }
         return $this->sTable;
     }
