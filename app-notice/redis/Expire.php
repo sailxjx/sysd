@@ -8,6 +8,6 @@
  */
 abstract class Redis_Expire {
 
-	const LOG = 2592000;
+    const LOG = 2592000;
 
 }

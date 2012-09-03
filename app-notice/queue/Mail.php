@@ -7,7 +7,5 @@
  * GTalk: sailxjx@gmail.com
  */
 class Queue_Mail extends Queue_Queue {
-
-	protected $sQueue = 'mail';
-
+    
 }
