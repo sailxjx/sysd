@@ -6,7 +6,7 @@
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-abstract class Hash_Fields {
+abstract class Store_Fields {
 
     /**
      * Log表结构

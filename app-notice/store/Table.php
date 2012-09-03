@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Document: Hash_Table
+ * Document: Store_Table
  * Created on: 2012-8-22, 16:26:23
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-abstract class Hash_Table extends Model_Base {
+abstract class Store_Table extends Model_Base {
 
     protected $sTable;
     protected $aMap;
@@ -20,21 +20,21 @@ abstract class Hash_Table extends Model_Base {
 
     /**
      * 初始化方法
-     * @return \Hash_Table 
+     * @return \Store_Table 
      */
     private function init() {
         $sTable = $this->getTable();
         $sFArr = 'a' . ucfirst($sTable);
-        if (!isset(Hash_Fields::$$sFArr)) {
+        if (!isset(Store_Fields::$$sFArr)) {
             trigger_error('could not find the called fields', E_USER_ERROR);
         }
-        $this->aMap = Hash_Fields::$$sFArr;
+        $this->aMap = Store_Fields::$$sFArr;
         return $this;
     }
 
     /**
      * 重置成员变量
-     * @return \Hash_Table 
+     * @return \Store_Table 
      */
     public function reset() {
         $this->aFields = array();

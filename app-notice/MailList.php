@@ -17,7 +17,7 @@ class MailList extends Base {
     }
 
     protected function addMail() {
-        $oHMail = Hash_Mail::getIns();
+        $oHMail = Store_Mail::getIns();
         $oHMail->{Const_Mail::F_SENDER} = 'web';
         $oHMail->{Const_Mail::F_RECEIVER} = 'me';
         $oHMail->{Const_Mail::F_CTIME} = time();
@@ -30,7 +30,7 @@ class MailList extends Base {
     }
 
     protected function getMail($id) {
-        $oHMail = Hash_Mail::getIns();
+        $oHMail = Store_Mail::getIns();
         return $oHMail->get($id);
     }
 
