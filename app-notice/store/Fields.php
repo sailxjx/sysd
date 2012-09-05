@@ -9,7 +9,7 @@
 abstract class Store_Fields {
 
     /**
-     * Log表结构
+     * log表结构
      * @var array
      */
     public static $aLog = array(
@@ -26,7 +26,7 @@ abstract class Store_Fields {
     );
 
     /**
-     * Mail表结构
+     * 邮件表结构
      * @var array
      */
     public static $aMail = array(
@@ -39,6 +39,16 @@ abstract class Store_Fields {
         Const_Mail::F_STIME => Const_Mail::F_STIME,
         Const_Mail::F_STATUS => Const_Mail::F_STATUS,
         Const_Mail::F_EXTRA => Const_Mail::F_EXTRA
+    );
+
+    /**
+     * 站内信表结构
+     * @var array
+     */
+    public static $aSiteMsg = array(
+        Const_Mail::F_ID => Const_Mail::F_ID,
+        Const_Mail::F_SENDER => Const_Mail::F_SENDER,
+        Const_Mail::F_RECEIVER => Const_Mail::F_RECEIVER,
     );
 
 }

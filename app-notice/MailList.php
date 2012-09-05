@@ -17,19 +17,14 @@ class MailList extends Base {
     }
 
     protected function addMail() {
+        $oHMail = Store_SiteMsg::getIns();
         $oHMail->{Const_Mail::F_SENDER} = 'web';
         $oHMail->{Const_Mail::F_RECEIVER} = 'me';
-        $oHMail->{Const_Mail::F_CTIME} = time();
-        $oHMail->{Const_Mail::F_TITLE} = '测试邮件';
-        $oHMail->{Const_Mail::F_CONTENT} = '测试内容';
-        return $oHMail->set(array(
-                    Const_Mail::F_STATUS => '1',
-                    Const_Mail::F_SENDER => 'web'
-                ));
+        return $oHMail->set();
     }
 
     protected function getMail($id) {
-        $oHMail = Store_Mail::getIns();
+        $oHMail = Store_SiteMsg::getIns();
         return $oHMail->get($id);
     }
 

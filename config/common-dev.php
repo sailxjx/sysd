@@ -1,7 +1,7 @@
 <?php
 
 // common configs
-$config['LogFile'] = APP_PATH . 'log/jump.log';
+$config['LogFile'] = APP_PATH . 'log/sys.log';
 $config['PidPath'] = APP_PATH . 'var/';
 $config['ManPage'] = APP_PATH . 'man/man.json';
 $config['MaxDaemonNum'] = 10;
