@@ -46,11 +46,12 @@ class Hook {
 	protected function runHook($sType = Const_Common::P_PRE_HOOK) {
 		$sPostHooks = isset($this->aParams[$sType]) ? $this->aParams[$sType] : '';
 		$aPostHooks = explode(',', $sPostHooks);
+                $sHookPath = Util::getConfig('HookPath');
 		if (empty($aPostHooks)) {
 			return false;
 		}
 		foreach ((array) $aPostHooks as $sShell) {
-			$sFile = APP_PATH . 'hooks/' . $sShell;
+			$sFile = $sHookPath . $sShell;
 			Util_SysUtil::runFile($sFile);
 		}
 		return true;

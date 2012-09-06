@@ -1,9 +1,10 @@
 <?php
 
 // common configs
-$config['LogFile'] = APP_PATH . 'log/sys.log';
+$config['LogFile'] = APP_PATH . 'var/log/sys.log';
 $config['PidPath'] = APP_PATH . 'var/';
-$config['ManPage'] = APP_PATH . 'man/man.json';
+$config['ManPage'] = APP_PATH . 'var/man/man.json';
+$config['HookPath'] = APP_PATH . 'var/hooks/';
 $config['MaxDaemonNum'] = 10;
 $config['MSSQL'] = array(
 	'dsn' => 'odbc:webdsn',
