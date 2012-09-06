@@ -6,7 +6,7 @@
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-abstract class Store_Table extends Model_Base {
+abstract class Store_Table extends Mod_Base {
 
     protected $sTable;
     protected $aMap;

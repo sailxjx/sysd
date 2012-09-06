@@ -12,7 +12,7 @@ abstract class Util_SysUtil {
 		if (empty($sCName)) {
 			return null;
 		}
-		return Util::getConfig('PidPath') . $sCName . '.pid';
+		return Util::getConfig('PID_PATH') . $sCName . '.pid';
 	}
 
 	public static function stopProcById($iPid) {

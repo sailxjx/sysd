@@ -130,7 +130,7 @@ final class Core {
 
     public function getMan() {
         if (!isset($this->aMan)) {
-            $this->aMan = json_decode(Util::getFileCon(Util::getConfig('ManPage')), true);
+            $this->aMan = json_decode(Util::getFileCon(Util::getConfig('MAN_PAGE')), true);
         }
         return $this->aMan;
     }
@@ -198,7 +198,7 @@ final class Core {
             $iDNum = 1;
             if (isset($this->aParams[Const_Common::P_DAEMON_NUM])) {
                 $iDNum = intval($this->aParams[Const_Common::P_DAEMON_NUM]);
-                if ($iDNum <= 0 || $iDNum > Util::getConfig('MaxDaemonNum')) {
+                if ($iDNum <= 0 || $iDNum > Util::getConfig('MAX_DAEMON_NUM')) {
                     $iDNum = 1;
                 }
             }
@@ -210,7 +210,7 @@ final class Core {
     public function getLogFile() {
         if (!isset($this->sLogFile)) {
             if (!isset($this->aParams[Const_Common::P_LOG_FILE])) {
-                $this->sLogFile = Util::getConfig('LogFile');
+                $this->sLogFile = Util::getConfig('LOG_FILE');
             } else {
                 $this->sLogFile = $this->aParams[Const_Common::P_LOG_FILE];
             }

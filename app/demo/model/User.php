@@ -6,7 +6,7 @@
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-class Model_User extends Model_Base {
+class Model_User extends Mod_Base {
 
 	/**
 	 * get joindate from dv_user

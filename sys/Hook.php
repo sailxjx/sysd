@@ -46,7 +46,7 @@ class Hook {
 	protected function runHook($sType = Const_Common::P_PRE_HOOK) {
 		$sPostHooks = isset($this->aParams[$sType]) ? $this->aParams[$sType] : '';
 		$aPostHooks = explode(',', $sPostHooks);
-                $sHookPath = Util::getConfig('HookPath');
+                $sHookPath = Util::getConfig('HOOK_PATH');
 		if (empty($aPostHooks)) {
 			return false;
 		}

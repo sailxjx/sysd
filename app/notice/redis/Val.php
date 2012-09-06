@@ -6,7 +6,7 @@
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-class Redis_Val extends Model_Base {
+class Redis_Val extends Mod_Base {
 
 	protected $oRedis;
 

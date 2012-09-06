@@ -96,7 +96,7 @@ class Listener extends Base {
 	 */
 	protected function wList() {
 		$aJobList = $this->aJobList;
-		$iCMaxDNum = Util::getConfig('MaxDaemonNum');
+		$iCMaxDNum = Util::getConfig('MAX_DAEMON_NUM');
 		foreach ($aJobList as $sClass => $aJob) {
 			if (empty($sClass)) {
 				continue;
@@ -121,7 +121,7 @@ class Listener extends Base {
 	}
 
 	protected function readJList() {
-		$aCmds = Util::getConfig('cmd');
+		$aCmds = Util::getConfig('CMD');
 		$aJClass = array();
 		foreach ($aCmds as $sConfCmd) {
 			$aArgvs = explode(' ', $sConfCmd);

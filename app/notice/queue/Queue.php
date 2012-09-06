@@ -6,7 +6,7 @@
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-abstract class Queue_Queue extends Model_Base {
+abstract class Queue_Queue extends Mod_Base {
 
     protected $oRedis;
     protected $sQueue;
@@ -14,7 +14,8 @@ abstract class Queue_Queue extends Model_Base {
         'wait' => array(), //正常等待队列
         'succ' => array(), //发送成功队列
         'error' => array(), //发送错误队列
-        'fail' => array() //发送失败队列
+        'fail' => array(), //发送失败队列
+        'sending' => array()//发送中队列
     );
 
     public function __construct() {
