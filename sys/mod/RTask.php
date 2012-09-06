@@ -7,6 +7,14 @@
  * Email: jingxinxu@anjuke.com
  * GTalk: sailxjx@gmail.com
  */
-class Mod_RTask {
-    
+class Mod_RTask extends Mod_Task {
+
+    public function recv() {
+        
+    }
+
+    public function send() {
+        
+    }
+
 }

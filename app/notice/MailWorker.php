@@ -7,7 +7,7 @@
  * Email: jingxinxu@anjuke.com
  * GTalk: sailxjx@gmail.com
  */
-class MailWorker extends Base {
+class MailWorker extends Task_Worker {
 
     protected function main() {
         

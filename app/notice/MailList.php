@@ -9,6 +9,8 @@
 class MailList extends Base {
 
     protected function main() {
+        Mod_ZTask::getIns()->recv();
+        exit;
         $id = $this->addMail();
         print_r($this->getMail($id));
         $this->queue($id);

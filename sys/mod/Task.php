@@ -8,5 +8,20 @@
  * GTalk: sailxjx@gmail.com
  */
 abstract class Mod_Task extends Mod_Base {
-    
+
+    protected $aMsg = array();
+
+    abstract public function send();
+
+    abstract public function recv();
+
+    abstract public function conf();
+
+    public function msg($aMsg = array()) {
+        if (!empty($aMsg)) {
+            $this->aMsg[] = $aMsg;
+        }
+        return $this;
+    }
+
 }
