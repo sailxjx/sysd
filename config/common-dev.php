@@ -2,7 +2,7 @@
 
 // common configs
 $config['LOG_FILE'] = APP_PATH . 'var/log/sys.log';
-$config['PID_PATH'] = APP_PATH . 'var/';
+$config['PID_PATH'] = APP_PATH . 'var/tmp/';
 $config['MAN_PAGE'] = APP_PATH . 'var/man/man.json';
 $config['HOOK_PATH'] = APP_PATH . 'var/hooks/';
 $config['MAX_DAEMON_NUM'] = 10;

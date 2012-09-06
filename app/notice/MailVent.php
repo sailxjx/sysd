@@ -14,9 +14,11 @@ class MailVent extends Task_Vent {
     }
 
     protected function vent() {
+        $oTask=Mod_RTask::getIns();
         for ($i = 0; $i < 10; $i++) {
-            Mod_ZTask::getIns()->msg($i)->send();
+            $oTask->msg($i);
         }
+        $oTask->send();
     }
 
 }

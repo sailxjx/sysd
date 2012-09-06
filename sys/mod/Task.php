@@ -17,9 +17,9 @@ abstract class Mod_Task extends Mod_Base {
 
     abstract public function conf();
 
-    public function msg($aMsg = array()) {
-        if (!empty($aMsg)) {
-            $this->aMsg[] = $aMsg;
+    public function msg($sMsg) {
+        if($sMsg){
+            $this->aMsg[] = $sMsg;
         }
         return $this;
     }

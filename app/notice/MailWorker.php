@@ -10,7 +10,16 @@
 class MailWorker extends Task_Worker {
 
     protected function main() {
-        
+        $this->work();
+    }
+
+    protected function work(){
+        $oWorker=Mod_RTask::getIns();
+        while($sMsg=$oWorker->recv()){
+            echo $sMsg,PHP_EOL;
+            sleep(1);
+        }
+        return true;
     }
 
 }
