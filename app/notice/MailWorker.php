@@ -14,10 +14,10 @@ class MailWorker extends Task_Worker {
     }
 
     protected function work(){
-        $oWorker=Mod_RTask::getIns();
+        $oWorker=Mod_ZTask::getIns()->channel(0);
         while($sMsg=$oWorker->recv()){
-            echo $sMsg,PHP_EOL;
-            sleep(1);
+            echo 'pid: '.posix_getpid(),';';
+            echo 'msg: '.$sMsg,PHP_EOL;
         }
         return true;
     }

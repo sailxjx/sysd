@@ -10,39 +10,38 @@
 class Mod_RTask extends Mod_Task {
 
     protected $oRedis;
+    protected $aChannels=array(
+        'taskList'//msg key
+        );
 
-    protected $sMsgKey='taskList';
-
-    protected function __construct(){
-        $this->oRedis=Fac_Db::getIns()->loadRedis();
+    protected function __construct() {
+        $this->oRedis = Fac_Db::getIns()->loadRedis();
     }
 
-    protected function reset(){
-        $this->aMsg=array();
+    protected function reset() {
+        $this->aMsg = array();
         return $this;
     }
 
     public function recv() {
-        while(!$sMsg=$this->oRedis->rpop(Redis_Key::{$this->sMsgKey}())){
+        $sMsgKey = $this->aChannels[$this->iChannel];
+        while (!$sMsg = $this->oRedis->rpop(Redis_Key::$sMsgKey())) {
             usleep(10000);
         }
         return $sMsg;
     }
 
     public function send() {
-        if(empty($this->aMsg)){
+        if (empty($this->aMsg)) {
             return false;
         }
         $this->oRedis->multi();
+        $sMsgKey = $this->aChannels[$this->iChannel];
         foreach ($this->aMsg as $sMsg) {
-            $this->oRedis->lpush(Redis_Key::{$this->sMsgKey}(), $sMsg);
+            $this->oRedis->lpush(Redis_Key::$sMsgKey(), $sMsg);
         }
         $this->reset();
         return $this->oRedis->exec();
-    }
-
-    public function conf(){
-
     }
 
 }

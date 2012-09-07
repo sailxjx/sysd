@@ -11,24 +11,37 @@ class Mod_ZTask extends Mod_Task {
 
     protected $oRecv;
     protected $oSend;
-    protected $aCSend = array(
-        'dsn' => 'ipc:///tmp/zmq_send.ipc',
-        'type' => ZMQ::SOCKET_PUSH
-    );
-    protected $aCRecv = array(
-        'dsn' => 'ipc:///tmp/zmq_recv.ipc',
-        'type' => ZMQ::SOCKET_PULL
-    );
+    protected $oReq;
+    protected $oRep;
+    protected $iCNum;//client number
+    protected $iMinCNum=2;//min client number
+    protected $aChannels = array(
+        array(
+            'send'=>array(
+                'dsn'=>'ipc:///tmp/zmq_sock0.ipc',
+                'type'=>ZMQ::SOCKET_PUSH,
+                'method'=>'bind'
+                ),
+            'recv'=>array(
+                'dsn'=>'ipc:///tmp/zmq_sock0.ipc',
+                'type'=>ZMQ::SOCKET_PULL,
+                'method'=>'connect'
+                )
+            )
+        );
 
-    /**
-     *
-     * @param type $aConf
-     * @return \Mod_ZTask 
-     */
-    public function conf($aConf) {
-        $this->aConf = $aConf;
-        return $this;
-    }
+    protected $aSync=array(
+        'rep'=>array(
+            'dsn'=>'ipc:///tmp/zmq_sync.ipc',
+            'type'=>ZMQ::SOCKET_REP,
+            'method'=>'bind'
+            ),
+        'req'=>array(
+            'dsn'=>'ipc:///tmp/zmq_sync.ipc',
+            'type'=>ZMQ::SOCKET_REQ,
+            'method'=>'connect'
+            )
+        );
 
     protected function reset() {
         $this->aMsg = array();
@@ -39,36 +52,67 @@ class Mod_ZTask extends Mod_Task {
      * 
      * @return \ZMQSocket
      */
-    protected function getRecv() {
-        if (!isset($this->oRecv)) {
-            $this->oRecv = Fac_Mq::getIns()->loadZMQ($this->aCRecv['type']);
-            $this->oRecv->connect($this->aCRecv['type']);
+    protected function getRecv(){
+        if(!isset($this->oRecv)){
+            $this->oRecv=$this->getSocket($aConf=$this->aChannels[$this->iChannel]['recv']);
+            $this->syncReq();
         }
         return $this->oRecv;
     }
 
     /**
-     *
+     * 
      * @return \ZMQSocket
      */
-    protected function getSend() {
-        if (!isset($this->oSend)) {
-            $this->oSend = Fac_Mq::getIns()->loadZMQ($this->aCSend['type']);
-            $this->oSend->bind($this->aCSend['type']);
+    protected function getSend(){
+        if(!isset($this->oSend)){
+            $this->oSend=$this->getSocket($this->aChannels[$this->iChannel]['send']);
+            $this->syncRep();
         }
         return $this->oSend;
     }
 
     public function recv() {
         $oRecv = $this->getRecv();
-        return $oRecv->recv();
+        if(!$sMsg=$oRecv->recv()){
+            $this->syncReq();
+        }
+        return $sMsg;
     }
 
     public function send() {
         $oSend = $this->getSend();
-        $oSend->send(json_encode($this->aMsg));
+        foreach ($this->aMsg as $sMsg) {
+            $oSend->send($sMsg);
+        }
         $this->reset();
         return true;
+    }
+
+    protected function syncReq(){
+        if(!isset($this->oReq)){
+            $this->oReq=$this->getSocket($this->aSync['req']);
+        }
+        return $this->oReq->send('one client connected')->recv();
+    }
+
+    protected function syncRep(){
+        if(!isset($this->oRep)){
+            $this->oRep=$this->getSocket($this->aSync['rep']);
+        }
+        while ($this->iCNum<$this->iMinCNum) {
+            $this->oRep->recv();
+            $this->oRep->send('');
+            $this->iCNum++;
+            Util::output($this->iCNum.' clients connected');
+        }
+        return $this;
+    }
+
+    protected function getSocket($aConf){
+        $oSock=Fac_Mq::getIns()->loadZMQ($aConf['type']);
+        $oSock->{$aConf['method']}($aConf['dsn']);
+        return $oSock;
     }
 
 }
