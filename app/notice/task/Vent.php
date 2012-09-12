@@ -7,6 +7,18 @@
  * Email: jingxinxu@anjuke.com
  * GTalk: sailxjx@gmail.com
  */
-abstract class Task_Vent extends Base {
-    
+abstract class Task_Vent extends Task_Base {
+
+    protected function main() {
+        $this->vent();
+    }
+
+    protected function vent() {
+        $sModClass=$this->sModClass;
+        $oTask=$sModClass::getIns()->channel(0);
+        for ($i = 0; $i < 100000; $i++) {
+            $oTask->msg($i);
+        }
+        $oTask->send();
+    }
 }

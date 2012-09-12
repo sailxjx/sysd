@@ -31,21 +31,7 @@ $config['REDIS'] = array(
 
 
 // bind modules
-$config['TASK_MOD'] = 'ZTask';
-
-// zmq dsn
-$config['ZMQ_REP1'] = array(
-    'dsn' => 'ipc:///tmp/zmq_rep1.ipc',
-    'type' => ZMQ::SOCKET_REP
-);
-$config['ZMQ_PUSH1'] = array(
-    'dsn' => 'ipc:///tmp/zmq_push1.ipc',
-    'type' => ZMQ::SOCKET_PUSH
-);
-$config['ZMQ_PULL1'] = array(
-    'dsn' => 'ipc:///tmp/zmq_pull1.ipc',
-    'type' => ZMQ::SOCKET_PULL
-);
+$config['MOD_TASK'] = 'ZTask';
 
 // job lists
 $config['CMD'] = array(
