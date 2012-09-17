@@ -1,7 +1,7 @@
 {
     "name": "sysd",
     "desc": "system demo",
-    "version": "0.3 ALPHA",
+    "version": "0.3.1",
     "depends": {
         "notice": "0.1"
     }

@@ -16,6 +16,9 @@ abstract class Task_Vent extends Task_Base {
     protected function vent() {
         $sModClass=$this->sModClass;
         $oTask=$sModClass::getIns()->channel(0);
+
+        $oTask->tstSend();
+        exit;
         for ($i = 0; $i < 100000; $i++) {
             $oTask->msg($i);
         }

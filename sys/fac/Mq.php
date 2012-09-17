@@ -9,6 +9,7 @@
 class Fac_Mq {
 
     private static $oIns;
+    protected $oZCon;
 
     /**
      * instance of Fac_Mq
@@ -27,9 +28,16 @@ class Fac_Mq {
      * @return \ZMQSocket
      */
     public function loadZMQ($iType) {
-        $oZCtxt = new ZMQContext();
+        $oZCtxt = $this->getZCon();
         $oZSock = new ZMQSocket($oZCtxt, $iType);
         return $oZSock;
+    }
+
+    protected function getZCon(){
+        if(!isset($this->oZCon)){
+            $this->oZCon = new ZMQContext();
+        }
+        return $this->oZCon;
     }
 
 }

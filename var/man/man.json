@@ -1,6 +1,6 @@
 {
     "name":"daemon io system",
-    "version":"0.3 ALPHA",
+    "version":"0.3.1",
     "help":{
         "Usage":"launcher.php [Command] [ClassName] [Options] [Arguments]",
         "Params" : [
