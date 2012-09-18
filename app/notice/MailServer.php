@@ -1,27 +1,22 @@
 <?php
 
 /**
- * Document: MailList
+ * Document: MailServer
  * Created on: 2012-8-22, 16:16:47
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-class MailList extends Base {
+class MailServer extends Task_Base {
 
     protected function main() {
-        $oLog = Store_Log::getIns();
-        $oLog->{Const_Log::F_ID} = 1;
-        $oLog->{Const_Log::F_CTIME} = time();
-        echo $oLog->set();
+        for($i=0;$i<20;$i++){
+            $this->queue($this->addMail());
+        }
         exit;
-
-        $this->queue($id);
-        print_r(Fac_Db::getIns()->loadRedis()->zrange('notice:mail:wait', 0, -1));
-        echo PHP_EOL;
     }
 
     protected function addMail() {
-        $oHMail = Store_SiteMsg::getIns();
+        $oHMail = Store_Mail::getIns();
         $oHMail->{Const_Mail::F_SENDER} = 'web';
         $oHMail->{Const_Mail::F_RECEIVER} = 'me';
         return $oHMail->set();
@@ -33,7 +28,7 @@ class MailList extends Base {
     }
 
     protected function queue($id) {
-        Queue_Mail::getIns()->wait($id, 100)->push();
+        Queue_Mail::getIns()->wait($id, time())->add();
     }
 
 }

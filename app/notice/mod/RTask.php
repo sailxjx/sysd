@@ -11,8 +11,9 @@ class Mod_RTask extends Mod_Task {
 
     protected $oRedis;
     protected $aChannels=array(
-        'taskList'//msg key
+        'mailTask' //msg key
         );
+    protected $iUSec = 10000; //usleep time
 
     protected function __construct() {
         $this->oRedis = Fac_Db::getIns()->loadRedis();
@@ -26,7 +27,7 @@ class Mod_RTask extends Mod_Task {
     public function recv() {
         $sMsgKey = $this->aChannels[$this->mChannel];
         while (!$sMsg = $this->oRedis->rpop(Redis_Key::$sMsgKey())) {
-            usleep(10000);
+            usleep($this->iUSec);
         }
         return $sMsg;
     }

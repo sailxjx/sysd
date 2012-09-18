@@ -15,11 +15,30 @@ class MailVent extends Task_Vent {
 
     protected function vent() {
         $sModClass=$this->sModClass;
-        $oTask=$sModClass::getIns()->channel(0);
-        for ($i = 0; $i < 100000; $i++) {
-            $oTask->msg($i);
+        $oTask = $sModClass::getIns()->channel(0);
+        $oQMail = Queue_Mail::getIns();
+        while(1){
+            $aMsgs = $this->listen();
+            foreach ($aMsgs as $sMsg => $iScore) {
+                $oQMail->wait($sMsg, 1);
+            }
+            $oQMail->rem();
+            foreach ($aMsgs as $sMsg => $iScore) {
+                $oQMail->send($sMsg, time());
+                $oTask->msg($sMsg);
+            }
+            $oQMail->add();
+            $oTask->send();
         }
-        $oTask->send();
+    }
+
+    protected function listen(){
+        $oRedis = Fac_Db::getIns()->loadRedis();
+        $sKey = Redis_Key::mailWait();
+        while(!$aMsgs = $oRedis->zrangebyscore(Redis_Key::mailWait(), '-inf', time(), array('withscores' => true))){
+            usleep(10000);
+        }
+        return $aMsgs;
     }
 
 }

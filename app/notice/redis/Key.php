@@ -13,6 +13,7 @@ abstract class Redis_Key {
     protected static $aMap = array(
         'logtable' => 'notice:log:table:{$id}',
         'mailtable' => 'notice:mail:table:{$id}',
+        'sitemsgtable' => 'notice:sitemsg:table:{$id}'
     );
 
     public static function __callStatic($name, $args) {

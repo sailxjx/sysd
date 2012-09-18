@@ -15,7 +15,7 @@ abstract class Queue_Queue extends Mod_Base {
         'succ' => array(), //发送成功队列
         'error' => array(), //发送错误队列
         'fail' => array(), //发送失败队列
-        'sending' => array()//发送中队列
+        'send' => array()//发送中队列
     );
 
     public function __construct() {
@@ -27,7 +27,7 @@ abstract class Queue_Queue extends Mod_Base {
      * 初始化队列
      * @return \Queue_Queue
      */
-    protected function init() {
+    protected function reset() {
         foreach ($this->aQueues as $sQue => $aQue) {
             $this->aQueues[$sQue] = array();
         }
@@ -53,7 +53,7 @@ abstract class Queue_Queue extends Mod_Base {
     /**
      * 进队列
      */
-    public function push() {
+    public function add() {
         $this->oRedis->multi();
         foreach ($this->aQueues as $sQue => $aQue) {
             $sKFunc = $this->sQueue . ucfirst($sQue);
@@ -62,15 +62,24 @@ abstract class Queue_Queue extends Mod_Base {
             }
         }
         $this->oRedis->exec();
-        $this->init();
+        $this->reset();
         return $this;
     }
 
     /**
      * 出队列
      */
-    public function pop() {
-        
+    public function rem() {
+        $this->oRedis->multi();
+        foreach ($this->aQueues as $sQue => $aQue) {
+            $sKFunc = $this->sQueue . ucfirst($sQue);
+            foreach ($aQue as $id => $t) {
+                $this->oRedis->zrem(Redis_Key::$sKFunc(), $id);
+            }
+        }
+        $this->oRedis->exec();
+        $this->reset();
+        return $this;
     }
 
     /**
