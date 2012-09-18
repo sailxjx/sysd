@@ -9,9 +9,12 @@
 class MailList extends Base {
 
     protected function main() {
-        Mod_ZTask::getIns()->recv();
-        $id = $this->addMail();
-        print_r($this->getMail($id));
+        $oLog = Store_Log::getIns();
+        $oLog->{Const_Log::F_ID} = 1;
+        $oLog->{Const_Log::F_CTIME} = time();
+        echo $oLog->set();
+        exit;
+
         $this->queue($id);
         print_r(Fac_Db::getIns()->loadRedis()->zrange('notice:mail:wait', 0, -1));
         echo PHP_EOL;

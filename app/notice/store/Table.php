@@ -41,8 +41,11 @@ abstract class Store_Table extends Mod_Base {
         return $this;
     }
 
+    /**
+     * can not del data now
+     */
     public function del() {
-        
+        return false;
     }
 
     public function get($iId, $mFields = null) {

@@ -9,4 +9,17 @@
  */
 class MailWorker extends Task_Worker {
 
+    protected function main() {
+        $this->work();
+    }
+    protected function work(){
+        $sModClass=$this->sModClass;
+        $oWorker=$sModClass::getIns()->channel(0);
+        while($sMsg=$oWorker->recv()){
+            echo 'pid: '.posix_getpid(),';';
+            echo 'msg: '.$sMsg,PHP_EOL;
+            echo $i++;
+        }
+        return true;
+    }
 }

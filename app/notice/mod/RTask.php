@@ -24,7 +24,7 @@ class Mod_RTask extends Mod_Task {
     }
 
     public function recv() {
-        $sMsgKey = $this->aChannels[$this->iChannel];
+        $sMsgKey = $this->aChannels[$this->mChannel];
         while (!$sMsg = $this->oRedis->rpop(Redis_Key::$sMsgKey())) {
             usleep(10000);
         }
@@ -36,7 +36,7 @@ class Mod_RTask extends Mod_Task {
             return false;
         }
         $this->oRedis->multi();
-        $sMsgKey = $this->aChannels[$this->iChannel];
+        $sMsgKey = $this->aChannels[$this->mChannel];
         foreach ($this->aMsg as $sMsg) {
             $this->oRedis->lpush(Redis_Key::$sMsgKey(), $sMsg);
         }

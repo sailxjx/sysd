@@ -9,4 +9,17 @@
  */
 class MailVent extends Task_Vent {
 
+    protected function main() {
+        $this->vent();
+    }
+
+    protected function vent() {
+        $sModClass=$this->sModClass;
+        $oTask=$sModClass::getIns()->channel(0);
+        for ($i = 0; $i < 100000; $i++) {
+            $oTask->msg($i);
+        }
+        $oTask->send();
+    }
+
 }
