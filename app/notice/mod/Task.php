@@ -10,18 +10,18 @@
 abstract class Mod_Task extends Mod_Base {
 
     protected $aMsg = array();
-    protected $aChannels=array();
-    protected $iChannel=0;
+    protected $aChannels = array();
+    protected $mChannel = 0;
 
     abstract public function send();
 
     abstract public function recv();
 
-    public function channel($iCId=0) {
-        if(!isset($this->aChannels[$iCId])){
+    public function channel($mCId=0) {
+        if(!isset($this->aChannels[$mCId])){
             trigger_error('could not find this channel! ',E_USER_ERROR);
         }
-        $this->iChannel=$iCId;
+        $this->mChannel=$mCId;
         return $this;
     }
 

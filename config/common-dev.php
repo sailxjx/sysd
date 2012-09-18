@@ -32,6 +32,7 @@ $config['REDIS'] = array(
 
 // bind modules
 $config['MOD_TASK'] = 'ZTask';
+$config['MOD_LOG'] = 'RLog';
 
 // job lists
 $config['CMD'] = array(

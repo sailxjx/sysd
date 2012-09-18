@@ -16,9 +16,6 @@ abstract class Task_Worker extends Task_Base {
     protected function work(){
         $sModClass=$this->sModClass;
         $oWorker=$sModClass::getIns()->channel(0);
-
-        $oWorker->tstRecv();
-        exit;
         while($sMsg=$oWorker->recv()){
             echo 'pid: '.posix_getpid(),';';
             echo 'msg: '.$sMsg,PHP_EOL;
