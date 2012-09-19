@@ -4,7 +4,7 @@
  * Document: Log
  * Created on: 2012-9-3, 12:15:28
  * @author: jxxu
- * Email: jingxinxu@anjuke.com
+ * Email: sailxjx@163.com
  * GTalk: sailxjx@gmail.com
  */
 class Const_Log {

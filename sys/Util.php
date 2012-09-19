@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Document: Util
  * Created on: 2012-4-27, 10:34:10
@@ -7,9 +6,9 @@
  * GTalk: sailxjx@gmail.com
  */
 abstract class Util {
-
+    
     protected static $aConfigs;
-
+    
     /**
      * 读取配置文件
      * @param string $sKey
@@ -27,15 +26,15 @@ abstract class Util {
         }
         return isset(self::$aConfigs[$sKey]) ? self::$aConfigs[$sKey] : null;
     }
-
+    
     public static function xmlToArray($sXmlFile) {
         $oSXml = simplexml_load_file($sXmlFile);
-        return json_decode(json_encode($oSXml), true);
+        return json_decode(json_encode($oSXml) , true);
     }
-
+    
     public static function objToArray($obj) {
         $arr = array();
-        foreach ((array) $obj as $sKey => $mVal) {
+        foreach ((array)$obj as $sKey => $mVal) {
             if (is_object($mVal)) {
                 $arr[$sKey] = self::objToArray($mVal);
             } else {
@@ -44,7 +43,7 @@ abstract class Util {
         }
         return $arr;
     }
-
+    
     public static function getFileCon($sFile, $sSetContent = '') {
         if (file_exists($sFile)) {
             return file_get_contents($sFile);
@@ -59,7 +58,7 @@ abstract class Util {
             return '';
         }
     }
-
+    
     public static function setFileCon($sFile, $sContent, $iOption = FILE_BINARY) {
         if (!file_exists($sFile)) {
             $sDir = dirname($sFile);
@@ -69,21 +68,32 @@ abstract class Util {
         }
         return file_put_contents($sFile, $sContent, $iOption);
     }
-
-    public static function output($mCon) {
-        echo date('Y-m-d H:i:s'), ':[', Core::getIns()->getJobClass(), '] ', var_export($mCon, true), PHP_EOL;
+    
+    public static function output() {
+        $aArgs = func_get_args();
+        $sCon = '';
+        foreach ($aArgs as $mArg) {
+            $sCon.= print_r($mArg, true);
+        }
+        echo self::formatLog($sCon);
         return true;
     }
-
+    
     public static function logInfo($mCon, $sLogFile = null) {
-        $sCon = date('Y-m-d H:i:s') . ':[' . Core::getIns()->getJobClass() . '] ' . var_export($mCon, true) . PHP_EOL;
+        $sCon = self::formatLog($mCon);
         $sLogFile = empty($sLogFile) ? Core::getIns()->getLogFile() : $sLogFile;
         self::setFileCon($sLogFile, $sCon, FILE_APPEND);
         return true;
     }
-
+    
+    public static function formatLog($mCon) {
+        return date('Y-m-d H:i:s') . '[memuse: ' . memory_get_usage(true) / 1024 . 'K]:[' . Core::getIns()->getJobClass() . '] ' . var_export($mCon, true) . PHP_EOL;
+    }
+    
     public static function report($iCode = 0, $sMsg = '') {
         //@todo error report
+        
+        
     }
-
+    
 }

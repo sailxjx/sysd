@@ -4,7 +4,7 @@
  * Document: Mail
  * Created on: 2012-9-3, 12:11:01
  * @author: jxxu
- * Email: jingxinxu@anjuke.com
+ * Email: sailxjx@163.com
  * GTalk: sailxjx@gmail.com
  */
 abstract class Const_Mail {

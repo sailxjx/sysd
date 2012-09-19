@@ -4,7 +4,7 @@
  * Document: Task_Base
  * Created on: 2012-9-11, 18:06:08
  * @author: jxxu
- * Email: jingxinxu@anjuke.com
+ * Email: sailxjx@163.com
  * GTalk: sailxjx@gmail.com
  */
 abstract class Task_Base extends Base {
