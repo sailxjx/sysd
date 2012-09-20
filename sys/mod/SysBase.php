@@ -1,19 +1,18 @@
 <?php
-
 /**
  * Document: Base
  * Created on: 2012-6-4, 13:08:19
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-class Mod_SysBase {
-
+abstract class Mod_SysBase {
+    
     /**
      * instance
      * @var array
      */
     private static $aIns;
-
+    
     /**
      * get a new instance
      * @return Mod_SysBase
@@ -25,5 +24,5 @@ class Mod_SysBase {
         }
         return self::$aIns[$sClass];
     }
-
+    
 }

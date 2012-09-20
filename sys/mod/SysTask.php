@@ -6,13 +6,13 @@
  * Email: sailxjx@163.com
  * GTalk: sailxjx@gmail.com
  */
-abstract class Mod_Task extends Mod_SysBase {
+abstract class Mod_SysTask extends Mod_SysBase {
     
     protected $aMsg = array();
     protected $aChannels = array();
     protected $mChannel = 0;
-    protected $sRKeyClass = 'Redis_Key'; //class to build the redis key
-    protected $sRExpClass = 'Redis_Expire'; //class to get the redis expire
+    protected $sRKeyClass = 'Redis_SysKey'; //class to build the redis key
+    protected $sRExpClass = 'Redis_SysExpire'; //class to get the redis expire
     
     abstract public function send();
     

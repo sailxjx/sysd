@@ -34,6 +34,7 @@ $config['REDIS'] = array(
 // bind modules
 $config['MOD_TASK'] = 'RTask'; //dicide which task distribute module to use
 $config['MOD_STATUS'] = 'ZStatus'; //module to scan the health of process
+$config['MOD_SYSTASK'] = 'SysRTask';
 
 // job lists
 $config['CMD'] = array(
