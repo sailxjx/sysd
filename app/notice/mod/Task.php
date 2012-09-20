@@ -6,7 +6,7 @@
  * Email: sailxjx@163.com
  * GTalk: sailxjx@gmail.com
  */
-abstract class Mod_Task extends Mod_Base {
+abstract class Mod_Task extends Mod_SysBase {
     
     protected $aMsg = array();
     protected $aChannels = array();

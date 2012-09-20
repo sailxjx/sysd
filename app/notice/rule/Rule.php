@@ -6,7 +6,7 @@
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-abstract class Rule_Rule extends Mod_Base {
+abstract class Rule_Rule extends Mod_SysBase {
 
 	protected $aRdRule = array(
 		'1' => 60, //60s
@@ -24,7 +24,7 @@ abstract class Rule_Rule extends Mod_Base {
 	protected $oRedis;
 
 	protected function __construct() {
-		$this->oRedis = Fac_Db::getIns()->loadRedis();
+		$this->oRedis = Fac_SysDb::getIns()->loadRedis();
 		$this->sNumRKey = $this->getDelNumRKey();
 	}
 

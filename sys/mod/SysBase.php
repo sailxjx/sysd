@@ -6,7 +6,7 @@
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-class Mod_Base {
+class Mod_SysBase {
 
     /**
      * instance
@@ -16,7 +16,7 @@ class Mod_Base {
 
     /**
      * get a new instance
-     * @return Mod_Base
+     * @return Mod_SysBase
      */
     public static function &getIns() {
         $sClass = get_called_class();

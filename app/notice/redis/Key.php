@@ -1,37 +1,11 @@
 <?php
-
-/**
- * 获取RedisKey
- * Document: Key
- * Created on: 2012-8-22, 16:48:23
- * @author: jxxu
- * GTalk: sailxjx@gmail.com
- */
-abstract class Redis_Key {
+abstract class Redis_Key extends Redis_SysKey {
 
     protected static $sPrefix = 'notice:';
     protected static $aMap = array(
-        'logtable' => 'notice:log:table:{$id}',
-        'mailtable' => 'notice:mail:table:{$id}',
-        'sitemsgtable' => 'notice:sitemsg:table:{$id}'
+        'logtable' => 'log:table:{$id}',
+        'mailtable' => 'mail:table:{$id}',
+        'sitemsgtable' => 'sitemsg:table:{$id}'
     );
-
-    public static function __callStatic($name, $args) {
-        $sName = strtolower($name);
-        if (!isset(self::$aMap[$sName])) {
-            return self::autoKey($name);
-        }
-        if (isset($args[0])) {
-            extract($args[0]);
-        }
-        $sKey = self::$aMap[$sName];
-        @eval("\$sKey = \"$sKey\";");
-        return $sKey;
-    }
-
-    protected static function autoKey($name) {
-        return self::$sPrefix . strtolower(preg_replace('/([a-z])([A-Z])/', '$1:$2', $name));
-    }
-
+    
 }
-

@@ -6,7 +6,7 @@
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-abstract class Const_Common {
+abstract class Const_SysCommon {
 	// commands
 
 	const C_START = 'start';

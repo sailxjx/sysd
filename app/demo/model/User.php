@@ -6,7 +6,7 @@
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-class Model_User extends Mod_Base {
+class Model_User extends Mod_SysBase {
 
 	/**
 	 * get joindate from dv_user
@@ -17,7 +17,7 @@ class Model_User extends Mod_Base {
 	public function getDvUserJoinDateByRange($iSId = 0, $iLimit = 200) {
 		$iSId = intval($iSId);
 		$iLimit = intval($iLimit);
-		$oPdo = Fac_Db::getIns()->loadPdo('MSSQL');
+		$oPdo = Fac_SysDb::getIns()->loadPdo('MSSQL');
 		$sSql = "SELECT TOP {$iLimit} UserID,JoinDate FROM Dv_User WHERE UserID>{$iSId} ORDER BY UserID ASC";
 		$oStmt = $oPdo->prepare($sSql);
 		$oStmt->execute();
@@ -31,7 +31,7 @@ class Model_User extends Mod_Base {
 	 * @return boolean
 	 */
 	public function updUserJoinDateInMysql($iUserId, $iJoinDate) {
-		$oPdo = Fac_Db::getIns()->loadPdo('MYSQL');
+		$oPdo = Fac_SysDb::getIns()->loadPdo('MYSQL');
 		$sTable = 'user_' . ($iUserId % 16);
 		$sSql = "UPDATE {$sTable} SET join_date=? WHERE userid=?";
 		$oStmt = $oPdo->prepare($sSql);

@@ -8,14 +8,15 @@
 class MailServer extends Task_Base {
     
     protected function main() {
-        for ($i = 0;$i < 10000;$i++) {
-            $this->queue($this->addMail());
+        for ($i = 0;$i < 10;$i++) {
+            $this->queue($this->addMail($i));
         }
         exit;
     }
     
-    protected function addMail() {
+    protected function addMail($i) {
         $oHMail = Store_Mail::getIns();
+        $oHMail->{Const_Mail::F_STATUS} = $i;
         $oHMail->{Const_Mail::F_SENDER} = 'web';
         $oHMail->{Const_Mail::F_RECEIVER} = 'me';
         return $oHMail->set();

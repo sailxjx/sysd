@@ -6,18 +6,18 @@
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-class Fac_Mq {
+class Fac_SysMq {
 
     private static $oIns;
     protected $oZCon;
 
     /**
-     * instance of Fac_Mq
-     * @return Fac_Mq
+     * instance of Fac_SysMq
+     * @return Fac_SysMq
      */
     public static function &getIns() {
         if (!isset(self::$oIns)) {
-            self::$oIns = new Fac_Mq();
+            self::$oIns = new Fac_SysMq();
         }
         return self::$oIns;
     }

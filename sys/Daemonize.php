@@ -10,9 +10,9 @@ class Daemonize {
 
 	private static $oIns;
 	public static $aNoDaemonCmds = array(
-		Const_Common::C_KILL,
-		Const_Common::C_RESTART,
-		Const_Common::C_STOP
+		Const_SysCommon::C_KILL,
+		Const_SysCommon::C_RESTART,
+		Const_SysCommon::C_STOP
 	);
 
 	/**

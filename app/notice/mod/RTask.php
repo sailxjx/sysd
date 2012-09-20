@@ -17,7 +17,7 @@ class Mod_RTask extends Mod_Task {
     protected $iUSec = 10000; //usleep time
     
     protected function __construct() {
-        $this->oRedis = Fac_Db::getIns()->loadRedis();
+        $this->oRedis = Fac_SysDb::getIns()->loadRedis();
     }
     
     protected function reset() {

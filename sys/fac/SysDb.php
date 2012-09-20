@@ -6,7 +6,7 @@
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-class Fac_Db {
+class Fac_SysDb {
 
 	public function __construct() {
 
@@ -22,11 +22,11 @@ class Fac_Db {
 
 	/**
 	 * instance of factory
-	 * @return Fac_Db
+	 * @return Fac_SysDb
 	 */
 	public static function &getIns() {
 		if (!isset(self::$oIns)) {
-			self::$oIns = new Fac_Db();
+			self::$oIns = new Fac_SysDb();
 		}
 		return self::$oIns;
 	}

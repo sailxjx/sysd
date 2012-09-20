@@ -9,22 +9,22 @@
 final class Core {
 
     protected $aOptionMaps = array(
-        Const_Common::OL_HELP => 'showHelp',
-        Const_Common::OS_VERSION => 'showVersion',
-        Const_Common::OL_VERSION => 'showVersion',
-        Const_Common::OS_LOG => 'showLog',
-        Const_Common::OL_LOG => 'showLog',
-        Const_Common::OS_DAEMON => 'daemon',
-        Const_Common::OL_DAEMON => 'daemon',
-        Const_Common::OL_QUIET => 'setQuiet',
-        Const_Common::OS_QUIET => 'setQuiet',
-        Const_Common::OL_TODO => 'showTodo'
+        Const_SysCommon::OL_HELP => 'showHelp',
+        Const_SysCommon::OS_VERSION => 'showVersion',
+        Const_SysCommon::OL_VERSION => 'showVersion',
+        Const_SysCommon::OS_LOG => 'showLog',
+        Const_SysCommon::OL_LOG => 'showLog',
+        Const_SysCommon::OS_DAEMON => 'daemon',
+        Const_SysCommon::OL_DAEMON => 'daemon',
+        Const_SysCommon::OL_QUIET => 'setQuiet',
+        Const_SysCommon::OS_QUIET => 'setQuiet',
+        Const_SysCommon::OL_TODO => 'showTodo'
     );
     protected $aDCmds = array(
-        Const_Common::C_START,
-        Const_Common::C_STOP,
-        Const_Common::C_RESTART,
-        Const_Common::C_KILL
+        Const_SysCommon::C_START,
+        Const_SysCommon::C_STOP,
+        Const_SysCommon::C_RESTART,
+        Const_SysCommon::C_KILL
     );
     protected $sCmd;
     protected $aMan; //手册内容
@@ -148,9 +148,9 @@ final class Core {
         foreach ($aCLog as $sDate => $aLog) {
             echo $sDate, PHP_EOL;
             foreach ($aLog as $sLog) {
-                echo Const_Common::R_TAB, $sLog, PHP_EOL;
+                echo Const_SysCommon::R_TAB, $sLog, PHP_EOL;
             }
-            echo Const_Common::R_HR, PHP_EOL;
+            echo Const_SysCommon::R_HR, PHP_EOL;
         }
         exit;
     }
@@ -186,7 +186,7 @@ final class Core {
             } else {
                 echo PHP_EOL;
                 foreach ($v as $vv) {
-                    echo Const_Common::R_TAB, $vv, PHP_EOL;
+                    echo Const_SysCommon::R_TAB, $vv, PHP_EOL;
                 }
             }
         }
@@ -196,8 +196,8 @@ final class Core {
     public function getDaemonNum() {
         if (!isset($this->iDNum)) {
             $iDNum = 1;
-            if (isset($this->aParams[Const_Common::P_DAEMON_NUM])) {
-                $iDNum = intval($this->aParams[Const_Common::P_DAEMON_NUM]);
+            if (isset($this->aParams[Const_SysCommon::P_DAEMON_NUM])) {
+                $iDNum = intval($this->aParams[Const_SysCommon::P_DAEMON_NUM]);
                 if ($iDNum <= 0 || $iDNum > Util::getConfig('MAX_DAEMON_NUM')) {
                     $iDNum = 1;
                 }
@@ -209,10 +209,10 @@ final class Core {
 
     public function getLogFile() {
         if (!isset($this->sLogFile)) {
-            if (!isset($this->aParams[Const_Common::P_LOG_FILE])) {
+            if (!isset($this->aParams[Const_SysCommon::P_LOG_FILE])) {
                 $this->sLogFile = Util::getConfig('LOG_FILE');
             } else {
-                $this->sLogFile = $this->aParams[Const_Common::P_LOG_FILE];
+                $this->sLogFile = $this->aParams[Const_SysCommon::P_LOG_FILE];
             }
         }
         return $this->sLogFile;
@@ -225,9 +225,9 @@ final class Core {
         foreach ($aTodo as $iLv => $aDoList) {
             echo "优先级:", $iLv, PHP_EOL;
             foreach ($aDoList as $sDo) {
-                echo Const_Common::R_TAB, $sDo, PHP_EOL;
+                echo Const_SysCommon::R_TAB, $sDo, PHP_EOL;
             }
-            echo Const_Common::R_HR, PHP_EOL;
+            echo Const_SysCommon::R_HR, PHP_EOL;
         }
         exit;
     }

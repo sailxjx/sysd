@@ -22,8 +22,8 @@ class Kill extends Base {
 			return false;
 		}
 		$aParams = $this->oCore->getParams();
-		if (!empty($aParams[Const_Common::P_PID])) {
-			$aPids = explode(',', $aParams[Const_Common::P_PID]);
+		if (!empty($aParams[Const_SysCommon::P_PID])) {
+			$aPids = explode(',', $aParams[Const_SysCommon::P_PID]);
 		}
 		if (empty($aPids)) {
 			Util::output('No process ids!');

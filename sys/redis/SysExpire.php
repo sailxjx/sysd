@@ -6,8 +6,6 @@
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-abstract class Redis_Expire extends Redis_SysExpire{
-
-    const LOG = 2592000;
+abstract class Redis_SysExpire{
 
 }

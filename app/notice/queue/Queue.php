@@ -5,7 +5,7 @@
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-abstract class Queue_Queue extends Mod_Base {
+abstract class Queue_Queue extends Mod_SysBase {
     
     protected $oRedis;
     protected $sQueue;
@@ -27,7 +27,7 @@ abstract class Queue_Queue extends Mod_Base {
     
     public function __construct() {
         $this->getQueue();
-        $this->oRedis = Fac_Db::getIns()->loadRedis();
+        $this->oRedis = Fac_SysDb::getIns()->loadRedis();
         $this->regFuncs();
     }
     

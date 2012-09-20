@@ -131,7 +131,7 @@ class Mod_ZTask extends Mod_Task {
     }
 
     protected function loadSock($aConf){
-        $oSock=Fac_Mq::getIns()->loadZMQ($aConf['type']);
+        $oSock=Fac_SysMq::getIns()->loadZMQ($aConf['type']);
         $oSock->{$aConf['method']}($aConf['dsn']);
         return $oSock;
     }

@@ -28,8 +28,7 @@ class MailVent extends Task_Vent {
     }
 
     protected function listen(){
-        $oRedis = Fac_Db::getIns()->loadRedis();
-        $sKey = Redis_Key::mailWait();
+        $oRedis = Fac_SysDb::getIns()->loadRedis();
         while(!$aMsgs = $oRedis->zrangebyscore(Redis_Key::mailWait(), '-inf', time(), array('withscores' => true))){
             usleep(10000);
         }
