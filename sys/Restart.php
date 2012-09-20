@@ -20,9 +20,9 @@ class Restart extends Base {
 	}
 
 	protected function start() {
-		$this->oCore->setCmd(Const_Common::C_START);
+		$this->oCore->setCmd(Const_SysCommon::C_START);
 		$aOptions = $this->oCore->getOptions();
-		$aDaemons = array_intersect($aOptions, array(Const_Common::OL_DAEMON, Const_Common::OS_DAEMON));
+		$aDaemons = array_intersect($aOptions, array(Const_SysCommon::OL_DAEMON, Const_SysCommon::OS_DAEMON));
 		if (!empty($aDaemons)) {
 			$this->oCore->daemon();
 		}

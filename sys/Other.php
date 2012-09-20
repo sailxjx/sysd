@@ -16,7 +16,7 @@ class Other extends Base {
 
 	protected function runOther() {
 		$aParams = $this->oCore->getParams();
-		$this->sOther = isset($aParams[Const_Common::P_OTHER]) ? $aParams[Const_Common::P_OTHER] : null;
+		$this->sOther = isset($aParams[Const_SysCommon::P_OTHER]) ? $aParams[Const_SysCommon::P_OTHER] : null;
 		if (!isset($this->sOther)) {
 			return null;
 		}

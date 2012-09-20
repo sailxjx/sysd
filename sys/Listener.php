@@ -96,23 +96,23 @@ class Listener extends Base {
 	 */
 	protected function wList() {
 		$aJobList = $this->aJobList;
-		$iCMaxDNum = Util::getConfig('MaxDaemonNum');
+		$iCMaxDNum = Util::getConfig('MAX_DAEMON_NUM');
 		foreach ($aJobList as $sClass => $aJob) {
 			if (empty($sClass)) {
 				continue;
 			}
 			$iNum = Util_SysUtil::getSysProcNumByClass($sClass);
-			$iMaxNum = !isset($aJob[self::K_PARAMS][Const_Common::P_DAEMON_NUM]) ? 1 :
-					($aJob[self::K_PARAMS][Const_Common::P_DAEMON_NUM] > $iCMaxDNum ? $iCMaxDNum :
-							$aJob[self::K_PARAMS][Const_Common::P_DAEMON_NUM]);
-			$iMinNum = !isset($aJob[self::K_PARAMS][Const_Common::P_MIN_DAEMON_NUM]) ? self::$iDMinDaemon :
-					($aJob[self::K_PARAMS][Const_Common::P_MIN_DAEMON_NUM] > $iMaxNum ? $iMaxNum :
-							$aJob[self::K_PARAMS][Const_Common::P_MIN_DAEMON_NUM]);
+			$iMaxNum = !isset($aJob[self::K_PARAMS][Const_SysCommon::P_DAEMON_NUM]) ? 1 :
+					($aJob[self::K_PARAMS][Const_SysCommon::P_DAEMON_NUM] > $iCMaxDNum ? $iCMaxDNum :
+							$aJob[self::K_PARAMS][Const_SysCommon::P_DAEMON_NUM]);
+			$iMinNum = !isset($aJob[self::K_PARAMS][Const_SysCommon::P_MIN_DAEMON_NUM]) ? self::$iDMinDaemon :
+					($aJob[self::K_PARAMS][Const_SysCommon::P_MIN_DAEMON_NUM] > $iMaxNum ? $iMaxNum :
+							$aJob[self::K_PARAMS][Const_SysCommon::P_MIN_DAEMON_NUM]);
 			if ($iNum >= $iMinNum) {
 				continue;
 			}
 			$iRNum = intval($iMaxNum - $iNum);
-			$sDNKey = Util_SysUtil::convParamKeyToArgsKey(Const_Common::P_DAEMON_NUM);
+			$sDNKey = Util_SysUtil::convParamKeyToArgsKey(Const_SysCommon::P_DAEMON_NUM);
 			$sCmd = preg_replace("/{$sDNKey}\=\d+?/i", $sDNKey . '=' . $iRNum, $aJob[self::K_CONF_CMD]);
 			$sCmd = APP_PATH . 'launcher.php start ' . $sCmd;
 			Util::logInfo($sCmd, APP_PATH . 'log/listen.log');
@@ -121,12 +121,12 @@ class Listener extends Base {
 	}
 
 	protected function readJList() {
-		$aCmds = Util::getConfig('cmd');
+		$aCmds = Util::getConfig('CMD');
 		$aJClass = array();
 		foreach ($aCmds as $sConfCmd) {
 			$aArgvs = explode(' ', $sConfCmd);
 			list($sClassName, $aParams, $aOptions, $sCmd) = Util_SysUtil::hashArgv($aArgvs);
-			if (!in_array(Const_Common::OL_LISTEN, $aOptions) && !in_array(Const_Common::OS_LISTEN, $aOptions)) {
+			if (!in_array(Const_SysCommon::OL_LISTEN, $aOptions) && !in_array(Const_SysCommon::OS_LISTEN, $aOptions)) {
 				continue;
 			}
 			$aJClass[$sClassName] = array(
