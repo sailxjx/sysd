@@ -10,9 +10,8 @@ class Mod_RTask extends Mod_Task {
     
     protected $oRedis;
     protected $aChannels = array(
-        'mailTask'
-        //task list
-        
+        'mailList',
+        'mailResult'
     );
     protected $iUSec = 10000; //usleep time
     

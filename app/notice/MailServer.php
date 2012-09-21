@@ -28,7 +28,7 @@ class MailServer extends Task_Base {
     }
     
     protected function queue($id) {
-        Queue_Mail::getIns()->wait($id, time()+100)->add();
+        Queue_Mail::getIns()->wait($id, time())->add();
     }
     
 }

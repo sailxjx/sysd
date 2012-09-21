@@ -19,6 +19,7 @@ class Store_Mail extends Store_Table {
         Const_Mail::F_CTIME => Const_Mail::F_CTIME,
         Const_Mail::F_STIME => Const_Mail::F_STIME,
         Const_Mail::F_STATUS => Const_Mail::F_STATUS,
+        Const_Mail::F_ERRORNUM => Const_Mail::F_ERRORNUM,
         Const_Mail::F_EXTRA => Const_Mail::F_EXTRA
     );
 }

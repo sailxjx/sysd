@@ -125,8 +125,9 @@ abstract class Store_SysTable extends Mod_SysBase {
         $sRIdFunc = $this->sTable . 'Id'; //自增id key
         $sRKeyClass = $this->sRKeyClass;
         $sIdKey = $sRKeyClass::$sRIdFunc();
+        $iAutoIncrId = $oRedis->get($sIdKey);
         if (isset($this->aData['id'])) { //设置id
-            if (intval($this->aData['id']) > $oRedis->get($sIdKey)) { //设置id大于自增id
+            if (intval($this->aData['id']) > intval($iAutoIncrId)) { //设置id大于自增id
                 trigger_error('the setting id is larger than auto_incr id', E_USER_WARNING);
                 $oRedis->set($sIdKey, $this->aData['id']);
             }

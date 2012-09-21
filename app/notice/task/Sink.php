@@ -7,6 +7,6 @@
  * Email: sailxjx@163.com
  * GTalk: sailxjx@gmail.com
  */
-abstract class Task_Sink extends Base {
+abstract class Task_Sink extends Task_Base {
     
 }

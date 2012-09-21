@@ -71,16 +71,16 @@ abstract class Queue_Queue extends Mod_SysBase {
      * add elements into queues
      */
     public function add() {
+        $this->beforeAdd();
         $this->oRedis->multi();
         foreach ($this->aQueues as $sQue => $aQue) {
             $sKFunc = $this->sQueue . ucfirst($sQue);
-            $this->beforeAdd($sQue, $aQue);
             foreach ($aQue as $id => $t) {
                 $this->oRedis->zadd(Redis_Key::$sKFunc() , $t, $id);
             }
-            $this->afterAdd($sQue, $aQue);
         }
         $this->oRedis->exec();
+        $this->afterAdd();
         $this->reset();
         return $this;
     }
@@ -89,16 +89,16 @@ abstract class Queue_Queue extends Mod_SysBase {
      * rem elements from queues
      */
     public function rem() {
+        $this->beforeRem();
         $this->oRedis->multi();
         foreach ($this->aQueues as $sQue => $aQue) {
             $sKFunc = $this->sQueue . ucfirst($sQue);
-            $this->beforeRem($sQue, $aQue);
             foreach ($aQue as $id => $t) {
                 $this->oRedis->zrem(Redis_Key::$sKFunc() , $id);
             }
-            $this->afterRem($sQue, $aQue);
         }
         $this->oRedis->exec();
+        $this->afterRem();
         $this->reset();
         return $this;
     }
@@ -108,17 +108,17 @@ abstract class Queue_Queue extends Mod_SysBase {
      */
     public function move($sFrom, $sTo, $sMember, $iNewScore) {
         if (!key_exists($sFrom, $this->aQueues) || !key_exists($sTo, $this->aQueues)) {
-            trigger_error('error: could not find the called queue', E_USER_ERROR);
+            trigger_error('error: could not find the called queue', E_USER_WARNING);
             return false;
         }
-        $this->oRedis->multi();
         $sFromKFunc = $this->sQueue . ucfirst($sFrom);
         $sToKFunc = $this->sQueue . ucfirst($sTo);
         $this->beforeMove(func_get_args());
+        $this->oRedis->multi();
         $this->oRedis->zrem(Redis_Key::$sFromKFunc() , $sMember);
         $this->oRedis->zadd(Redis_Key::$sToKFunc() , $iNewScore, $sMember);
-        $this->afterMove(func_get_args());
         $this->oRedis->exec();
+        $this->afterMove(func_get_args());
         $this->reset();
         return $this;
     }

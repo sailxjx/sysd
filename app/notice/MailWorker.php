@@ -13,17 +13,16 @@ class MailWorker extends Task_Worker {
     
     protected function work() {
         $sModClass = $this->sModClass;
-        $oWorker = $sModClass::getIns()->channel(0);
+        $oWorker = $sModClass::getIns();
         $oQMail = Queue_Mail::getIns();
-        while ($sMsg = $oWorker->recv()) {
-            Util::output('pid: ' . posix_getpid() . ';');
-            Util::output('msg: ' . $sMsg);
+        while ($sMsg = $oWorker->channel(0)->recv()) {
+            Util::output('recv msg: ' . $sMsg);
             if ($this->doSth()) {
                 Util::output('succ msg: ' . $sMsg);
-                $oQMail->move('send', 'succ', $sMsg, time());
+                $oWorker->channel(1)->msg($sMsg . $this->sSplite . 'succ')->send();
             } else {
                 Util::output('error msg: ' . $sMsg);
-                $oQMail->move('send', 'error', $sMsg, time());
+                $oWorker->channel(1)->msg($sMsg . $this->sSplite . 'error')->send();
             }
         }
         return true;

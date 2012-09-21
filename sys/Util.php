@@ -17,7 +17,7 @@ abstract class Util {
     public static function getConfig($sKey) {
         if (!isset(self::$aConfigs)) {
             $sEnv = ENV;
-            $sFile = APP_PATH . "config/common-{$sEnv}.php";
+            $sFile = APP_PATH . "config/config-{$sEnv}.php";
             if (is_file($sFile)) {
                 self::$aConfigs = include $sFile;
             } else {
