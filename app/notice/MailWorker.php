@@ -15,14 +15,14 @@ class MailWorker extends Task_Worker {
         $sModClass = $this->sModClass;
         $oWorker = $sModClass::getIns();
         $oQMail = Queue_Mail::getIns();
-        while ($sMsg = $oWorker->channel(0)->recv()) {
+        while ($sMsg = $oWorker->channel(Const_Task::C_MAILLIST)->recv()) {
             Util::output('recv msg: ' . $sMsg);
             if ($this->doSth()) {
                 Util::output('succ msg: ' . $sMsg);
-                $oWorker->channel(1)->msg($sMsg . $this->sSplite . 'succ')->send();
+                $oWorker->channel(Const_Task::C_MAILRESULT)->msg($sMsg . $this->sSplite . 'succ')->send();
             } else {
                 Util::output('error msg: ' . $sMsg);
-                $oWorker->channel(1)->msg($sMsg . $this->sSplite . 'error')->send();
+                $oWorker->channel(Const_Task::C_MAILRESULT)->msg($sMsg . $this->sSplite . 'error')->send();
             }
         }
         return true;

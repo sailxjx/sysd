@@ -10,8 +10,9 @@ class Mod_RTask extends Mod_Task {
     
     protected $oRedis;
     protected $aChannels = array(
-        'mailList',
-        'mailResult'
+        Const_Task::C_MAILSERVER => 'mailServer',
+        Const_Task::C_MAILLIST => 'mailList',
+        Const_Task::C_MAILRESULT => 'mailResult'
     );
     protected $iUSec = 10000; //usleep time
     
@@ -32,7 +33,10 @@ class Mod_RTask extends Mod_Task {
         return $sMsg;
     }
     
-    public function send() {
+    public function send($sMsg = null) {
+        if ($sMsg) {
+            $this->msg($sMsg);
+        }
         if (empty($this->aMsg)) {
             return false;
         }

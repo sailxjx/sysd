@@ -21,27 +21,38 @@ class Queue_Mail extends Queue_Queue {
     
     protected function waitToSend($aArgs) {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
-        Store_Mail::getIns()->set(array(
-            Const_Mail::F_ID => $iMailId,
-            Const_Mail::F_STATUS => Const_Mail::S_SEND,
-        ));
+        $this->changeStatus($iMailId,Const_Mail::S_SEND);
         return $this;
     }
-    
+
+    protected function sendToError($aArgs){
+        list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
+        $this->changeStatus($iMailId,Const_Mail::S_ERROR);
+        return $this;        
+    }
+
+    protected function sendToSucc($aArgs){
+        list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
+        $this->changeStatus($iMailId,Const_Mail::S_SUCC);
+        return $this;        
+    }
+
     protected function errorToWait($aArgs) {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
-        Store_Mail::getIns()->set(array(
-            Const_Mail::F_ID => $iMailId,
-            Const_Mail::F_STATUS => Const_Mail::S_WAIT,
-        ));
+        $this->changeStatus($iMailId,Const_Mail::S_WAIT);
         return $this;
     }
     
     protected function errorToFail($aArgs) {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
+        $this->changeStatus($iMailId,Const_Mail::S_FAIL);
+        return $this;
+    }
+
+    protected function changeStatus($iMailId,$iSt){
         Store_Mail::getIns()->set(array(
             Const_Mail::F_ID => $iMailId,
-            Const_Mail::F_STATUS => Const_Mail::S_FAIL,
+            Const_Mail::F_STATUS => $iSt,
         ));
         return $this;
     }

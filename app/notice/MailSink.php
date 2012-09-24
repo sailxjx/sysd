@@ -16,7 +16,7 @@ class MailSink extends Task_Sink {
     
     protected function sink() {
         $sModClass = $this->sModClass;
-        $oTask = $sModClass::getIns()->channel(1);
+        $oTask = $sModClass::getIns()->channel(Const_Task::C_MAILRESULT);
         $oQMail = Queue_Mail::getIns();
         while ($sMsg = $oTask->recv()) {
             Util::output('recv msg: ' . $sMsg);

@@ -8,23 +8,30 @@
 class MailServer extends Task_Base {
     
     protected function main() {
-        for ($i = 0;$i < 10;$i++) {
-            $this->queue($this->addMail($i));
+        Util::output('begin to listen request from clients');
+        $this->server();
+    }
+    
+    protected function server() {
+        $sModClass = $this->sModClass;
+        $oTask = $sModClass::getIns()->channel(Const_Task::C_MAILSERVER);
+        while ($sMsg = $oTask->recv()) {
+            $aMsg = json_decode($sMsg, true);
+            if (empty($aMsg)) {
+                continue;
+            }
+            Util::output($aMsg);
+            $iMailId = $this->addMail($aMsg);
+            Util::output('new mail id: ' . $iMailId);
+            $this->queue($iMailId);
         }
-        exit;
+        return true;
     }
     
-    protected function addMail($i) {
+    protected function addMail($aMail) {
         $oHMail = Store_Mail::getIns();
-        $oHMail->{Const_Mail::F_STATUS} = $i;
-        $oHMail->{Const_Mail::F_SENDER} = 'web';
-        $oHMail->{Const_Mail::F_RECEIVER} = 'me';
-        return $oHMail->set();
-    }
-    
-    protected function getMail($id) {
-        $oHMail = Store_SiteMsg::getIns();
-        return $oHMail->get($id);
+        $oHMail->{Const_Mail::F_CTIME} = time();
+        return $oHMail->set($aMail);
     }
     
     protected function queue($id) {
