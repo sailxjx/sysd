@@ -1,5 +1,4 @@
 <?php
-
 spl_autoload_register('uAutoLoad');
 
 function uAutoLoad($sName) {
@@ -14,8 +13,8 @@ function reqClass($sClass) {
     $aPath = explode('_', $sClass);
     $iCnt = count($aPath) - 1;
     $sFix = '';
-    for ($i = 0; $i < $iCnt; $i++) {
-        $sFix.=strtolower($aPath[$i]) . '/';
+    for ($i = 0;$i < $iCnt;$i++) {
+        $sFix.= strtolower($aPath[$i]) . '/';
     }
     foreach ($G_LOAD_PATH as $sDir) {
         $sFile = $sDir . $sFix . $aPath[$iCnt] . '.php';
@@ -30,9 +29,9 @@ function reqClass($sClass) {
 function getPackage() {
     static $aPack;
     if (!isset($aPack)) {
-        $sFile = APP_PATH . "config/pack.json";
+        $sFile = APP_PATH . "pack.json";
         if (is_file($sFile)) {
-            $aPack = json_decode(file_get_contents($sFile), true);
+            $aPack = json_decode(file_get_contents($sFile) , true);
         } else {
             trigger_error('could not find packages!', E_USER_ERROR);
         }
@@ -43,12 +42,12 @@ function getPackage() {
 function getLoadPath() {
     $aPack = getPackage();
     $aLoadPath = array();
-    foreach ((array) $aPack['depends'] as $sDep => $sDVer) {
-        $sDir = APP_PATH . 'app/' . $sDep . '/';
+    foreach ((array)$aPack['depends'] as $sDep => $sDVer) {
+        $sDir = APP_PATH . 'app/' . $sDep . '-' . $sDVer . '/';
         if (!is_dir($sDir)) {
             trigger_error('could not find the depends dir! dirname: ' . $sDir, E_USER_WARNING);
         } else {
-            $aLoadPath[] = APP_PATH . 'app/' . $sDep . '/';
+            $aLoadPath[] = $sDir;
         }
     }
     $aLoadPath[] = APP_PATH . 'sys/'; //load system path
@@ -61,4 +60,3 @@ function uErrorHandler($etype, $msg, $file, $line) {
     }
     return true;
 }
-
