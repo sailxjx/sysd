@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Document: Core
  * Created on: 2012-4-6, 14:48:03
@@ -7,8 +6,9 @@
  * GTalk: sailxjx@gmail.com
  */
 final class Core {
-
+    
     protected $aOptionMaps = array(
+        Const_SysCommon::OS_HELP => 'showHelp',
         Const_SysCommon::OL_HELP => 'showHelp',
         Const_SysCommon::OS_VERSION => 'showVersion',
         Const_SysCommon::OL_VERSION => 'showVersion',
@@ -16,8 +16,9 @@ final class Core {
         Const_SysCommon::OL_LOG => 'showLog',
         Const_SysCommon::OS_DAEMON => 'daemon',
         Const_SysCommon::OL_DAEMON => 'daemon',
-        Const_SysCommon::OL_QUIET => 'setQuiet',
         Const_SysCommon::OS_QUIET => 'setQuiet',
+        Const_SysCommon::OL_QUIET => 'setQuiet',
+        Const_SysCommon::OS_TODO => 'showTodo',
         Const_SysCommon::OL_TODO => 'showTodo'
     );
     protected $aDCmds = array(
@@ -35,7 +36,7 @@ final class Core {
     protected $sLogFile;
     protected $iDNum; //Deamon进程个数
     protected $bQuiet;
-
+    
     /**
      * instance of JobCore
      * @return Core
@@ -46,7 +47,7 @@ final class Core {
         }
         return self::$oIns;
     }
-
+    
     /**
      * get current job class name
      * @return string
@@ -54,7 +55,7 @@ final class Core {
     public function getJobClass() {
         return $this->sJobClass;
     }
-
+    
     /**
      * get current params
      * @return array
@@ -62,7 +63,7 @@ final class Core {
     public function getParams() {
         return $this->aParams;
     }
-
+    
     /**
      * get current options
      * @return array
@@ -70,7 +71,7 @@ final class Core {
     public function getOptions() {
         return $this->aOptions;
     }
-
+    
     /**
      * get current command
      * @return string
@@ -78,7 +79,7 @@ final class Core {
     public function getCmd() {
         return $this->sCmd;
     }
-
+    
     /**
      *
      * @param type $sCmd
@@ -88,7 +89,7 @@ final class Core {
         $this->sCmd = $sCmd;
         return $this->sCmd;
     }
-
+    
     /**
      * init of JobCore
      * @return Core
@@ -98,7 +99,7 @@ final class Core {
         list($this->sJobClass, $this->aParams, $this->aOptions, $this->sCmd) = Util_SysUtil::hashArgv($argv, $this->aDCmds);
         return self::$oIns;
     }
-
+    
     /**
      * run job
      * @return Core
@@ -107,14 +108,17 @@ final class Core {
         Hook::getIns()->pre();
         foreach ($this->aOptionMaps as $sOps => $sFunc) {
             if (in_array($sOps, $this->aOptions) && method_exists(self::$oIns, $sFunc)) {
-                call_user_func(array(self::$oIns, $sFunc));
+                call_user_func(array(
+                    self::$oIns,
+                    $sFunc
+                ));
             }
         }
         $this->rCmd();
         Hook::getIns()->post();
         return self::$oIns;
     }
-
+    
     /**
      * 执行不同命令
      * @todo 执行多条命令？
@@ -127,21 +131,21 @@ final class Core {
         }
         $sCmdClass::getIns()->run();
     }
-
+    
     public function getMan() {
         if (!isset($this->aMan)) {
-            $this->aMan = json_decode(Util::getFileCon(Util::getConfig('MAN_PAGE')), true);
+            $this->aMan = json_decode(Util::getFileCon(Util::getConfig('MAN_PAGE')) , true);
         }
         return $this->aMan;
     }
-
+    
     public function showVersion() {
         $aMan = $this->getMan();
         $sVersion = isset($aMan['version']) ? $aMan['version'] : '';
-        echo trim($sVersion), PHP_EOL;
+        echo trim($sVersion) , PHP_EOL;
         exit;
     }
-
+    
     public function showLog() {
         $aMan = $this->getMan();
         $aCLog = isset($aMan['changelog']) ? $aMan['changelog'] : array();
@@ -154,7 +158,7 @@ final class Core {
         }
         exit;
     }
-
+    
     public function daemon() {
         if (empty($this->sJobClass)) {
             Util::output('Class is not exsit!');
@@ -163,19 +167,19 @@ final class Core {
         $this->setQuiet();
         Daemonize::getIns()->daemon();
     }
-
+    
     public function setQuiet() {
         if (!isset($this->bQuiet)) {
             fclose(STDOUT);
             fclose(STDERR);
             global $STDOUT, $STDERR;
-            $STDOUT = fopen(Core::getIns()->getLogFile(), 'a');
-            $STDERR = fopen(Core::getIns()->getLogFile().'.err', 'a');
+            $STDOUT = fopen(Core::getIns()->getLogFile() , 'a');
+            $STDERR = fopen(Core::getIns()->getLogFile() . '.err', 'a');
             $this->bQuiet = true;
         }
         return $this->bQuiet;
     }
-
+    
     public function showHelp() {
         $aMan = $this->getMan();
         $aHelp = isset($aMan['help']) ? $aMan['help'] : '';
@@ -192,7 +196,7 @@ final class Core {
         }
         exit;
     }
-
+    
     public function getDaemonNum() {
         if (!isset($this->iDNum)) {
             $iDNum = 1;
@@ -206,7 +210,7 @@ final class Core {
         }
         return $this->iDNum;
     }
-
+    
     public function getLogFile() {
         if (!isset($this->sLogFile)) {
             if (!isset($this->aParams[Const_SysCommon::P_LOG_FILE])) {
@@ -217,7 +221,7 @@ final class Core {
         }
         return $this->sLogFile;
     }
-
+    
     public function showTodo() {
         $aMan = $this->getMan();
         $aTodo = isset($aMan['todo']) ? $aMan['todo'] : array();
@@ -231,5 +235,5 @@ final class Core {
         }
         exit;
     }
-
+    
 }
