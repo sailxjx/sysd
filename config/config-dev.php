@@ -2,18 +2,11 @@
 $config = require_once 'share.php';
 
 // database configs
-$config['MSSQL'] = array(
-    'dsn' => 'odbc:webdsn',
-    'user' => 'trace',
-    'pwd' => 'trace',
-    'options' => array()
-);
-
 $config['MYSQL'] = array(
     'dsn' => 'mysql:host=192.168.100.60;dbname=51fanli_user',
     'user' => 'root',
     'pwd' => 'root',
-    'options' => array(),
+    'options' => array() ,
     'statments' => array(
         'SET CHARACTER SET utf8'
     )
@@ -26,7 +19,11 @@ $config['REDIS'] = array(
 
 // job lists
 $config['CMD'] = array(
-    'HelloWorld -d --daemon-num=3 --min-daemon-num=2 -w -q'
+    'MailServer -d --log-file=' . APP_PATH . 'var/log/mailserver.log',
+    'MailVent -d --log-file=' . APP_PATH . 'var/log/mailvent.log',
+    'MailSink -d --log-file=' . APP_PATH . 'var/log/mailsink.log',
+    'MailRedel -d --log-file=' . APP_PATH . 'var/log/mailredel.log',
+    'MailWorker -d --log-file=' . APP_PATH . 'var/log/mailworker.log --daemon-num=3'
 );
 
 // return configs

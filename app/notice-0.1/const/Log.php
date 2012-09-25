@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Document: Log
  * Created on: 2012-9-3, 12:15:28
@@ -9,9 +8,8 @@
  */
 class Const_Log {
     /**
-     * fields 
+     * fields
      */
-
     const F_ID = 'id'; //id
     const F_CTIME = 'ctime'; //日志创建时间
     const F_LOCATION = 'location'; //位置标识
@@ -22,5 +20,7 @@ class Const_Log {
     const F_ECODE = 'ecode'; //ecode
     const F_STATUS = 'status'; //状态
     const F_EXTRA = 'extra'; //其他
-
+    
+    const L_MAILSEND = '001';
+    
 }

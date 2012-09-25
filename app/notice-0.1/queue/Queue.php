@@ -9,13 +9,6 @@ abstract class Queue_Queue extends Mod_SysBase {
     
     protected $oRedis;
     protected $sQueue;
-    protected $aQueues = array(
-        'wait' => array() , //正常等待队列
-        'succ' => array() , //发送成功队列
-        'error' => array() , //发送错误队列
-        'fail' => array() , //发送失败队列
-        'send' => array() //发送中队列
-    );
     protected $aFuncs = array(
         'beforeAdd',
         'afterAdd',
