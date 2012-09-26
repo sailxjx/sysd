@@ -10,7 +10,7 @@ abstract class Mod_Task extends Mod_SysBase {
     
     protected $aMsg = array();
     protected $aChannels = array();
-    protected $mChannel = 0;
+    protected $mChannel;
     protected $sRKeyClass = 'Redis_Key'; //class to build the redis key
     protected $sRExpClass = 'Redis_Expire'; //class to get the redis expire
     
@@ -19,10 +19,11 @@ abstract class Mod_Task extends Mod_SysBase {
     abstract public function recv();
     
     public function channel($mCId = 0) {
-        if (!isset($this->aChannels[$mCId])) {
-            trigger_error('could not find this channel! ', E_USER_ERROR);
+        if (is_scalar($mCId) && isset($this->aChannels[$mCId])) {
+            $this->mChannel = $this->aChannels[$mCId];
+        } elseif ($mCId) {
+            $this->mChannel = $mCId;
         }
-        $this->mChannel = $mCId;
         return $this;
     }
     
