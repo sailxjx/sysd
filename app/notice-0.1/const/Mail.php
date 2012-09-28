@@ -14,7 +14,7 @@ abstract class Const_Mail {
     const F_ID = 'id'; //id
     const F_SENDER = 'sender'; //发件人
     const F_RECEIVER = 'receiver'; //收件人
-    const F_MAIL = 'mail'; //邮件地址
+    const F_EMAIL = 'email'; //邮件地址
     const F_TITLE = 'title'; //邮件标题
     const F_CONTENT = 'content'; //邮件内容
     const F_CTIME = 'ctime'; //邮件创建时间

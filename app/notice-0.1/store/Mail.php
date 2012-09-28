@@ -14,7 +14,7 @@ class Store_Mail extends Store_Table {
         Const_Mail::F_ID => Const_Mail::F_ID,
         Const_Mail::F_SENDER => Const_Mail::F_SENDER,
         Const_Mail::F_RECEIVER => Const_Mail::F_RECEIVER,
-        Const_Mail::F_MAIL => Const_Mail::F_MAIL,
+        Const_Mail::F_EMAIL => Const_Mail::F_EMAIL,
         Const_Mail::F_TITLE => Const_Mail::F_TITLE,
         Const_Mail::F_CONTENT => Const_Mail::F_CONTENT,
         Const_Mail::F_CTIME => Const_Mail::F_CTIME,
