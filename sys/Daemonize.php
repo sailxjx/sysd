@@ -33,7 +33,7 @@ class Daemonize {
 		}
 		$sPidFile = Util_SysUtil::getPidFileByClass($oCore->getJobClass());
 		if (empty($sPidFile)) {
-			Util::logInfo('could not find pid file!');
+			Util::output('could not find pid file!');
 			exit;
 		}
 		$iDNum = $oCore->getDaemonNum();
@@ -42,7 +42,7 @@ class Daemonize {
 		for ($i = 0; $i < $iDNum; $i++) {
 			$iPid = pcntl_fork();
 			if ($iPid === -1) {
-				Util::logInfo('could not fork');
+				Util::output('could not fork');
 			}
 			elseif ($iPid) {//parent
 				$aPid[] = $iPid;
@@ -60,7 +60,7 @@ class Daemonize {
 				umask(022);
 				// detatch from the controlling terminal
 				if (posix_setsid() == -1) {
-					Util::logInfo("could not detach from terminal");
+					Util::output("could not detach from terminal");
 					exit;
 				}
 //				self::ctrlSignal();
@@ -71,7 +71,7 @@ class Daemonize {
 	}
 
 	public static function sigHandler($iSignal) {
-		Util::logInfo("catch system signal![{$iSignal}]");
+		Util::output("catch system signal![{$iSignal}]");
 		switch ($iSignal) {
 			case SIGTERM:
 				exit;

@@ -20,11 +20,11 @@ abstract class Util_SysUtil {
 			return false;
 		}
 		if (posix_kill(intval($iPid), SIGTERM)) {
-			Util::logInfo('Stop Process Succ:' . $iPid);
+			Util::output('Stop Process Succ:' . $iPid);
 			return true;
 		}
 		else {
-			Util::logInfo('Stop Process Error:' . $iPid);
+			Util::output('Stop Process Error:' . $iPid);
 			return false;
 		}
 	}
@@ -84,7 +84,7 @@ abstract class Util_SysUtil {
 			return false;
 		}
 		if (!is_executable($sFile)) {
-			Util::logInfo('StartError[file is not executable!]-> ' . $sFile);
+			Util::output('StartError[file is not executable!]-> ' . $sFile);
 			return false;
 		}
 		return self::runCmd($sFile, $sMode);
@@ -102,11 +102,11 @@ abstract class Util_SysUtil {
 		}
 		if ($rProc = popen($sCmd, $sMode)) {
 			pclose($rProc);
-			Util::logInfo('Start-> ' . $sCmd);
+			Util::output('Start-> ' . $sCmd);
 			return true;
 		}
 		else {
-			Util::logInfo('StartError-> ' . $sCmd);
+			Util::output('StartError-> ' . $sCmd);
 			return false;
 		}
 	}

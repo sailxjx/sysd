@@ -62,16 +62,16 @@ abstract class Base {
 
 	protected function trBegin($sAction = 'action') {
 		$this->aTS[$sAction] = microtime(true);
-		Util::logInfo("{$sAction} --begin");
+		Util::output("{$sAction} --begin");
 	}
 
 	protected function trEnd($sAction = 'action') {
-		Util::logInfo("{$sAction} --end");
+		Util::output("{$sAction} --end");
 		if (!isset($this->aTS[$sAction])) {
-			Util::logInfo("{$sAction}: duration-> No time record");
+			Util::output("{$sAction}: duration-> No time record");
 			return false;
 		}
-		Util::logInfo("{$sAction}: duration-> " . (microtime(true) - $this->aTS[$sAction]));
+		Util::output("{$sAction}: duration-> " . (microtime(true) - $this->aTS[$sAction]));
 		unset($this->aTS[$sAction]);
 		return true;
 	}

@@ -115,7 +115,7 @@ class Listener extends Base {
 			$sDNKey = Util_SysUtil::convParamKeyToArgsKey(Const_SysCommon::P_DAEMON_NUM);
 			$sCmd = preg_replace("/{$sDNKey}\=\d+?/i", $sDNKey . '=' . $iRNum, $aJob[self::K_CONF_CMD]);
 			$sCmd = APP_PATH . 'launcher.php start ' . $sCmd;
-			Util::logInfo($sCmd, APP_PATH . 'log/listen.log');
+			Util::output($sCmd, APP_PATH . 'log/listen.log');
 			Util_SysUtil::runCmd($sCmd);
 		}
 	}
@@ -147,7 +147,7 @@ class Listener extends Base {
 		$this->iPPid = posix_getppid();
 		$this->iPid = posix_getpid();
 		if ($iPid === -1) {
-			Util::logInfo('could not fork');
+			Util::output('could not fork');
 		}
 		elseif ($iPid) {//parent
 			$this->iCPid = $iPid;

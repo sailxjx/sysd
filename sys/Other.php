@@ -25,7 +25,7 @@ class Other extends Base {
 			return true;
 		}
 		else {
-			Util::logInfo('Error: file[' . $this->sOther . '] not exsit!');
+			Util::output('Error: file[' . $this->sOther . '] not exsit!');
 			return false;
 		}
 	}
