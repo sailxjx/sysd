@@ -22,6 +22,7 @@ abstract class Const_Mail {
     const F_STATUS = 'status'; //邮件发送状态
     const F_ERRORNUM = 'error'; //邮件发送错误次数
     const F_EXTRA = 'extra'; //其他
+    const F_SERVICETYPE = 'servicetype'; //服务商标识
     
     const S_WAIT = 0;
     const S_SEND = 1;
