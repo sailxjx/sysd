@@ -9,17 +9,12 @@
 abstract class Task_Base extends Base {
     
     protected $sMod;
-    protected $sModPrefix = 'Mod_';
-    protected $sModClass;
+    protected $oTask;
     protected $sSplite = '_';
     
     protected function __construct() {
         parent::__construct();
-        $this->sMod = isset($this->sMod) ? $this->sMod : Util::getConfig('MOD_TASK');
-        $this->sModClass = $this->sModPrefix . $this->sMod;
-        if (!reqClass($this->sModClass)) {
-            trigger_error('could not find the req mod: ' . $sMod, E_USER_ERROR);
-        }
+        $this->oTask=Fac_Mod::getIns()->loadModTask();
     }
     
 }

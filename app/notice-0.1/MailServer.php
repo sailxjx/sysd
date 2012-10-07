@@ -13,8 +13,7 @@ class MailServer extends Task_Base {
     }
     
     protected function server() {
-        $sModClass = $this->sModClass;
-        $oTask = $sModClass::getIns()->channel(Const_Task::C_MAILSERVER);
+        $oTask = $this->oTask->channel(Const_Task::C_MAILSERVER);
         while ($sMsg = $oTask->recv()) {
             $aMsg = json_decode($sMsg, true);
             if (empty($aMsg)) {

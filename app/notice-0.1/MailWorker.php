@@ -12,8 +12,7 @@ class MailWorker extends Task_Worker {
     }
     
     protected function work() {
-        $sModClass = $this->sModClass;
-        $oWorker = $sModClass::getIns();
+        $oWorker = $this->oTask;
         $oQMail = Queue_Mail::getIns();
         while ($sMsg = $oWorker->channel(Const_Task::C_MAILLIST)->recv()) {
             Util::output('recv msg: ' . $sMsg);

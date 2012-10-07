@@ -14,8 +14,7 @@ class MailVent extends Task_Vent {
     }
     
     protected function vent() {
-        $sModClass = $this->sModClass;
-        $oTask = $sModClass::getIns();
+        $oTask = $this->oTask;
         $oQMail = Queue_Mail::getIns();
         $i = 0;
         $aChannels = $this->loadChannels();
