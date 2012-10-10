@@ -63,7 +63,7 @@ class Daemonize {
 					Util::output("could not detach from terminal");
 					exit;
 				}
-//				self::ctrlSignal();
+				self::ctrlSignal();
 				break; //break the parent loop
 			}
 		}
@@ -79,6 +79,9 @@ class Daemonize {
 			case SIGINT:
 				exit;
 				break;
+			case SIGHUP:
+				// reload configure files
+				break;
 			default:
 				break;
 		}
@@ -88,6 +91,7 @@ class Daemonize {
 		declare (ticks = 1); //for signal control
 		pcntl_signal(SIGTERM, "Daemonize::sigHandler");
 		pcntl_signal(SIGINT, "Daemonize::sigHandler");
+		pcntl_signal(SIGHUP, "Daemonize::sigHandler");
 	}
 
 	/**
