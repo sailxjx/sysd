@@ -77,7 +77,7 @@ class Queue_Mail extends Queue_Queue {
             Const_Log::F_CTIME => time() ,
             Const_Log::F_LOCATION => Const_Log::L_MAILSEND,
             Const_Log::F_OBJECT => json_encode($aArgs) ,
-            Const_Log::F_EXTRA => "mail: {$iMailId} has been set from '{$sFrom}' to '{$sTo}' queue"
+            Const_Log::F_MSG => "mail: {$iMailId} has been set from '{$sFrom}' to '{$sTo}' queue"
         );
         return $oSLog->set($aLog);
     }

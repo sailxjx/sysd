@@ -23,7 +23,7 @@ $config['CMD'] = array(
     'MailVent -d --log-file=' . APP_PATH . 'var/log/mailvent.log',
     'MailSink -d --log-file=' . APP_PATH . 'var/log/mailsink.log',
     'MailRedel -d --log-file=' . APP_PATH . 'var/log/mailredel.log',
-    'MailWorker -d --log-file=' . APP_PATH . 'var/log/mailworker.log --daemon-num=3'
+    // 'MailWorker -d --log-file=' . APP_PATH . 'var/log/mailworker.log --daemon-num=3'
 );
 
 // return configs
