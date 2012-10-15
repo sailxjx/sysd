@@ -19,6 +19,7 @@ class Const_Log {
     const F_OBJECT = 'object'; //收件人
     const F_ECODE = 'ecode'; //ecode
     const F_STATUS = 'status'; //状态
+    const F_MSG = 'msg';
     const F_EXTRA = 'extra'; //其他
     
     const L_MAILSEND = '001';

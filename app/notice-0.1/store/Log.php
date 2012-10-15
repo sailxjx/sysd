@@ -20,6 +20,7 @@ class Store_Log extends Store_Table {
         Const_Log::F_OBJECT => Const_Log::F_OBJECT,
         Const_Log::F_ECODE => Const_Log::F_ECODE,
         Const_Log::F_STATUS => Const_Log::F_STATUS,
+        Const_Log::F_MSG => Const_Log::F_MSG,
         Const_Log::F_EXTRA => Const_Log::F_EXTRA
     );
 }
