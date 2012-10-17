@@ -1,6 +1,7 @@
 /nbproject
 /var/log
 /var/tmp
+/var/run
 /tags
 .tags
 .tags_sorted_by_file
