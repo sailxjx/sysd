@@ -63,7 +63,7 @@ class Daemonize {
 					Util::output("could not detach from terminal");
 					exit;
 				}
-				self::ctrlSignal();
+				// self::ctrlSignal(); // if add control signals, some exceptions may be raised by zmq
 				break; //break the parent loop
 			}
 		}
