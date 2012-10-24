@@ -19,7 +19,11 @@ class Server extends Base {
                 foreach ($aRead as $oSock) {
                     $sMsg = $oSock->recv();
                     Util::output('get message: ' . $sMsg);
-                    $oSock->send($this->getReply($sMsg));
+                    if ($this->getReply($sMsg)) {
+                        $oSock->send($this->getReply($sMsg));
+                    } else {
+                        $oSock->send($this->errReturn($sMsg));
+                    }
                 }
             }
         }
@@ -52,6 +56,13 @@ class Server extends Base {
      */
     protected function getReply($sMsg) {
         return Mod_SysMsgDeal::getIns()->deal($sMsg);
+    }
+    
+    protected function errReturn($sMsg) {
+        return json_encode(array(
+            'status' => 'error',
+            'msg' => $sMsg
+        ));
     }
     
 }

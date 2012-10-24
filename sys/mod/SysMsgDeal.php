@@ -16,4 +16,10 @@ class Mod_SysMsgDeal extends Mod_SysBase {
     protected function getConfigs() {
         return Util::getConfig();
     }
+    
+    protected function getJobs() {
+        return array(
+            'msg' => 'hello, here is some jobs'
+        );
+    }
 }
