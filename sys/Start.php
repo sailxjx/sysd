@@ -23,7 +23,6 @@ class Start extends Base {
             $this->oCore->showHelp();
             return false;
         }
-        $this->logStatus($sJClass);
         $sJClass::getIns()->run();
     }
     
@@ -34,18 +33,6 @@ class Start extends Base {
             $sCmd = APP_PATH . 'launcher.php start ' . $sOriCmd;
             Util_SysUtil::runCmd($sCmd);
         }
-        return true;
-    }
-    
-    protected function logStatus() {
-        $aData = array(
-            Const_SysProc::F_NAME => $this->oCore->getJobClass() ,
-            Const_SysProc::F_START => time() ,
-            Const_SysProc::F_PARAMS => json_encode($this->oCore->getParams()) ,
-            Const_SysProc::F_OPTIONS => json_encode($this->oCore->getOptions()) ,
-            Const_SysProc::F_PID => posix_getpid() ,
-        );
-        Store_SysProc::getIns()->set($aData);
         return true;
     }
     
