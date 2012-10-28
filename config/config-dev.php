@@ -1,5 +1,5 @@
 <?php
-$config = require_once 'share.php';
+$config = require 'share.php';
 
 // database configs
 $config['MYSQL'] = array(

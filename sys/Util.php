@@ -31,6 +31,11 @@ abstract class Util {
         }
         
     }
+
+    public static function reloadConfig(){
+        self::$aConfigs = null;
+        return true;
+    }
     
     public static function xmlToArray($sXmlFile) {
         $oSXml = simplexml_load_file($sXmlFile);
@@ -97,8 +102,6 @@ abstract class Util {
     
     public static function report($iCode = 0, $sMsg = '') {
         //@todo error report
-        
-        
     }
     
 }

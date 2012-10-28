@@ -9,7 +9,6 @@
         "   --log-file          设置日志文件",
         "   --daemon-num        daemon进程数量",
         "   --min-daemon-num    最小daemon进程数量,有监控时低于这个数量将重启,默认为1",
-        "   --pid               进程ID,Kill时需要",
         "-l --log               显示修订记录",
         "-v --version           显示版本",
         "-w --listen            需要监控",
@@ -24,7 +23,7 @@
         "start                  开启作业",
         "stop                   结束作业",
         "restart                重启作业",
-        "kill                   根据进程ID结束作业"
+        "reload                 重载配置"
         ]
     },
     "changelog":{
@@ -48,7 +47,8 @@
         "2012-09-21":["进程状态写入Redis","增加MailSink收集器，MailRedel从error队列恢复数据"],
         "2012-09-24":["MailServer与前端对接"],
         "2012-09-26":["MailVent增加渠道商权重配置"],
-        "2012-10-07":["去除MOD配置文件","增加MOD工厂"]
+        "2012-10-07":["去除MOD配置文件","增加MOD工厂"],
+        "2012-10-28":["增加信号控制","去除kill方法","增加reload方法"]
     },
     "todo":{
         "5":[
@@ -59,6 +59,6 @@
         "接口开发[fun?]",
         "多进程邮件发送"
         ],
-        "99":["ZReq改为Noblock异步调用","stop,restart,kill改为单进程"]
+        "99":["ZReq改为Noblock异步调用","stop,restart改为单进程"]
     }
 }

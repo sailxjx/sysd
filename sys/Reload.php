@@ -1,24 +1,23 @@
 <?php
 /**
- * Document: Stop
- * Stop all jobs or stop by name
- * Created on: 2012-4-16, 16:53:25
+ * Document: Reload
+ * Reload all jobs or Reload by name
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-class Stop extends Base {
+class Reload extends Base {
     
     protected function main() {
         $sJClass = $this->oCore->getJobClass();
         if (empty($sJClass)) {
-            $this->stopAll();
+            $this->reloadAll();
         } else {
-            $this->stopOne($sJClass);
+            $this->reloadOne($sJClass);
         }
         return true;
     }
     
-    protected function stopAll() {
+    protected function reloadAll() {
         $aJList = Util::getConfig('CMD');
         $aCList = array(); //Class list
         foreach ((array)$aJList as $sOCmd) {
@@ -27,12 +26,12 @@ class Stop extends Base {
         }
         $aCList = array_filter(array_unique($aCList));
         foreach ((array)$aCList as $sJClass) {
-            $this->stopOne($sJClass);
+            $this->reloadOne($sJClass);
         }
         return true;
     }
     
-    protected function stopOne($sJClass) {
+    protected function reloadOne($sJClass) {
         if (!reqClass($sJClass)) {
             Util::output('Class not exsit!');
             $this->oCore->showHelp();
@@ -40,17 +39,17 @@ class Stop extends Base {
         }
         $aPids = Util_SysUtil::getProcIdsByClass($sJClass);
         $sPidFile = Util_SysUtil::getPidFileByClass($sJClass);
-        $this->stopProcByIds($aPids, $sPidFile);
+        $this->reloadProcByIds($aPids, $sPidFile);
         return true;
     }
     
-    protected function stopProcByIds($aPids, $sPidFile) {
+    protected function reloadProcByIds($aPids, $sPidFile) {
         $iMyPid = posix_getpid();
         foreach ($aPids as $iPid) {
             if ($iMyPid == $iPid) { //if this function is called by a restart command, it will not be killed
                 continue;
             }
-            Util_SysUtil::stopProcById($iPid);
+            Util_SysUtil::reloadProcById($iPid);
         }
         return true;
     }

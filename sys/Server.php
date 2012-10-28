@@ -14,16 +14,26 @@ class Server extends Base {
         $aRead = $aWrite = array();
         Util::output('begin listening messages from: ' . implode(',', $this->aDsn));
         while (1) {
-            $ie = $oPoll->poll($aRead, $aWrite);
-            if ($ie > 0) {
-                foreach ($aRead as $oSock) {
-                    $sMsg = $oSock->recv();
-                    Util::output('get message: ' . $sMsg);
-                    if ($this->getReply($sMsg)) {
-                        $oSock->send($this->getReply($sMsg));
-                    } else {
-                        $oSock->send($this->errReturn($sMsg));
+            try {
+                $ie = $oPoll->poll($aRead, $aWrite);
+                if ($ie > 0) {
+                    foreach ($aRead as $oSock) {
+                        $sMsg = $oSock->recv();
+                        Util::output('get message: ' . $sMsg);
+                        if ($this->getReply($sMsg)) {
+                            $oSock->send($this->getReply($sMsg));
+                        } else {
+                            $oSock->send($this->errReturn($sMsg));
+                        }
                     }
+                }
+            }
+            catch(ZMQPollException $e) {
+                if ($e->getCode() === 4) {
+                    pcntl_signal_dispatch();
+                    continue;
+                } else {
+                    Util::output("poll failed: " . $e->getMessage());
                 }
             }
         }

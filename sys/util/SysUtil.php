@@ -29,6 +29,20 @@ abstract class Util_SysUtil {
 		}
 	}
 
+	public static function reloadProcById($iPid) {
+		if (empty($iPid)) {
+			return false;
+		}
+		if (posix_kill(intval($iPid), SIGHUP)) {
+			Util::output('Reload Process Succ:' . $iPid);
+			return true;
+		}
+		else {
+			Util::output('Reload Process Error:' . $iPid);
+			return false;
+		}
+	}	
+
 	public static function getProcIdsByClass($sJClass) {
 		$sPidFile = self::getPidFileByClass($sJClass);
 		$aPids = array();

@@ -10,9 +10,9 @@ class Daemonize {
 
 	private static $oIns;
 	public static $aNoDaemonCmds = array(
-		Const_SysCommon::C_KILL,
 		Const_SysCommon::C_RESTART,
-		Const_SysCommon::C_STOP
+		Const_SysCommon::C_STOP,
+		Const_SysCommon::C_RELOAD
 	);
 
 	/**
@@ -63,7 +63,7 @@ class Daemonize {
 					Util::output("could not detach from terminal");
 					exit;
 				}
-				// self::ctrlSignal(); // if add control signals, some exceptions may be raised by zmq
+				self::ctrlSignal(); // if add control signals, some exceptions may be raised by zmq
 				break; //break the parent loop
 			}
 		}
@@ -80,7 +80,7 @@ class Daemonize {
 				exit;
 				break;
 			case SIGHUP:
-				// reload configure files
+				Util::reloadConfig();
 				break;
 			default:
 				break;
