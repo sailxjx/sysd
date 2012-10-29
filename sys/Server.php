@@ -10,6 +10,9 @@ class Server extends Base {
     protected $oPoll;
     
     protected function main() {
+        Mod_SysMsgDeal::getIns()->getJobs();
+        exit;
+
         $oPoll = $this->getPoll();
         $aRead = $aWrite = array();
         Util::output('begin listening messages from: ' . implode(',', $this->aDsn));

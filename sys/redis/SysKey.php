@@ -11,7 +11,7 @@ abstract class Redis_SysKey {
         if (!isset(static ::$aMap[$sName])) {
             return static ::autoKey($name);
         }
-        if (isset($args[0])) {
+        if (isset($args[0]) && is_array($args[0])) {
             extract($args[0]);
         }
         $sKey = static ::$sPrefix . static ::$aMap[$sName];

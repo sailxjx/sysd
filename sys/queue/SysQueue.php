@@ -58,6 +58,16 @@ abstract class Queue_SysQueue extends Mod_SysBase {
     }
     
     /**
+     * get queue range
+     *
+     */
+    public function range($sQueue, $iStart = 0, $iStop = - 1, $bWithScore = false) {
+        $sKFunc = $this->sQueue . ucfirst($sQueue);
+        $sRKeyClass = $this->sRKeyClass;
+        return $this->oRedis->zrange($sRKeyClass::$sKFunc() , $iStart, $iStop, $bWithScore);
+    }
+    
+    /**
      * add elements into queues
      */
     public function add() {
