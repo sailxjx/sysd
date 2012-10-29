@@ -3,6 +3,7 @@ abstract class Queue_SysQueue extends Mod_SysBase {
     
     protected $oRedis;
     protected $sQueue;
+    protected $aQueues;
     protected $aFuncs = array(
         'beforeAdd',
         'afterAdd',
@@ -11,6 +12,8 @@ abstract class Queue_SysQueue extends Mod_SysBase {
         'beforeMove',
         'afterMove'
     );
+    protected $sRKeyClass = 'Redis_SysKey'; //class to build the redis key
+    protected $sRExpClass = 'Redis_SysExpire'; //class to get the redis expire
     
     public function __construct() {
         $this->getQueue();
@@ -63,7 +66,8 @@ abstract class Queue_SysQueue extends Mod_SysBase {
         foreach ($this->aQueues as $sQue => $aQue) {
             $sKFunc = $this->sQueue . ucfirst($sQue);
             foreach ($aQue as $id => $t) {
-                $this->oRedis->zadd(Redis_Key::$sKFunc() , $t, $id);
+                $sRKeyClass = $this->sRKeyClass;
+                $this->oRedis->zadd($sRKeyClass::$sKFunc() , $t, $id);
             }
         }
         $this->oRedis->exec();
@@ -81,7 +85,8 @@ abstract class Queue_SysQueue extends Mod_SysBase {
         foreach ($this->aQueues as $sQue => $aQue) {
             $sKFunc = $this->sQueue . ucfirst($sQue);
             foreach ($aQue as $id => $t) {
-                $this->oRedis->zrem(Redis_Key::$sKFunc() , $id);
+                $sRKeyClass = $this->sRKeyClass;
+                $this->oRedis->zrem($sRKeyClass::$sKFunc() , $id);
             }
         }
         $this->oRedis->exec();
@@ -102,8 +107,9 @@ abstract class Queue_SysQueue extends Mod_SysBase {
         $sToKFunc = $this->sQueue . ucfirst($sTo);
         $this->beforeMove(func_get_args());
         $this->oRedis->multi();
-        $this->oRedis->zrem(Redis_Key::$sFromKFunc() , $sMember);
-        $this->oRedis->zadd(Redis_Key::$sToKFunc() , $iNewScore, $sMember);
+        $sRKeyClass = $this->sRKeyClass;
+        $this->oRedis->zrem($sRKeyClass::$sFromKFunc() , $sMember);
+        $this->oRedis->zadd($sRKeyClass::$sToKFunc() , $iNewScore, $sMember);
         $this->oRedis->exec();
         $this->afterMove(func_get_args());
         $this->reset();
@@ -120,7 +126,7 @@ abstract class Queue_SysQueue extends Mod_SysBase {
             if (empty($sQueue)) {
                 trigger_error('error: could not find the called queue', E_USER_ERROR);
             }
-            $this->sQueue = strtolower($sQueue);
+            $this->sQueue = $sQueue;
         }
         return $this->sQueue;
     }
@@ -139,7 +145,7 @@ abstract class Queue_SysQueue extends Mod_SysBase {
         } elseif (isset($aArgs[1])) {
             $this->aQueues[$sName][$aArgs[0]] = $aArgs[1];
         } else {
-            return false;
+            $this->aQueues[$sName][$aArgs[0]] = 0;
         }
         return true;
     }

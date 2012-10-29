@@ -173,7 +173,7 @@ final class Core {
             fclose(STDOUT);
             fclose(STDERR);
             global $STDOUT, $STDERR;
-            Util::setFileCon($this->getLogFile(), '', FILE_APPEND);
+            Util::setFileCon($this->getLogFile() , '', FILE_APPEND);
             $STDERR = $STDOUT = fopen($this->getLogFile() , 'a');
             $this->bQuiet = true;
         }
@@ -235,5 +235,4 @@ final class Core {
         }
         exit;
     }
-    
 }

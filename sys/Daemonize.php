@@ -8,6 +8,8 @@
 class Daemonize {
     
     private static $oIns;
+    protected $aRunData;
+    protected $iRunId;
     public static $aNoDaemonCmds = array(
         Const_SysCommon::C_RESTART,
         Const_SysCommon::C_STOP,
@@ -38,7 +40,7 @@ class Daemonize {
         $iDNum = $oCore->getDaemonNum();
         $sPids = Util::getFileCon($sPidFile);
         $aPid = !empty($sPids) ? explode(',', $sPids) : array();
-        for ($i = 0; $i < $iDNum; $i++) {
+        for ($i = 0;$i < $iDNum;$i++) {
             $iPid = pcntl_fork();
             if ($iPid === - 1) {
                 Util::output('could not fork');
@@ -51,7 +53,10 @@ class Daemonize {
                 }
                 exit;
             } else { //child
-                register_shutdown_function('Daemonize::shutdown');
+                register_shutdown_function(array(
+                    $this,
+                    'shutdown'
+                ));
                 chdir('/tmp');
                 umask(022);
                 // detatch from the controlling terminal
@@ -59,36 +64,45 @@ class Daemonize {
                     Util::output("could not detach from terminal");
                     exit;
                 }
-                self::logStatus();
-                self::ctrlSignal(); // if add control signals, some exceptions may be raised by zmq
+                $this->logRunData(); // log process id or other status in redis
+                $this->ctrlSignal(); // if add control signals, some exceptions may be raised by zmq
                 break; //break the parent loop
             }
         }
         return true;
     }
     
-    public static function sigHandler($iSignal) {
+    public function sigHandler($iSignal) {
         Util::output("catch system signal![{$iSignal}]");
         switch ($iSignal) {
             case SIGTERM:
                 exit;
-                break;
+            break;
             case SIGINT:
                 exit;
-                break;
+            break;
             case SIGHUP:
                 Util::reloadConfig();
-                break;
+            break;
             default:
-                break;
+            break;
         }
     }
     
-    protected static function ctrlSignal() {
+    protected function ctrlSignal() {
         declare(ticks = 1); //for signal control
-        pcntl_signal(SIGTERM, "Daemonize::sigHandler");
-        pcntl_signal(SIGINT, "Daemonize::sigHandler");
-        pcntl_signal(SIGHUP, "Daemonize::sigHandler");
+        pcntl_signal(SIGTERM, array(
+            $this,
+            'sigHandler'
+        ));
+        pcntl_signal(SIGINT, array(
+            $this,
+            'sigHandler'
+        ));
+        pcntl_signal(SIGHUP, array(
+            $this,
+            'sigHandler'
+        ));
     }
     
     /**
@@ -96,7 +110,8 @@ class Daemonize {
      * @param array $aPidConf
      * @return boolean
      */
-    public static function shutdown() {
+    public function shutdown() {
+        $this->clearRunData();// clear run id in redis first
         $iPid = posix_getpid();
         $sPidFile = Util_SysUtil::getPidFileByClass(Core::getIns()->getJobClass());
         if (!is_file($sPidFile)) {
@@ -115,7 +130,11 @@ class Daemonize {
         return true;
     }
     
-    protected static function logStatus() {
+    /**
+     * log runtime data in redis
+     * @return boolean
+     */
+    protected function logRunData() {
         $oCore = Core::getIns();
         $aData = array(
             Const_SysProc::F_NAME => $oCore->getJobClass() ,
@@ -124,7 +143,18 @@ class Daemonize {
             Const_SysProc::F_OPTIONS => json_encode($oCore->getOptions()) ,
             Const_SysProc::F_PID => posix_getpid()
         );
-        Store_SysProc::getIns()->set($aData);
+        $this->aRunData = $aData;
+        $this->iRunId = Store_SysProc::getIns()->set($aData);
+        Queue_SysProc::getIns()->run($this->iRunId, time())->add();
+        return true;
+    }
+    
+    /**
+     * delete run id in redis running queue
+     * @return boolean
+     */
+    protected function clearRunData() {
+        Queue_SysProc::getIns()->run($this->iRunId)->rem();
         return true;
     }
     
