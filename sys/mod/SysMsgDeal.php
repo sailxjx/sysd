@@ -12,19 +12,33 @@ class Mod_SysMsgDeal extends Mod_SysBase {
         $sFunc = $aMsg['func'];
         $aParams = $aMsg['params'];
         if (method_exists($this, $sFunc)) {
-            return json_encode(call_user_func(array(
+            return $this->succReply(call_user_func(array(
                 $this,
                 $sFunc
             ) , $aParams));
         }
-        return false;
+        return $this->errReply('error','could not find the called function');
+    }
+
+    protected function succReply($mData, $sMsg = 'succ'){
+        $aData['status'] = 1;
+        $aData['msg'] = $sMsg;
+        $aData['data'] = $mData;
+        return json_encode($aData);
+    }
+
+    protected function errReply($mData, $sMsg = 'error'){
+        $aData['status'] = 0;
+        $aData['msg'] = $sMsg;
+        $aData['data'] = $mData;
+        return json_encode($aData);
     }
     
     protected function getConfigs() {
         return Util::getConfig();
     }
     
-    public function getJobs() {
+    protected function getJobs() {
         $aRunJobIds = Queue_SysProc::getIns()->range('run');
         if (empty($aRunJobIds)) {
             return array();
@@ -37,5 +51,9 @@ class Mod_SysMsgDeal extends Mod_SysBase {
             }
             return $this->oRedis->exec();
         }
+    }
+
+    protected function getJobSum(){
+        return $this->oRedis->zcard(Redis_SysKey::sysProcRun());
     }
 }
