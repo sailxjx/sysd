@@ -25,3 +25,7 @@ Version:
 * app/          项目文件
 * var/log/      log文件
 * var/man/      帮助文件
+
+NOTICE
+---
+* Redis配置的timeout需要设置为0

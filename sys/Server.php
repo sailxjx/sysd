@@ -2,15 +2,19 @@
 class Server extends Base {
     
     protected $aDsn = array(
-        'tcp://*:5555',
-        'tcp://*:5556'
+        'reply' => 'tcp://*:5555',
+        'heartbeat' => 'tcp://*:5556'
     );
     
-    protected $aSocks;
-    protected $oPoll;
-    
     protected function main() {
-        $oPoll = $this->getPoll();
+        $oPoll = new ZMQPoll();
+        $oSockRep = Fac_SysMq::getIns()->loadZMQ(ZMQ::SOCKET_REP);
+        $oSockRep->bind($this->aDsn['reply']);
+        $oPoll->add($oSockRep, ZMQ::POLL_IN | ZMQ::POLL_OUT);
+        $oSockHeartIn = Fac_SysMq::getIns()->loadZMQ(ZMQ::SOCKET_SUB);
+        $oSockHeartIn->connect($this->aDsn['heartbeat']);
+        $oSockHeartIn->setSockOpt(ZMQ::SOCKOPT_SUBSCRIBE, 'heartbeat');
+        $oPoll->add($oSockHeartIn, ZMQ::POLL_IN);
         $aRead = $aWrite = array();
         Util::output('begin listening messages from: ' . implode(',', $this->aDsn));
         while (1) {
@@ -18,11 +22,15 @@ class Server extends Base {
                 $ie = $oPoll->poll($aRead, $aWrite);
                 if ($ie > 0) {
                     foreach ($aRead as $oSock) {
-                        $sMsg = $oSock->recv();
-                        Util::output('get message: ' . $sMsg);
-                        $sReply = $this->getReply($sMsg);
-                        Util::output('reply: ' . $sReply);
-                        $oSock->send($sReply);
+                        if ($oSock === $oSockRep) {
+                            $sMsg = $oSock->recv();
+                            Util::output('get message: ' . $sMsg);
+                            $sReply = $this->getReply($sMsg);
+                            Util::output('reply: ' . $sReply);
+                            $oSock->send($sReply);
+                        } elseif ($oSock === $oSockHeartIn) {
+                            Util::output('heartin: ' . $oSockHeartIn->recv());
+                        }
                     }
                 }
             }
@@ -35,28 +43,6 @@ class Server extends Base {
                 }
             }
         }
-    }
-    
-    protected function getSocks() {
-        if (!isset($this->aSocks)) {
-            foreach ($this->aDsn as $sDsn) {
-                $oSock = Fac_SysMq::getIns()->loadZMQ(ZMQ::SOCKET_REP);
-                $oSock->bind($sDsn);
-                $this->aSocks[] = $oSock;
-            }
-        }
-        return $this->aSocks;
-    }
-    
-    protected function getPoll() {
-        if (!isset($this->oPoll)) {
-            $aSocks = $this->getSocks();
-            $this->oPoll = new ZMQPoll();
-            foreach ($aSocks as $oSock) {
-                $this->oPoll->add($oSock, ZMQ::POLL_IN | ZMQ::POLL_OUT);
-            }
-        }
-        return $this->oPoll;
     }
     
     /**
