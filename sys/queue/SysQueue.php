@@ -130,7 +130,7 @@ abstract class Queue_SysQueue extends Mod_SysBase {
      * 获取queue名
      * @return string
      */
-    protected function getQueue() {
+    public function getQueue() {
         if (!isset($this->sQueue)) {
             list($sPre, $sQueue) = explode('_', get_called_class());
             if (empty($sQueue)) {

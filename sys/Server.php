@@ -63,7 +63,7 @@ class Server extends Base {
      * deal with messages and return the replies
      */
     protected function getReply($sMsg) {
-        return Mod_SysMsgDeal::getIns()->deal($sMsg);
+        return Fac_SysMod::getIns()->loadModMsgDeal()->deal($sMsg);
     }
     
 }

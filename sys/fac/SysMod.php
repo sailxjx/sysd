@@ -16,5 +16,21 @@ class Fac_SysMod {
         }
         return self::$oIns;
     }
+
+    /**
+     * load mod msg deal
+     * @return Mod_MsgDeal
+     */
+    public function loadModMsgDeal(){
+        if(!isset($this->oModMsgDeal)){
+            $sModMsgDeal = Util::getConfig('MOD_MSGDEAL');
+            if (reqClass($sModMsgDeal)) {
+                $this->oModMsgDeal = $sModMsgDeal::getIns();
+            }else{
+                $this->oModMsgDeal = Mod_SysMsgDeal::getIns();
+            }
+        }
+        return $this->oModMsgDeal;
+    }
     
 }

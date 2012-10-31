@@ -34,11 +34,7 @@ class Mod_SysMsgDeal extends Mod_SysBase {
         return json_encode($aData);
     }
     
-    protected function getConfigs() {
-        return Util::getConfig();
-    }
-    
-    protected function getJobs() {
+    protected function getJobList() {
         $aRunJobIds = Queue_SysProc::getIns()->range('run');
         if (empty($aRunJobIds)) {
             return array();
@@ -52,8 +48,8 @@ class Mod_SysMsgDeal extends Mod_SysBase {
             return $this->oRedis->exec();
         }
     }
-
-    protected function getJobSum(){
+    
+    protected function getJobSum() {
         return $this->oRedis->zcard(Redis_SysKey::sysProcRun());
-    }
+    }    
 }

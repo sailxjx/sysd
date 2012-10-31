@@ -7,4 +7,6 @@ $config['MAN_PAGE'] = APP_PATH . 'var/man/man.json';
 $config['HOOK_PATH'] = APP_PATH . 'var/hooks/';
 $config['MAX_DAEMON_NUM'] = 10;
 
+$config['MOD_MSGDEAL'] = 'Mod_MsgDeal';
+
 return $config;

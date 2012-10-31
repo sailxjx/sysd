@@ -81,5 +81,9 @@ class Queue_Mail extends Queue_Queue {
         );
         return $oSLog->set($aLog);
     }
+
+    public function getMailQueues(){
+        return $this->aQueues;
+    }
     
 }
