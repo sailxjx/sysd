@@ -21,12 +21,6 @@ final class Core {
         Const_SysCommon::OS_TODO => 'showTodo',
         Const_SysCommon::OL_TODO => 'showTodo'
     );
-    protected $aDCmds = array(
-        Const_SysCommon::C_START,
-        Const_SysCommon::C_STOP,
-        Const_SysCommon::C_RESTART,
-        Const_SysCommon::C_RELOAD
-    );
     protected $sCmd;
     protected $aMan; //手册内容
     protected $sJobClass;
@@ -96,7 +90,7 @@ final class Core {
      */
     public function init($argv) {
         unset($argv[0]);
-        list($this->sJobClass, $this->aParams, $this->aOptions, $this->sCmd) = Util_SysUtil::hashArgv($argv, $this->aDCmds);
+        list($this->sJobClass, $this->aParams, $this->aOptions, $this->sCmd) = Util_SysUtil::hashArgv($argv);
         return self::$oIns;
     }
     

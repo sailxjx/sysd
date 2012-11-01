@@ -12,22 +12,22 @@ class Mod_SysMsgDeal extends Mod_SysBase {
         $sFunc = $aMsg['func'];
         $aParams = $aMsg['params'];
         if (method_exists($this, $sFunc)) {
-            return $this->succReply(call_user_func(array(
+            return call_user_func(array(
                 $this,
                 $sFunc
-            ) , $aParams));
+            ) , $aParams);
         }
-        return $this->errReply('error','could not find the called function');
+        return $this->errReply('error', 'could not find the called function');
     }
-
-    protected function succReply($mData, $sMsg = 'succ'){
+    
+    protected function succReply($mData, $sMsg = 'succ') {
         $aData['status'] = 1;
         $aData['msg'] = $sMsg;
         $aData['data'] = $mData;
         return json_encode($aData);
     }
-
-    protected function errReply($mData, $sMsg = 'error'){
+    
+    protected function errReply($mData, $sMsg = 'error') {
         $aData['status'] = 0;
         $aData['msg'] = $sMsg;
         $aData['data'] = $mData;
@@ -37,7 +37,7 @@ class Mod_SysMsgDeal extends Mod_SysBase {
     protected function getJobList() {
         $aRunJobIds = Queue_SysProc::getIns()->range('run');
         if (empty($aRunJobIds)) {
-            return array();
+            return $this->succReply(array());
         } else {
             $this->oRedis->multi();
             foreach ($aRunJobIds as $iRunJobId) {
@@ -45,11 +45,22 @@ class Mod_SysMsgDeal extends Mod_SysBase {
                     'id' => $iRunJobId
                 )));
             }
-            return $this->oRedis->exec();
+            return $this->succReply($this->oRedis->exec());
         }
     }
     
     protected function getJobSum() {
-        return $this->oRedis->zcard(Redis_SysKey::sysProcRun());
-    }    
+        return $this->succReply($this->oRedis->zcard(Redis_SysKey::sysProcRun()));
+    }
+    
+    protected function startJob($aRParams) {
+        $sCmd = $aRParams['cmd'];
+        if (empty($sCmd)) {
+            return $this->errReply($aParams, 'missing cmd');
+        }
+        list($sClassName, $aParams, $aOptions, $sCmd) = Util_SysUtil::hashArgv(explode(' ', $sCmd));
+        //TODO fork and start job daemon
+        return $this->succReply($aRParams);
+    }
+    
 }

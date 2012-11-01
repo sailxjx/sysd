@@ -3,7 +3,7 @@ class Server extends Base {
     
     protected $aDsn = array(
         'reply' => 'tcp://*:5555',
-        'heartbeat' => 'tcp://*:5556'
+        'heartbeat' => 'tcp://127.0.0.1:5556'
     );
     
     protected function main() {
