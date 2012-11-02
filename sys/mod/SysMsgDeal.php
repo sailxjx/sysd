@@ -58,9 +58,13 @@ class Mod_SysMsgDeal extends Mod_SysBase {
         if (empty($sCmd)) {
             return $this->errReply($aParams, 'missing cmd');
         }
-        list($sClassName, $aParams, $aOptions, $sCmd) = Util_SysUtil::hashArgv(explode(' ', $sCmd));
-        //TODO fork and start job daemon
-        return $this->succReply($aRParams);
+        $aJob = Util_SysUtil::hashArgv(Util_SysUtil::getArgvFromStr($sCmd));
+        list($sClassName, $aParams, $aOptions, $sCmd) = $aJob;
+        if (Util_SysUtil::runJob($sCmd, $sClassName, $aOptions, $aParams)) {
+            return $this->succReply($aRParams);
+        } else {
+            return $this->errReply($aJob, 'run job error');
+        }
     }
     
 }

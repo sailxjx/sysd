@@ -86,6 +86,40 @@ abstract class Util_SysUtil {
         );
     }
     
+    public static function getArgvFromStr($str) {
+        $sDelimiter = ' ';
+        $arr = explode($sDelimiter, $str);
+        $aFinal = array();
+        $bCFlag = false;
+        foreach ($arr as $val) {
+            if (strpos($val, '\'') === false && strpos($val, '"') === false && $bCFlag === false) {
+                $aFinal[] = $val;
+                continue;
+            } elseif ($bCFlag === true) {
+                $aFinal[count($aFinal) - 1].= $sDelimiter . str_replace(array(
+                    '\'',
+                    '"'
+                ) , array(
+                    '',
+                    ''
+                ) , $val);
+                $bCFlag = false;
+                continue;
+            } else {
+                $aFinal[] = str_replace(array(
+                    '\'',
+                    '"'
+                ) , array(
+                    '',
+                    ''
+                ) , $val);
+                $bCFlag = true;
+                continue;
+            }
+        }
+        return $aFinal;
+    }
+    
     /**
      * param key to argv key
      * @param string $sPKey
@@ -122,6 +156,23 @@ abstract class Util_SysUtil {
             return true;
         } else {
             Util::output('StartError-> ' . $sCmd);
+            return false;
+        }
+    }
+    
+    public static function runJob($sCmd, $sClassName, $aOptions = array() , $aParams = array()) {
+        if (empty($sClassName) || empty($sCmd)) {
+            return false;
+        }
+        $sRunCmd = APP_PATH . "launcher {$sCmd} {$sClassName}";
+        $aRunParams = array();
+        foreach ($aParams as $k => $v) {
+            $aRunParams[] = self::convParamKeyToArgsKey($k) . '="' . $v . '"';
+        }
+        $sRunCmd.= ' ' . implode(' ', $aOptions) . ' ' . implode(' ', $aRunParams);
+        if (self::runCmd($sRunCmd)) {
+            return true;
+        } else {
             return false;
         }
     }
