@@ -26,6 +26,7 @@ class Server extends Base {
                             $sMsg = $oSock->recv();
                             Util::output('get message: ' . $sMsg);
                             $sReply = $this->getReply($sMsg);
+                            $sReply = is_scalar($sReply) ? $sReply : json_encode($sReply);
                             Util::output('reply: ' . $sReply);
                             $oSock->send($sReply);
                         } elseif ($oSock === $oSockHeartIn) {
@@ -47,6 +48,7 @@ class Server extends Base {
     
     /**
      * deal with messages and return the replies
+     * @return string
      */
     protected function getReply($sMsg) {
         return Fac_SysMod::getIns()->loadModMsgDeal()->deal($sMsg);
