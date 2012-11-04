@@ -31,7 +31,7 @@ class Fac_SysMq {
         return new ZMQSocket($this->getZCon(), $iType);
     }
 
-    protected function getZCon(){
+    public function getZCon(){
         if(!isset($this->oZCon)){
             $this->oZCon = new ZMQContext();
         }

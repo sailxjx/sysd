@@ -27,7 +27,7 @@ class Start extends Base {
     }
     
     protected function startAll() {
-        $aJList = Util::getConfig('CMD');
+        $aJList = Util::getConfig('INIT_JOBS');
         $sCmd = '';
         foreach ($aJList as $sOriCmd) {
             $sCmd = APP_PATH . 'launcher.php start ' . $sOriCmd;

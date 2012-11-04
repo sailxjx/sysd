@@ -3,18 +3,18 @@ class Server extends Base {
     
     protected $aDsn = array(
         'reply' => 'tcp://*:5555',
-        'heartbeat' => 'tcp://127.0.0.1:5556'
+        'heartbeat' => 'tcp://*:5556'
     );
     
     protected function main() {
+        print_r($_SERVER);exit;
         $oPoll = new ZMQPoll();
         $oSockRep = Fac_SysMq::getIns()->loadZMQ(ZMQ::SOCKET_REP);
         $oSockRep->bind($this->aDsn['reply']);
         $oPoll->add($oSockRep, ZMQ::POLL_IN | ZMQ::POLL_OUT);
-        $oSockHeartIn = Fac_SysMq::getIns()->loadZMQ(ZMQ::SOCKET_SUB);
-        $oSockHeartIn->connect($this->aDsn['heartbeat']);
-        $oSockHeartIn->setSockOpt(ZMQ::SOCKOPT_SUBSCRIBE, 'heartbeat');
-        $oPoll->add($oSockHeartIn, ZMQ::POLL_IN);
+        $oSockHeart = Fac_SysMq::getIns()->loadZMQ(ZMQ::SOCKET_REP);
+        $oSockHeart->bind($this->aDsn['heartbeat']);
+        $oPoll->add($oSockHeart, ZMQ::POLL_IN | ZMQ::POLL_OUT);
         $aRead = $aWrite = array();
         Util::output('begin listening messages from: ' . implode(',', $this->aDsn));
         while (1) {
@@ -29,8 +29,9 @@ class Server extends Base {
                             $sReply = is_scalar($sReply) ? $sReply : json_encode($sReply);
                             Util::output('reply: ' . $sReply);
                             $oSock->send($sReply);
-                        } elseif ($oSock === $oSockHeartIn) {
-                            Util::output('heartin: ' . $oSockHeartIn->recv());
+                        } elseif ($oSock === $oSockHeart) {
+                            Util::output($oSock->recv());
+                            $oSock->send('heartbeat: i heard about you!');
                         }
                     }
                 }
@@ -44,6 +45,10 @@ class Server extends Base {
                 }
             }
         }
+    }
+
+    protected function waitForMaster(){
+        $oHeartReq = new ZMQSocket(new ZMQContext(), ZMQ::SOCKET_REQ);
     }
     
     /**
