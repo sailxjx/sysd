@@ -49,7 +49,7 @@ class Server extends Base {
         while (1) {
             if ($iCPid = pcntl_wait($iStatus)) {
                 Util::output("job {$iCPid} has exited!");
-                sleep(1);//wait for signal handle
+                sleep(1); //wait for signal handle
                 $sFunc = $this->aPids[$iCPid];
                 if (method_exists($this, $sFunc)) {
                     $iPid = pcntl_fork();
@@ -75,10 +75,15 @@ class Server extends Base {
     }
     
     protected function heartbeat() {
+        $oSockHeartOut = new ZMQSocket(new ZMQContext() , ZMQ::SOCKET_PUB);
+        $oSockHeartOut->bind($this->aDsn['heartbeat']);
         while (1) {
-            Util::output('heartbeat now');
+            $sMsg = 'heartbeat ' . $this->aDsn['heartbeat'];
+            Util::output($sMsg);
+            $oSockHeartOut->send($sMsg);
             sleep(5);
         }
+        return true;
     }
     
     protected function serv() {

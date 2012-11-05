@@ -31,8 +31,8 @@ abstract class Util {
         }
         
     }
-
-    public static function reloadConfig(){
+    
+    public static function reloadConfig() {
         self::$aConfigs = null;
         return true;
     }
@@ -102,6 +102,14 @@ abstract class Util {
     
     public static function report($iCode = 0, $sMsg = '') {
         //@todo error report
+    }
+    
+    public static function getMyIp($sIfName = 'eth0') {
+        $sIfConfig = shell_exec("ifconfig {$sIfName}");
+        if (preg_match('/(\d+\.\d+\.\d+\.\d+)/', $sIfConfig, $aMatch)) {
+            return $aMatch[1];
+        }
+        return false;
     }
     
 }
