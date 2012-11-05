@@ -18,7 +18,7 @@ class Reload extends Base {
     }
     
     protected function reloadAll() {
-        $aJList = Util::getConfig('CMD');
+        $aJList = Util::getConfig('INIT_JOBS');
         $aCList = array(); //Class list
         foreach ((array)$aJList as $sOCmd) {
             $aOCmd = explode(' ', trim($sOCmd));

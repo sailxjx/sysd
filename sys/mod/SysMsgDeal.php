@@ -60,8 +60,11 @@ class Mod_SysMsgDeal extends Mod_SysBase {
         }
         $aJob = Util_SysUtil::hashArgv(Util_SysUtil::getArgvFromStr($sCmd));
         list($sClassName, $aParams, $aOptions, $sCmd) = $aJob;
-        if (!in_array('-d', $aOptions)) {
-            $aOptions[] = '-d';
+        if (!array_intersect(array(
+            Const_SysCommon::OS_DAEMON,
+            Const_SysCommon::OL_DAEMON
+        ) , $aOptions)) {
+            $aOptions[] = Const_SysCommon::OS_DAEMON;
         }
         if (Util_SysUtil::runJob($sCmd, $sClassName, $aOptions, $aParams)) {
             return $this->succReply($aRParams);

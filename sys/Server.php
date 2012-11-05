@@ -6,8 +6,87 @@ class Server extends Base {
         'heartbeat' => 'tcp://*:5556'
     );
     
+    protected $aPids = array();
+    
+    protected $aDaemons = array(
+        'heartbeat',
+        'serv'
+    );
+    
     protected function main() {
-        print_r($_SERVER);exit;
+        $aOptions = $this->oCore->getOptions();
+        if (!array_intersect(array(
+            Const_SysCommon::OS_SLAVE,
+            Const_SysCommon::OL_SLAVE
+        ) , $aOptions)) { //master
+            $this->goMaster();
+        } else {
+            $this->goSlave();
+        }
+    }
+    
+    protected function goMaster() {
+        foreach ($this->aDaemons as $sFunc) {
+            $iPid = pcntl_fork();
+            if ($iPid === - 1) {
+                Util::output('could not fork: ' . $sFunc);
+                exit;
+            } elseif ($iPid) { //parent
+                $this->aPids[$iPid] = $sFunc;
+                continue;
+            } else { //child
+                $iPid = posix_getpid();
+                Util_SysUtil::addPid($iPid);
+                Util_SysUtil::logRunData();
+                return $this->{$sFunc}();
+            }
+        }
+        $this->waitForChild();
+        return true;
+    }
+    
+    protected function waitForChild() {
+        while (1) {
+            if ($iCPid = pcntl_wait($iStatus)) {
+                Util::output("job {$iCPid} has exited!");
+                sleep(1);//wait for signal handle
+                $sFunc = $this->aPids[$iCPid];
+                if (method_exists($this, $sFunc)) {
+                    $iPid = pcntl_fork();
+                    if ($iPid == - 1) {
+                        Util::output('could not fork: ' . $sFunc);
+                        exit;
+                    } elseif ($iPid) {
+                        $this->aPids[$iPid] = $sFunc;
+                    } else {
+                        $iPid = posix_getpid();
+                        Util_SysUtil::addPid($iPid);
+                        Util_SysUtil::logRunData();
+                        return $this->{$sFunc}();
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    
+    protected function goSlave() {
+        
+    }
+    
+    protected function heartbeat() {
+        while (1) {
+            Util::output('heartbeat now');
+            sleep(5);
+        }
+    }
+    
+    protected function serv() {
+        while (1) {
+            Util::output('serv now');
+            sleep(5);
+        }
+        
         $oPoll = new ZMQPoll();
         $oSockRep = Fac_SysMq::getIns()->loadZMQ(ZMQ::SOCKET_REP);
         $oSockRep->bind($this->aDsn['reply']);
@@ -46,9 +125,9 @@ class Server extends Base {
             }
         }
     }
-
-    protected function waitForMaster(){
-        $oHeartReq = new ZMQSocket(new ZMQContext(), ZMQ::SOCKET_REQ);
+    
+    protected function waitForMaster() {
+        $oHeartReq = new ZMQSocket(new ZMQContext() , ZMQ::SOCKET_REQ);
     }
     
     /**

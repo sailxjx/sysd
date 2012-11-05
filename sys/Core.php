@@ -30,6 +30,7 @@ final class Core {
     protected $sLogFile;
     protected $iDNum; //Deamon进程个数
     protected $bQuiet;
+    protected $aRunData;
     
     /**
      * instance of JobCore
@@ -101,9 +102,9 @@ final class Core {
     public function run() {
         Hook::getIns()->pre();
         foreach ($this->aOptionMaps as $sOps => $sFunc) {
-            if (in_array($sOps, $this->aOptions) && method_exists(self::$oIns, $sFunc)) {
+            if (in_array($sOps, $this->aOptions) && method_exists($this, $sFunc)) {
                 call_user_func(array(
-                    self::$oIns,
+                    $this,
                     $sFunc
                 ));
             }
@@ -114,8 +115,7 @@ final class Core {
     }
     
     /**
-     * 执行不同命令
-     * @todo 执行多条命令？
+     * 执行主程序
      */
     protected function rCmd() {
         if (empty($this->sCmd) || !reqClass($sCmdClass = ucfirst($this->sCmd))) {
@@ -228,5 +228,13 @@ final class Core {
             echo Const_SysCommon::R_HR, PHP_EOL;
         }
         exit;
+    }
+    
+    public function getRunData() {
+        return $this->aRunData;
+    }
+    
+    public function setRunData($aData) {
+        return $this->aRunData = $aData;
     }
 }

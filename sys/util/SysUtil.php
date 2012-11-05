@@ -195,4 +195,106 @@ abstract class Util_SysUtil {
         return shell_exec("ps -ef|grep '{$sClass}'|grep -v grep|wc -l");
     }
     
+    /**
+     * add pid in pid file
+     * @return boolean
+     */
+    public static function addPid($mPid = null, $sClassName = null) {
+        $sClassName = isset($sClassName) ? $sClassName : Core::getIns()->getJobClass();
+        $mPid = isset($mPid) ? $mPid : posix_getpid();
+        if (!is_array($mPid)) {
+            $mPid = array(
+                $mPid
+            );
+        }
+        $sPidFile = self::getPidFileByClass($sClassName);
+        $sPids = Util::getFileCon($sPidFile);
+        $aPids = !empty($sPids) ? explode(',', $sPids) : array();
+        $aPids = array_values(array_unique(array_merge($aPids, $mPid)));
+        return Util::setFileCon($sPidFile, implode(',', $aPids));
+    }
+    
+    /**
+     * log runtime data in redis
+     * @return array
+     */
+    public static function logRunData() {
+        $oCore = Core::getIns();
+        $aData = array(
+            Const_SysProc::F_NAME => $oCore->getJobClass() ,
+            Const_SysProc::F_START => time() ,
+            Const_SysProc::F_PARAMS => json_encode($oCore->getParams()) ,
+            Const_SysProc::F_OPTIONS => json_encode($oCore->getOptions()) ,
+            Const_SysProc::F_PID => posix_getpid() ,
+            Const_SysProc::F_PPID => posix_getppid()
+        );
+        $iRunId = Store_SysProc::getIns()->set($aData);
+        $aData[Const_SysProc::F_ID] = $iRunId;
+        Queue_SysProc::getIns()->run($iRunId, time())->add();
+        $oCore->setRunData($aData);
+        return $aData;
+    }
+    
+    public static function sigHandler($iSignal) {
+        Util::output("catch system signal![{$iSignal}]");
+        switch ($iSignal) {
+            case SIGTERM:
+                exit;
+            break;
+            case SIGINT:
+                exit;
+            break;
+            case SIGHUP:
+                Util::reloadConfig();
+            break;
+            default:
+            break;
+        }
+    }
+    
+    /**
+     * 作业结束时删除正常结束的PID文件
+     * @return boolean
+     */
+    public static function shutdown() {
+        self::clearRunData(); // clear run id in redis first
+        return self::remPidInFile();
+    }
+    
+    public static function remPidInFile($iPid = null, $sClassName = null) {
+        $iPid = isset($iPid) ? $iPid : posix_getpid();
+        $sClassName = isset($sClassName) ? $sClassName : Core::getIns()->getJobClass();
+        $sPidFile = self::getPidFileByClass($sClassName);
+        if (!is_file($sPidFile)) {
+            return false;
+        }
+        $sPids = file_get_contents($sPidFile);
+        $aPids = explode(',', $sPids);
+        $aPids = array_diff($aPids, array(
+            $iPid
+        ));
+        if (empty($aPids)) {
+            @unlink($sPidFile);
+        } else {
+            file_put_contents($sPidFile, implode(',', $aPids));
+        }
+        return true;
+    }
+    
+    /**
+     * delete run id in redis running queue
+     * @return boolean
+     */
+    public static function clearRunData($iRunId = null) {
+        if (!isset($iRunId)) {
+            $aRunData = Core::getIns()->getRunData();
+            $iRunId = !empty($aRunData[Const_SysProc::F_ID]) ? $aRunData[Const_SysProc::F_ID] : null;
+            if (empty($iRunId)) {
+                return false;
+            }
+        }
+        Queue_SysProc::getIns()->run($iRunId)->rem();
+        return true;
+    }
+    
 }

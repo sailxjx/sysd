@@ -74,7 +74,7 @@ class Fac_SysDb {
 				throw new Exception('error, redis config not found');
 			}
 			$oRedis = new Redis();
-			if (!$oRedis->connect($aConf['host'], $aConf['port'])) {
+			if (!$oRedis->pconnect($aConf['host'], $aConf['port'])) {
 				throw new Exception('error, redis connection failed');
 			}
 			$this->aRedis[$sCKey] = $oRedis;
