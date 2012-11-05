@@ -3,7 +3,7 @@ $config = require_once 'share.php';
 
 // database configs
 $config['REDIS'] = array(
-    'host' => '127.0.0.1',
+    'host' => 'zhihui.redis1.51fanli.it',
     'port' => 6380
 );
 
