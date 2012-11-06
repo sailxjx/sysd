@@ -83,7 +83,7 @@ abstract class Queue_SysQueue extends Mod_SysBase {
         $this->oRedis->exec();
         $this->afterAdd();
         $this->reset();
-        return $this;
+        return true;
     }
     
     /**
@@ -102,28 +102,29 @@ abstract class Queue_SysQueue extends Mod_SysBase {
         $this->oRedis->exec();
         $this->afterRem();
         $this->reset();
-        return $this;
+        return true;
     }
     
     /**
      * move an element from one queue to another
+     * this is an atomic operation
      */
     public function move($sFrom, $sTo, $sMember, $iNewScore) {
         if (!key_exists($sFrom, $this->aQueues) || !key_exists($sTo, $this->aQueues)) {
             trigger_error('error: could not find the called queue', E_USER_WARNING);
             return false;
         }
+        $sRKeyClass = $this->sRKeyClass;
+        $iResult = true;
         $sFromKFunc = $this->sQueue . ucfirst($sFrom);
         $sToKFunc = $this->sQueue . ucfirst($sTo);
         $this->beforeMove(func_get_args());
-        $this->oRedis->multi();
-        $sRKeyClass = $this->sRKeyClass;
-        $this->oRedis->zrem($sRKeyClass::$sFromKFunc() , $sMember);
-        $this->oRedis->zadd($sRKeyClass::$sToKFunc() , $iNewScore, $sMember);
-        $this->oRedis->exec();
+        if ($iResult = $this->oRedis->zrem($sRKeyClass::$sFromKFunc() , $sMember)) { // remove succ
+            $this->oRedis->zadd($sRKeyClass::$sToKFunc() , $iNewScore, $sMember);
+        }
         $this->afterMove(func_get_args());
         $this->reset();
-        return $this;
+        return $iResult;
     }
     
     /**

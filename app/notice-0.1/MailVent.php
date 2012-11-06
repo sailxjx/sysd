@@ -22,10 +22,11 @@ class MailVent extends Task_Vent {
         while (1) {
             $aMsgs = $this->listen();
             foreach ($aMsgs as $sMsg => $iScore) {
-                $oQMail->move('wait', 'send', $sMsg, time());
-                $oTask->channel($aChannels[$i % $iCNum])->msg($sMsg)->send();
-                Util::output('sending msgs: ', $sMsg);
-                $i++;
+                if($oQMail->move('wait', 'send', $sMsg, time())){
+                    $oTask->channel($aChannels[$i % $iCNum])->msg($sMsg)->send();
+                    Util::output('sending msgs: ', $sMsg);
+                    $i++;
+                }
             }
             if ($i > 100000) { //reset i to 0
                 $i = 0;
