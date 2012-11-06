@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Document: Listener
  * Created on: 2012-4-13, 17:43:03
@@ -7,184 +6,87 @@
  * GTalk: sailxjx@gmail.com
  */
 class Listener extends Base {
-
-	protected $aJobList; //初始数据
-	protected static $sInitFile = 'var/listen.dat'; //初始数据文件
-	protected static $iMaxRetry = 3; //重试次数
-	protected static $iSleep = 5; //睡眠间隔
-	protected static $iDMinDaemon = 1; //默认最小进程数量，低于此进程时会重启
-	protected $iPPid;
-	protected $iPid;
-	protected $iCPid;
-
-	const K_PARAMS = 'kp';
-	const K_CONF_CMD = 'kcc';
-	const K_CMD = 'kc';
-	const K_OPTIONS = 'ko';
-	const K_START_TIME = 'kst';
-	const K_RETRY_NUM = 'krn';
-
-	protected function main() {
-		$this->readJList();
-		$this->daemon();
-		$this->listen();
-		return true;
-	}
-
-	protected function __construct() {
-		$this->getProcStatus();
-		parent::__construct();
-	}
-
-	protected function getProcStatus() {
-		$this->iPid = posix_getpid();
-		$this->iPPid = posix_getppid();
-	}
-
-	/**
-	 * read status date of last launcher
-	 * @todo how to handle these data?
-	 * @return array
-	 */
-	protected function getInitData() {
-		if (!isset($this->aJobList)) {
-			$aInitData = Util::getFileCon(APP_PATH . self::$sInitFile);
-			if (!empty($aInitData)) {
-				$this->aJobList = json_decode(base64_decode($aInitData), true);
-			}
-			else {
-				$this->aJobList = array();
-			}
-		}
-		return $this->aJobList;
-	}
-
-	/**
-	 * set status data on job exit
-	 * @return array
-	 */
-	protected function setInitData() {
-		return Util::setFileCon(APP_PATH . self::$sInitFile, base64_encode(json_encode($this->aJobList)));
-	}
-
-	public function __destruct() {
-		$this->setInitData();
-		parent::__destruct();
-	}
-
-	protected function listen() {
-		while (1) {
-			if (!$this->wParent()) {
-				exit;
-			}
-			$this->wList();
-			sleep(self::$iSleep);
-		}
-	}
-
-	/**
-	 * check whether the parent process is exited
-	 * @return boolean
-	 */
-	protected function wParent() {
-		return (posix_getppid() != $this->iPPid) ? false : true;
-	}
-
-	/**
-	 * watch the job list
-	 * @return boolean
-	 */
-	protected function wList() {
-		$aJobList = $this->aJobList;
-		$iCMaxDNum = Util::getConfig('MAX_DAEMON_NUM');
-		foreach ($aJobList as $sClass => $aJob) {
-			if (empty($sClass)) {
-				continue;
-			}
-			$iNum = Util_SysUtil::getSysProcNumByClass($sClass);
-			$iMaxNum = !isset($aJob[self::K_PARAMS][Const_SysCommon::P_DAEMON_NUM]) ? 1 :
-					($aJob[self::K_PARAMS][Const_SysCommon::P_DAEMON_NUM] > $iCMaxDNum ? $iCMaxDNum :
-							$aJob[self::K_PARAMS][Const_SysCommon::P_DAEMON_NUM]);
-			$iMinNum = !isset($aJob[self::K_PARAMS][Const_SysCommon::P_MIN_DAEMON_NUM]) ? self::$iDMinDaemon :
-					($aJob[self::K_PARAMS][Const_SysCommon::P_MIN_DAEMON_NUM] > $iMaxNum ? $iMaxNum :
-							$aJob[self::K_PARAMS][Const_SysCommon::P_MIN_DAEMON_NUM]);
-			if ($iNum >= $iMinNum) {
-				continue;
-			}
-			$iRNum = intval($iMaxNum - $iNum);
-			$sDNKey = Util_SysUtil::convParamKeyToArgsKey(Const_SysCommon::P_DAEMON_NUM);
-			$sCmd = preg_replace("/{$sDNKey}\=\d+?/i", $sDNKey . '=' . $iRNum, $aJob[self::K_CONF_CMD]);
-			$sCmd = APP_PATH . 'launcher.php start ' . $sCmd;
-			Util::output($sCmd, APP_PATH . 'log/listen.log');
-			Util_SysUtil::runCmd($sCmd);
-		}
-	}
-
-	protected function readJList() {
-		$aCmds = Util::getConfig('CMD');
-		$aJClass = array();
-		foreach ($aCmds as $sConfCmd) {
-			$aArgvs = explode(' ', $sConfCmd);
-			list($sClassName, $aParams, $aOptions, $sCmd) = Util_SysUtil::hashArgv($aArgvs);
-			if (!in_array(Const_SysCommon::OL_LISTEN, $aOptions) && !in_array(Const_SysCommon::OS_LISTEN, $aOptions)) {
-				continue;
-			}
-			$aJClass[$sClassName] = array(
-				self::K_CONF_CMD => $sConfCmd,
-				self::K_CMD => $sCmd,
-				self::K_PARAMS => $aParams,
-				self::K_OPTIONS => $aOptions,
-				self::K_START_TIME => time(),
-				self::K_RETRY_NUM => 0
-			);
-		}
-		$this->aJobList = $aJClass;
-		return $this->aJobList;
-	}
-
-	protected function daemon() {
-		$iPid = pcntl_fork();
-		$this->iPPid = posix_getppid();
-		$this->iPid = posix_getpid();
-		if ($iPid === -1) {
-			Util::output('could not fork');
-		}
-		elseif ($iPid) {//parent
-			$this->iCPid = $iPid;
-			$this->addPid($iPid);
-			if ($iCPid = pcntl_waitpid($iPid, $iSt)) {//child process exit
-				$this->removePid($iCPid);
-				$this->daemon();
-			}
-		}
-		else {//child
-		}
-		return true;
-	}
-
-	protected function addPid($iPid) {
-		$sPidFile = Util_SysUtil::getPidFileByClass($this->oCore->getJobClass());
-		$sPids = Util::getFileCon($sPidFile);
-		$aPids = !empty($sPids) ? explode(',', $sPids) : array();
-		$aPids = array_merge($aPids, array($iPid));
-		Util::setFileCon($sPidFile, implode(',', $aPids));
-		return true;
-	}
-
-	protected function removePid($iPid) {
-		$sPidFile = Util_SysUtil::getPidFileByClass($this->oCore->getJobClass());
-		$sPids = Util::getFileCon($sPidFile);
-		if (empty($sPids)) {
-			return false;
-		}
-		$aPids = explode(',', $sPids);
-		$aPids = array_diff($aPids, array($iPid));
-		if (empty($aPids) && is_file($sPidFile)) {
-			@unlink($sPidFile);
-			return true;
-		}
-		Util::setFileCon($sPidFile, implode(',', $aPids));
-		return true;
-	}
-
+    
+    protected $aJobList; //初始数据
+    protected $iMaxRetry = 3; //重试次数
+    protected $aErrTimes = array();
+    protected $iSleep = 5; //睡眠间隔
+    
+    protected function main() {
+        Util::output('Begin to Listen');
+        $this->aJobList = $this->getJobList();
+        while (1) {
+            $this->listen();
+            sleep($this->iSleep);
+        }
+        return true;
+    }
+    
+    /**
+     * read status date of last launcher
+     * @todo how to handle these data?
+     * @return array
+     */
+    protected function getInitData() {
+        if (!isset($this->aJobList)) {
+            $aInitData = Util::getFileCon(APP_PATH . self::$sInitFile);
+            if (!empty($aInitData)) {
+                $this->aJobList = json_decode(base64_decode($aInitData) , true);
+            } else {
+                $this->aJobList = array();
+            }
+        }
+        return $this->aJobList;
+    }
+    
+    protected function getJobList() {
+        $aCmds = Util::getConfig('JOBS');
+        $iMaxDNum = Util::getConfig('MAX_DAEMON_NUM');
+        $aJobs = array();
+        foreach ($aCmds as $sCmd) {
+            list($sClass, $aParams, $aOptions, $sCmd) = $aJob = Util_SysUtil::hashArgv(Util_SysUtil::getArgvFromStr($sCmd));
+            if (!array_intersect(array(
+                Const_SysCommon::OL_LISTEN,
+                Const_SysCommon::OS_LISTEN
+            ) , $aOptions)) { // need not listening
+                continue;
+            }
+            $aJobs[] = $aJob;
+        }
+        return $aJobs;
+    }
+    
+    protected function listen() {
+        $aJobList = $this->aJobList;
+        foreach ($aJobList as $iIndex => $aJob) {
+            list($sClass, $aParams, $aOptions, $sCmd) = $aJob;
+            if (empty($sClass) || $this->getSetErrTimes($iIndex) >= $this->iMaxRetry) {
+                continue;
+            }
+            $iNum = Util_SysUtil::getSysProcNumByClass($sClass);
+            $iMaxNum = isset($aParams[Const_SysCommon::P_DAEMON_NUM]) ? intval($aParams[Const_SysCommon::P_DAEMON_NUM]) : 1;
+            $iMinNum = isset($aParams[Const_SysCommon::P_MIN_DAEMON_NUM]) ? intval($aParams[Const_SysCommon::P_MIN_DAEMON_NUM]) : 1;
+            if ($iNum >= $iMinNum) {
+                continue;
+            }
+            $aParams[Const_SysCommon::P_DAEMON_NUM] = intval($iMaxNum - $iNum);
+            if (Util_SysUtil::runJob($sCmd, $sClass, $aOptions, $aParams)) {
+                Util::output('Revive Job Succ: ' . json_encode($aJob));
+            } else {
+                Util::output('Revive Job Error: ' . json_encode($aJob));
+                $this->getSetErrTimes($iIndex, 1);
+            }
+        }
+    }
+    
+    protected function getSetErrTimes($iIndex, $iIncr = 0) {
+        $iErrTimes = isset($this->aErrTimes[$iIndex]) ? intval($this->aErrTimes[$iIndex]) : 0;
+        $iErrTimes+= $iIncr;
+        if ($iErrTimes > 0) {
+            Util::output("Retry Times: {$iErrTimes}; job index: {$iIndex}");
+        }
+        $this->aErrTimes[$iIndex] = $iErrTimes;
+        return $this->aErrTimes[$iIndex];
+    }
+    
 }

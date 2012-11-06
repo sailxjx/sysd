@@ -2,27 +2,21 @@
 class Server extends Base {
     
     protected $aDsn = array(
-        'reply' => 'tcp://*:5555',
-        'heartbeat' => 'tcp://*:5556'
+        'reply' => 'tcp://*:5555'
     );
     
     protected $aPids = array();
-    
     protected $aDaemons = array(
-        'heartbeat',
-        'serv'
+        'serv',
+        'listen'
     );
     
+    /**
+     * for now, there is only master
+     *
+     */
     protected function main() {
-        $aOptions = $this->oCore->getOptions();
-        if (!array_intersect(array(
-            Const_SysCommon::OS_SLAVE,
-            Const_SysCommon::OL_SLAVE
-        ) , $aOptions)) { //master
-            $this->goMaster();
-        } else {
-            $this->goSlave();
-        }
+        $this->goMaster();
     }
     
     protected function goMaster() {
@@ -73,22 +67,15 @@ class Server extends Base {
     protected function goSlave() {
         
     }
-    
-    protected function heartbeat() {
-        $oSockHeartOut = new ZMQSocket(new ZMQContext() , ZMQ::SOCKET_PUB);
-        $oSockHeartOut->bind($this->aDsn['heartbeat']);
-        while (1) {
-            $sMsg = 'heartbeat ' . $this->aDsn['heartbeat'];
-            Util::output($sMsg);
-            $oSockHeartOut->send($sMsg);
-            sleep(5);
-        }
+
+    protected function listen() {
+        Listener::getIns()->run();
         return true;
     }
     
     protected function serv() {
         while (1) {
-            Util::output('serv now');
+            // Util::output('serv now');
             sleep(5);
         }
         
@@ -130,11 +117,6 @@ class Server extends Base {
             }
         }
     }
-    
-    protected function waitForMaster() {
-        $oHeartReq = new ZMQSocket(new ZMQContext() , ZMQ::SOCKET_REQ);
-    }
-    
     /**
      * deal with messages and return the replies
      * @return string

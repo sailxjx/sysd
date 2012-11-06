@@ -78,6 +78,7 @@ abstract class Util_SysUtil {
                 $sClassName = $sArgv;
             }
         }
+        $sCmd = empty($sCmd) ? Const_SysCommon::C_START : $sCmd;
         return array(
             $sClassName,
             $aParams,

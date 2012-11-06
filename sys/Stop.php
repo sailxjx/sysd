@@ -19,7 +19,7 @@ class Stop extends Base {
     }
     
     protected function stopAll() {
-        $aJList = Util::getConfig('INIT_JOBS');
+        $aJList = array_merge(Util::getConfig('INIT_JOBS') , Util::getConfig('JOBS'));
         $aCList = array(); //Class list
         foreach ((array)$aJList as $sOCmd) {
             $aOCmd = explode(' ', trim($sOCmd));
