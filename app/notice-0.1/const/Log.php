@@ -7,21 +7,10 @@
  * GTalk: sailxjx@gmail.com
  */
 class Const_Log {
-    /**
-     * fields
-     */
-    const F_ID = 'id'; //id
-    const F_CTIME = 'ctime'; //日志创建时间
-    const F_LOCATION = 'location'; //位置标识
-    const F_REASON = 'reason'; //原因
-    const F_FROMSRC = 'fromsrc'; //来源(ip)
-    const F_ACTOR = 'actor'; //发件人
-    const F_OBJECT = 'object'; //收件人
-    const F_ECODE = 'ecode'; //ecode
-    const F_STATUS = 'status'; //状态
-    const F_MSG = 'msg';
-    const F_EXTRA = 'extra'; //其他
-    
-    const L_MAILSEND = '001';
-    
+
+    const F_TIME = '%t';
+    const F_MSG = '%m';
+    const F_DATA = '%d';
+    const F_CODE = '%c';
+
 }
