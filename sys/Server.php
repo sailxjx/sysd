@@ -7,7 +7,7 @@ class Server extends Base {
     
     protected $aPids = array();
     protected $aDaemons = array(
-        'serv',
+        // 'serv',
         'listen'
     );
     
@@ -75,10 +75,9 @@ class Server extends Base {
     
     protected function serv() {
         while (1) {
-            // Util::output('serv now');
+            Util::output('serv now');
             sleep(5);
         }
-        
         $oPoll = new ZMQPoll();
         $oSockRep = Fac_SysMq::getIns()->loadZMQ(ZMQ::SOCKET_REP);
         $oSockRep->bind($this->aDsn['reply']);
