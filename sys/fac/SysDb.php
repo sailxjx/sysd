@@ -80,6 +80,7 @@ class Fac_SysDb {
             $this->aRedis[$sCKey] = $oRedis;
         }
         if (!$this->tRedisConn($this->aRedis[$sCKey])) {
+            usleep(100000);
             $this->iRedisRetry++;
             if ($this->iRedisRetry > 3) {
                 trigger_error('error, redis connection failed', E_USER_ERROR);
@@ -89,7 +90,7 @@ class Fac_SysDb {
         return $this->aRedis[$sCKey];
     }
     
-    protected function tRedisConn($oRedis) {
+    protected function tRedisConn(&$oRedis) {
         try {
             if ($oRedis->ping() === '+PONG') {
                 return true;
