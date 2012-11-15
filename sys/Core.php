@@ -21,12 +21,6 @@ final class Core {
         Const_SysCommon::OS_TODO => 'showTodo',
         Const_SysCommon::OL_TODO => 'showTodo'
     );
-    protected $aDCmds = array(
-        Const_SysCommon::C_START,
-        Const_SysCommon::C_STOP,
-        Const_SysCommon::C_RESTART,
-        Const_SysCommon::C_KILL
-    );
     protected $sCmd;
     protected $aMan; //手册内容
     protected $sJobClass;
@@ -36,6 +30,7 @@ final class Core {
     protected $sLogFile;
     protected $iDNum; //Deamon进程个数
     protected $bQuiet;
+    protected $aRunData;
     
     /**
      * instance of JobCore
@@ -96,7 +91,7 @@ final class Core {
      */
     public function init($argv) {
         unset($argv[0]);
-        list($this->sJobClass, $this->aParams, $this->aOptions, $this->sCmd) = Util_SysUtil::hashArgv($argv, $this->aDCmds);
+        list($this->sJobClass, $this->aParams, $this->aOptions, $this->sCmd) = Util_SysUtil::hashArgv($argv);
         return self::$oIns;
     }
     
@@ -107,9 +102,9 @@ final class Core {
     public function run() {
         Hook::getIns()->pre();
         foreach ($this->aOptionMaps as $sOps => $sFunc) {
-            if (in_array($sOps, $this->aOptions) && method_exists(self::$oIns, $sFunc)) {
+            if (in_array($sOps, $this->aOptions) && method_exists($this, $sFunc)) {
                 call_user_func(array(
-                    self::$oIns,
+                    $this,
                     $sFunc
                 ));
             }
@@ -120,8 +115,7 @@ final class Core {
     }
     
     /**
-     * 执行不同命令
-     * @todo 执行多条命令？
+     * 执行主程序
      */
     protected function rCmd() {
         if (empty($this->sCmd) || !reqClass($sCmdClass = ucfirst($this->sCmd))) {
@@ -173,7 +167,7 @@ final class Core {
             fclose(STDOUT);
             fclose(STDERR);
             global $STDOUT, $STDERR;
-            Util::setFileCon($this->getLogFile(), '', FILE_APPEND);
+            Util::setFileCon($this->getLogFile() , '', FILE_APPEND);
             $STDERR = $STDOUT = fopen($this->getLogFile() , 'a');
             $this->bQuiet = true;
         }
@@ -236,4 +230,11 @@ final class Core {
         exit;
     }
     
+    public function getRunData() {
+        return $this->aRunData;
+    }
+    
+    public function setRunData($aData) {
+        return $this->aRunData = $aData;
+    }
 }

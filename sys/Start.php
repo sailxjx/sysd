@@ -23,29 +23,23 @@ class Start extends Base {
             $this->oCore->showHelp();
             return false;
         }
-        $this->logStatus($sJClass);
+        declare(ticks = 1); //for signal control
+        Util_SysUtil::addPid(); // add pid in file
+        Util_SysUtil::logRunData(); // log process id or other status in redis
+        register_shutdown_function('Util_SysUtil::shutdown'); // register shutdown function to delete pids
+        pcntl_signal(SIGTERM, 'Util_SysUtil::sigHandler');
+        pcntl_signal(SIGINT, 'Util_SysUtil::sigHandler');
+        pcntl_signal(SIGHUP, 'Util_SysUtil::sigHandler');
         $sJClass::getIns()->run();
     }
     
     protected function startAll() {
-        $aJList = Util::getConfig('CMD');
+        $aJList = Util::getConfig('INIT_JOBS');
         $sCmd = '';
         foreach ($aJList as $sOriCmd) {
             $sCmd = APP_PATH . 'launcher.php start ' . $sOriCmd;
             Util_SysUtil::runCmd($sCmd);
         }
-        return true;
-    }
-    
-    protected function logStatus() {
-        $aData = array(
-            Const_SysProc::F_NAME => $this->oCore->getJobClass() ,
-            Const_SysProc::F_START => time() ,
-            Const_SysProc::F_PARAMS => json_encode($this->oCore->getParams()) ,
-            Const_SysProc::F_OPTIONS => json_encode($this->oCore->getOptions()) ,
-            Const_SysProc::F_PID => posix_getpid() ,
-        );
-        Store_SysProc::getIns()->set($aData);
         return true;
     }
     

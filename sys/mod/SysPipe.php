@@ -1,5 +1,4 @@
 <?php
-
-abstract class Mod_Pipe extends Mod_SysBase{
-
+class Mod_SysPipe extends Mod_SysBase {
+    
 }

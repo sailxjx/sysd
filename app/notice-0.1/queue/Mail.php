@@ -30,35 +30,35 @@ class Queue_Mail extends Queue_Queue {
     protected function waitToSend($aArgs) {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
         $this->changeStatus($iMailId, Const_Mail::S_SEND);
-        Queue_Log::getIns()->normal($this->sendLog($aArgs) , time())->add();
+        $this->sendLog($aArgs);
         return $this;
     }
     
     protected function sendToError($aArgs) {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
         $this->changeStatus($iMailId, Const_Mail::S_ERROR);
-        Queue_Log::getIns()->warning($this->sendLog($aArgs) , time())->add();
+        $this->sendLog($aArgs,'warning');
         return $this;
     }
     
     protected function sendToSucc($aArgs) {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
         $this->changeStatus($iMailId, Const_Mail::S_SUCC);
-        Queue_Log::getIns()->normal($this->sendLog($aArgs) , time())->add();
+        $this->sendLog($aArgs);
         return $this;
     }
     
     protected function errorToWait($aArgs) {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
         $this->changeStatus($iMailId, Const_Mail::S_WAIT);
-        Queue_Log::getIns()->normal($this->sendLog($aArgs) , time())->add();
+        $this->sendLog($aArgs);
         return $this;
     }
     
     protected function errorToFail($aArgs) {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
         $this->changeStatus($iMailId, Const_Mail::S_FAIL);
-        Queue_Log::getIns()->error($this->sendLog($aArgs) , time())->add();
+        $this->sendLog($aArgs,'error');
         return $this;
     }
     
@@ -70,16 +70,13 @@ class Queue_Mail extends Queue_Queue {
         return $this;
     }
     
-    protected function sendLog($aArgs) {
+    protected function sendLog($aArgs, $sQueue = 'normal') {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
-        $oSLog = Store_Log::getIns();
-        $aLog = array(
-            Const_Log::F_CTIME => time() ,
-            Const_Log::F_LOCATION => Const_Log::L_MAILSEND,
-            Const_Log::F_OBJECT => json_encode($aArgs) ,
-            Const_Log::F_MSG => "mail: {$iMailId} has been set from '{$sFrom}' to '{$sTo}' queue"
-        );
-        return $oSLog->set($aLog);
+        return Mod_Log::getIns()->$sQueue('MAIL: [%t]: "%m"; %d; %c;', date('Y-m-d H:i:s'), "set {$iMailId} from {$sFrom} to {$sTo}", '{}', '001');
+    }
+
+    public function getMailQueues(){
+        return $this->aQueues;
     }
     
 }

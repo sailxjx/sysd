@@ -14,7 +14,7 @@ abstract class Util {
      * @param string $sKey
      * @return mix
      */
-    public static function getConfig($sKey) {
+    public static function getConfig($sKey = null) {
         if (!isset(self::$aConfigs)) {
             $sEnv = ENV;
             $sFile = APP_PATH . "config/config-{$sEnv}.php";
@@ -24,7 +24,17 @@ abstract class Util {
                 trigger_error('could not find config file!', E_USER_ERROR);
             }
         }
-        return isset(self::$aConfigs[$sKey]) ? self::$aConfigs[$sKey] : null;
+        if (!empty($sKey)) {
+            return isset(self::$aConfigs[$sKey]) ? self::$aConfigs[$sKey] : null;
+        } else {
+            return self::$aConfigs;
+        }
+        
+    }
+    
+    public static function reloadConfig() {
+        self::$aConfigs = null;
+        return true;
     }
     
     public static function xmlToArray($sXmlFile) {
@@ -92,8 +102,14 @@ abstract class Util {
     
     public static function report($iCode = 0, $sMsg = '') {
         //@todo error report
-        
-        
+    }
+    
+    public static function getMyIp($sIfName = 'eth0') {
+        $sIfConfig = shell_exec("ifconfig {$sIfName}");
+        if (preg_match('/(\d+\.\d+\.\d+\.\d+)/', $sIfConfig, $aMatch)) {
+            return $aMatch[1];
+        }
+        return false;
     }
     
 }

@@ -10,6 +10,7 @@ class MakeTest extends Base {
         'PDO',
         'posix',
         'redis',
+        'zmq'
     );
     
     public function main() {

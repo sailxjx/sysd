@@ -11,7 +11,7 @@ abstract class Const_SysCommon {
     const C_START = 'start';
     const C_STOP = 'stop';
     const C_RESTART = 'restart';
-    const C_KILL = 'kill';
+    const C_RELOAD = 'reload';
     
     //options
     const OS_HELP = '-h';
@@ -28,6 +28,8 @@ abstract class Const_SysCommon {
     const OL_QUIET = '--quiet';
     const OS_TODO = '-t';
     const OL_TODO = '--todo';
+    const OS_SLAVE = '-s';
+    const OL_SLAVE = '--slave';
     
     //params
     const P_DAEMON_NUM = 'daemon_num';

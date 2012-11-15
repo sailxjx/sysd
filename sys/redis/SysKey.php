@@ -3,7 +3,7 @@ abstract class Redis_SysKey {
     
     protected static $sPrefix = 'sys:';
     protected static $aMap = array(
-        'sysproctable' => 'sys:proc:table:{$id}',
+        'sysproctable' => 'sys:proc:table:{$id}'
     );
     
     public static function __callStatic($name, $args) {
@@ -11,7 +11,7 @@ abstract class Redis_SysKey {
         if (!isset(static ::$aMap[$sName])) {
             return static ::autoKey($name);
         }
-        if (isset($args[0])) {
+        if (isset($args[0]) && is_array($args[0])) {
             extract($args[0]);
         }
         $sKey = static ::$sPrefix . static ::$aMap[$sName];
