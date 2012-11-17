@@ -10,7 +10,12 @@ class Mod_MsgDeal extends Mod_SysMsgDeal {
             $sKey = $sPreQueue . ucfirst($sQueue);
             $oRedis->zcard(Redis_Key::$sKey());
         }
-        return $this->succReply(array_combine(array_keys($aQueues), $oRedis->exec()));
+        $aMail = $oRedis->exec();
+        if(empty($aMail)){
+            return $this->errReply(null, 'mail not exist');
+        }else{
+            return $this->succReply(array_combine(array_keys($aQueues), $aMail));
+        }
     }
     
 }

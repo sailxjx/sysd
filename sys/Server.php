@@ -31,7 +31,6 @@ class Server extends Base {
             } else { //child
                 $iPid = posix_getpid();
                 Util_SysUtil::addPid($iPid);
-                Util_SysUtil::logRunData();
                 return $this->{$sFunc}();
             }
         }
