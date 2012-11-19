@@ -25,7 +25,6 @@ class Start extends Base {
         }
         declare(ticks = 1); //for signal control
         Util_SysUtil::addPid(); // add pid in file
-        Util_SysUtil::logRunData(); // log process id or other status in redis
         register_shutdown_function('Util_SysUtil::shutdown'); // register shutdown function to delete pids
         pcntl_signal(SIGTERM, 'Util_SysUtil::sigHandler');
         pcntl_signal(SIGINT, 'Util_SysUtil::sigHandler');

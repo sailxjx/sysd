@@ -7,7 +7,7 @@ class Server extends Base {
     
     protected $aPids = array();
     protected $aDaemons = array(
-        // 'serv',
+        'serv',
         'listen'
     );
     
@@ -31,7 +31,6 @@ class Server extends Base {
             } else { //child
                 $iPid = posix_getpid();
                 Util_SysUtil::addPid($iPid);
-                Util_SysUtil::logRunData();
                 return $this->{$sFunc}();
             }
         }
@@ -74,17 +73,10 @@ class Server extends Base {
     }
     
     protected function serv() {
-        while (1) {
-            Util::output('serv now');
-            sleep(5);
-        }
         $oPoll = new ZMQPoll();
         $oSockRep = Fac_SysMq::getIns()->loadZMQ(ZMQ::SOCKET_REP);
         $oSockRep->bind($this->aDsn['reply']);
         $oPoll->add($oSockRep, ZMQ::POLL_IN | ZMQ::POLL_OUT);
-        $oSockHeart = Fac_SysMq::getIns()->loadZMQ(ZMQ::SOCKET_REP);
-        $oSockHeart->bind($this->aDsn['heartbeat']);
-        $oPoll->add($oSockHeart, ZMQ::POLL_IN | ZMQ::POLL_OUT);
         $aRead = $aWrite = array();
         Util::output('begin listening messages from: ' . implode(',', $this->aDsn));
         while (1) {
@@ -99,9 +91,6 @@ class Server extends Base {
                             $sReply = is_scalar($sReply) ? $sReply : json_encode($sReply);
                             Util::output('reply: ' . $sReply);
                             $oSock->send($sReply);
-                        } elseif ($oSock === $oSockHeart) {
-                            Util::output($oSock->recv());
-                            $oSock->send('heartbeat: i heard about you!');
                         }
                     }
                 }

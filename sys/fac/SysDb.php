@@ -60,7 +60,10 @@ class Fac_SysDb {
         unset($this->aPdos[$sCKey]);
     }
     
-    protected $iRedisRetry = 0;
+    protected $aRedisRetry = array(
+        'num' => 0,
+        'time' => 0
+    );
     
     /**
      * 初始化Redis
@@ -80,8 +83,13 @@ class Fac_SysDb {
             $this->aRedis[$sCKey] = $oRedis;
         }
         if (!$this->tRedisConn($this->aRedis[$sCKey])) {
-            $this->iRedisRetry++;
-            if ($this->iRedisRetry > 3) {
+            if (time() - $this->aRedisRetry['time'] > 300) {
+                $this->aRedisRetry['num'] = 0;
+            }
+            $this->aRedisRetry['time'] = time();
+            usleep(100000);
+            $this->aRedisRetry['num']++;
+            if ($this->aRedisRetry['num'] > 3) {
                 trigger_error('error, redis connection failed', E_USER_ERROR);
             }
             $this->aRedis[$sCKey] = $this->loadRedis($sCKey, true);
@@ -89,7 +97,7 @@ class Fac_SysDb {
         return $this->aRedis[$sCKey];
     }
     
-    protected function tRedisConn($oRedis) {
+    protected function tRedisConn(&$oRedis) {
         try {
             if ($oRedis->ping() === '+PONG') {
                 return true;
