@@ -258,7 +258,7 @@ abstract class Util_SysUtil {
      * @return boolean
      */
     public static function shutdown() {
-        self::clearRunData(); // clear run id in redis first
+        // self::clearRunData(); // clear run id in redis first
         return self::remPidInFile();
     }
     
