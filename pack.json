@@ -1,7 +1,7 @@
 {
     "name": "sysd",
     "desc": "system daemon",
-    "version": "0.4",
+    "version": "0.5",
     "depends": {
         "notice": "0.1"
     }

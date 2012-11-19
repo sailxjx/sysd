@@ -1,6 +1,6 @@
 {
     "name":"daemon io system",
-    "version":"0.4",
+    "version":"0.5",
     "help":{
         "Usage":"launcher.php [Command] [ClassName] [Options] [Arguments]",
         "Params" : [
@@ -55,12 +55,6 @@
     "todo":{
         "5":[
         "管理后台开发[fun?node?]",
-        "守护进程开发[sysd]"
         ],
-        "10":[
-        "接口开发[fun?]",
-        "多进程邮件发送"
-        ],
-        "99":["ZReq改为Noblock异步调用","stop,restart改为单进程"]
     }
 }
