@@ -23,11 +23,18 @@ abstract class Const_Mail {
     const F_ERRORNUM = 'error'; //邮件发送错误次数
     const F_EXTRA = 'extra'; //其他
     const F_SERVICETYPE = 'servicetype'; //服务商标识
+    const F_TRYSERVICE = 'tryservice'; //已尝试过的服务商
+    const F_MAILPARAMS = 'mailparams'; //邮件替换参数
     
     const S_WAIT = 0;
     const S_SEND = 1;
     const S_ERROR = 2;
     const S_FAIL = 3;
     const S_SUCC = 4;
+
+    const F_SERVICE_TEMP = 'temp';
+    const F_SERVICE_SCORE = 'score';
+    const TEMP_LOCAL = 'local';
+    const TEMP_REMOTE = 'remote';
     
 }

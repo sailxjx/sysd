@@ -23,5 +23,7 @@ class Store_Mail extends Store_Table {
         Const_Mail::F_ERRORNUM => Const_Mail::F_ERRORNUM,
         Const_Mail::F_EXTRA => Const_Mail::F_EXTRA,
         Const_Mail::F_SERVICETYPE => Const_Mail::F_SERVICETYPE,
+        Const_Mail::F_TRYSERVICE => Const_Mail::F_TRYSERVICE,
+        Const_Mail::F_MAILPARAMS => Const_Mail::F_MAILPARAMS
     );
 }

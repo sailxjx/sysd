@@ -14,12 +14,18 @@ class Listener extends Base {
     
     protected function main() {
         Util::output('Begin to Listen');
-        $this->aJobList = $this->getJobList();
+        $this->initListen();
         while (1) {
+            $this->aJobList = $this->getJobList();
             $this->listen();
             sleep($this->iSleep);
         }
         return true;
+    }
+    
+    protected function initListen() {
+        $this->aJobList = $this->getJobList(false);
+        return $this->listen();
     }
     
     /**
@@ -39,7 +45,7 @@ class Listener extends Base {
         return $this->aJobList;
     }
     
-    protected function getJobList() {
+    protected function getJobList($bOnlyListen = true) {
         $aCmds = Util::getConfig('JOBS');
         $iMaxDNum = Util::getConfig('MAX_DAEMON_NUM');
         $aJobs = array();
@@ -48,7 +54,7 @@ class Listener extends Base {
             if (!array_intersect(array(
                 Const_SysCommon::OL_LISTEN,
                 Const_SysCommon::OS_LISTEN
-            ) , $aOptions)) { // need not listening
+            ) , $aOptions) && $bOnlyListen) { // need not listening
                 continue;
             }
             $aJobs[] = $aJob;
@@ -77,6 +83,7 @@ class Listener extends Base {
                 $this->getSetErrTimes($iIndex, 1);
             }
         }
+        return true;
     }
     
     protected function getSetErrTimes($iIndex, $iIncr = 0) {

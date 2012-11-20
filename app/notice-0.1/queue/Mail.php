@@ -23,42 +23,50 @@ class Queue_Mail extends Queue_Queue {
                 $this,
                 $sFunc
             ) , $aArgs);
+        } else {
+            $sFunc = 'to' . ucfirst($sTo);
+            if (method_exists($this, $sFunc)) {
+                call_user_func(array(
+                    $this,
+                    $sFunc
+                ) , $aArgs);
+            }
         }
         return $this;
     }
     
-    protected function waitToSend($aArgs) {
+    protected function toSend($aArgs) {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
         $this->changeStatus($iMailId, Const_Mail::S_SEND);
         $this->sendLog($aArgs);
         return $this;
     }
     
-    protected function sendToError($aArgs) {
+    protected function toError($aArgs) {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
         $this->changeStatus($iMailId, Const_Mail::S_ERROR);
-        $this->sendLog($aArgs,'warning');
+        $this->sendLog($aArgs, 'warning');
         return $this;
     }
     
-    protected function sendToSucc($aArgs) {
+    protected function toSucc($aArgs) {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
         $this->changeStatus($iMailId, Const_Mail::S_SUCC);
         $this->sendLog($aArgs);
         return $this;
     }
     
-    protected function errorToWait($aArgs) {
+    protected function toWait($aArgs) {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
         $this->changeStatus($iMailId, Const_Mail::S_WAIT);
         $this->sendLog($aArgs);
         return $this;
     }
     
-    protected function errorToFail($aArgs) {
+    protected function toFail($aArgs) {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
         $this->changeStatus($iMailId, Const_Mail::S_FAIL);
-        $this->sendLog($aArgs,'error');
+        $this->sendLog($aArgs, 'error');
         return $this;
     }
     
@@ -72,10 +80,10 @@ class Queue_Mail extends Queue_Queue {
     
     protected function sendLog($aArgs, $sQueue = 'normal') {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
-        return Mod_Log::getIns()->$sQueue('MAIL: [%t]: "%m"; %d; %c;', date('Y-m-d H:i:s'), "set {$iMailId} from {$sFrom} to {$sTo}", '{}', '001');
+        return Mod_Log::getIns()->$sQueue('MAIL: [%t]: "%m"; %d; %c;', date('Y-m-d H:i:s') , "set {$iMailId} from {$sFrom} to {$sTo}", '{}', '001');
     }
-
-    public function getMailQueues(){
+    
+    public function getMailQueues() {
         return $this->aQueues;
     }
     
