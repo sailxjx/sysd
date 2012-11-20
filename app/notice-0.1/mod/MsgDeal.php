@@ -17,5 +17,11 @@ class Mod_MsgDeal extends Mod_SysMsgDeal {
             return $this->succReply(array_combine(array_keys($aQueues), $aMail));
         }
     }
+
+    protected function getMailChannels() {
+        $oRedis = $this->oRedis;
+        $aServices = $oRedis->hgetall(Redis_Key::mailServices());
+        return $this->succReply($aServices);
+    }
     
 }

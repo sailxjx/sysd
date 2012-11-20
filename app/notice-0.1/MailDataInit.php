@@ -20,6 +20,10 @@ class MailDataInit extends Base {
         )
     );
     
+    protected $aSysMailBoxes = array(
+        'jingxin.xu@51fanli.com'
+    );
+    
     protected function __construct() {
         parent::__construct();
         $this->oRedis = Fac_SysDb::getIns()->loadRedis();
@@ -27,6 +31,7 @@ class MailDataInit extends Base {
     
     protected function main() {
         $this->initServices();
+        $this->initSysMailBoxes();
     }
     
     protected function initServices() {
@@ -34,6 +39,14 @@ class MailDataInit extends Base {
         $oRedis = $this->oRedis;
         foreach ($this->aServices as $sService => $aService) {
             $oRedis->hset($sServiceKey, $sService, json_encode($aService));
+        }
+        return true;
+    }
+    
+    protected function initSysMailBoxes() {
+        $sSysMailBoxKey = Redis_Key::mailSysBoxes();
+        foreach ($this->aSysMailBoxes as $sMailBox) {
+            $this->oRedis->sadd($sSysMailBoxKey, $sMailBox);
         }
         return true;
     }
