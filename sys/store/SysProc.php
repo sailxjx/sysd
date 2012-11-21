@@ -1,7 +1,7 @@
 <?php
 class Store_SysProc extends Store_SysTable {
     
-    public static $aFields = array(
+    protected static $aFields = array(
         Const_SysProc::F_NAME => Const_SysProc::F_NAME,
         Const_SysProc::F_START => Const_SysProc::F_START,
         Const_SysProc::F_PARAMS => Const_SysProc::F_PARAMS,

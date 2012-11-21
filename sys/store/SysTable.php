@@ -7,8 +7,8 @@
  */
 abstract class Store_SysTable extends Mod_SysBase {
     
-    protected $sTable;
-    public static $aFields = array();
+    protected static $sTable;
+    protected static $aFields;
     protected $aData = array();
     protected $oRedis;
     protected $sRKeyClass = 'Redis_SysKey'; //class to build the redis key
@@ -24,8 +24,27 @@ abstract class Store_SysTable extends Mod_SysBase {
      * @return \Store_SysTable
      */
     private function init() {
-        $this->getTable();
+        self::getTable();
+        self::getFields();
         return $this;
+    }
+    
+    public static function getFields() {
+        if (!isset(static ::$aFields)) {
+            $sTable = self::getTable();
+            $aFields = array();
+            if (reqClass("Const_{$sTable}")) {
+                $oRef = new ReflectionClass("Const_{$sTable}");
+                $aFieldCons = $oRef->getConstants();
+                foreach ($aFieldCons as $sKey => $sField) {
+                    if (strpos($sKey, 'F_') === 0) {
+                        $aFields[$sField] = $sField;
+                    }
+                }
+            }
+            static ::$aFields = $aFields;
+        }
+        return static::$aFields;
     }
     
     /**
@@ -74,7 +93,7 @@ abstract class Store_SysTable extends Mod_SysBase {
         }
         $oRedis = $this->oRedis;
         $aData['id'] = $this->getId();
-        $sRExpKey = strtoupper($this->sTable); //过期时间key
+        $sRExpKey = strtoupper(self::getTable()); //过期时间key
         $sKey = $this->getTableKey($aData['id']);
         $oRedis->hmset($sKey, $aData);
         $sRExpClass = $this->sRExpClass;
@@ -86,7 +105,7 @@ abstract class Store_SysTable extends Mod_SysBase {
     }
     
     protected function getTableKey($iId) {
-        $sRTableFunc = $this->sTable . 'Table';
+        $sRTableFunc = self::getTable() . 'Table';
         $sRKeyClass = $this->sRKeyClass;
         return $sRKeyClass::$sRTableFunc(array(
             'id' => $iId
@@ -96,15 +115,15 @@ abstract class Store_SysTable extends Mod_SysBase {
     /**
      * 获取table名
      */
-    protected function getTable() {
-        if (!isset($this->sTable)) {
+    public static function getTable() {
+        if (!isset(static::$sTable)) {
             list($sPre, $sTable) = explode('_', get_called_class());
             if (empty($sTable)) {
                 trigger_error('could not find the called table', E_USER_ERROR);
             }
-            $this->sTable = $sTable;
+            static::$sTable = $sTable;
         }
-        return $this->sTable;
+        return static::$sTable;
     }
     
     public function __set($sKey, $sVal) {
@@ -122,7 +141,7 @@ abstract class Store_SysTable extends Mod_SysBase {
      */
     protected function getId() {
         $oRedis = $this->oRedis;
-        $sRIdFunc = $this->sTable . 'Id'; //自增id key
+        $sRIdFunc = self::getTable() . 'Id'; //自增id key
         $sRKeyClass = $this->sRKeyClass;
         $sIdKey = $sRKeyClass::$sRIdFunc();
         $iAutoIncrId = $oRedis->get($sIdKey);

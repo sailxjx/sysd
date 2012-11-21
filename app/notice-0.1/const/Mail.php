@@ -8,9 +8,8 @@
  */
 abstract class Const_Mail {
     /**
-     * fields
+     * store fields
      */
-    
     const F_ID = 'id'; //id
     const F_SENDER = 'sender'; //发件人
     const F_RECEIVER = 'receiver'; //收件人
@@ -32,8 +31,8 @@ abstract class Const_Mail {
     const S_FAIL = 3;
     const S_SUCC = 4;
 
-    const F_SERVICE_TEMP = 'temp';
-    const F_SERVICE_SCORE = 'score';
+    const C_SERVICE_TEMP = 'temp';
+    const C_SERVICE_SCORE = 'score';
     const TEMP_LOCAL = 'local';
     const TEMP_REMOTE = 'remote';
     

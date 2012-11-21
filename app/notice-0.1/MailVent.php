@@ -87,7 +87,7 @@ class MailVent extends Task_Vent {
         }
         $aService = $aServices[$aMail[Const_Mail::F_SERVICETYPE]];
         $sMailCon = '';
-        switch ($aService[Const_Mail::F_SERVICE_TEMP]) {
+        switch ($aService[Const_Mail::C_SERVICE_TEMP]) {
             case Const_Mail::TEMP_LOCAL:
                 $sMailCon = $this->buildMailConFromLocal($aMail);
             break;
@@ -114,14 +114,14 @@ class MailVent extends Task_Vent {
         $aServices = $oRedis->hgetall($sChanKey);
         foreach ($aServices as $k => $v) {
             $aV = json_decode($v, true);
-            if (intval($aV[Const_Mail::F_SERVICE_SCORE]) <= 0) {
+            if (intval($aV[Const_Mail::C_SERVICE_SCORE]) <= 0) {
                 unset($aServices[$k]);
             } else {
                 $aServices[$k] = $aV;
             }
         }
         uasort($aServices, function ($a, $b) {
-            if ($a[Const_Mail::F_SERVICE_SCORE] > $b[Const_Mail::F_SERVICE_SCORE]) {
+            if ($a[Const_Mail::C_SERVICE_SCORE] > $b[Const_Mail::C_SERVICE_SCORE]) {
                 return 1;
             }
             return 0;
