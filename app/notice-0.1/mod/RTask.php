@@ -14,7 +14,7 @@ class Mod_RTask extends Mod_Task {
         Const_Task::C_MAILLIST => 'mailList',
         Const_Task::C_MAILRESULT => 'mailResult'
     );
-    protected $iUSec = 10000; //usleep time
+    protected $iUSec = 100000; //usleep time
     
     protected function __construct() {
         $this->oRedis = Fac_SysDb::getIns()->loadRedis();

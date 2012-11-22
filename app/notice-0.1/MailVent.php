@@ -134,7 +134,7 @@ class MailVent extends Task_Vent {
         while (!$aMsgs = $oRedis->zrangebyscore(Redis_Key::mailWait() , '-inf', time() , array(
             'withscores' => true
         ))) {
-            usleep(10000);
+            usleep(100000);
         }
         return $aMsgs;
     }

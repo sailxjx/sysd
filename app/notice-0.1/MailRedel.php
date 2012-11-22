@@ -29,7 +29,7 @@ class MailRedel extends Base {
     protected function listen() {
         $oRedis = Fac_SysDb::getIns()->loadRedis();
         while (!$aMsgs = $oRedis->zrange(Redis_Key::mailError() , 0, $this->iRemNum)) {
-            usleep(10000);
+            usleep(100000);
         }
         return $aMsgs;
     }

@@ -26,12 +26,11 @@ class Mod_MsgDeal extends Mod_SysMsgDeal {
     
     protected function getMailTempSum() {
         $oRedis = $this->oRedis;
-        $aMailIds = $oRedis->smembers(Redis_Key::mailTemplates());
+        $aMailIds = $oRedis->zrange(Redis_Key::mailTemplates(), 0, -1);
         $oSMailTemp = Store_MailTemp::getIns();
         $aMailTemps = array();
         foreach ($aMailIds as $iMailId) {
             $aMailTemps[] = $oSMailTemp->get($iMailId, array(
-                Const_MailTemp::F_ID,
                 Const_MailTemp::F_NAME,
                 Const_MailTemp::F_WEBPOWERID,
                 Const_MailTemp::F_INUSE,
@@ -39,6 +38,18 @@ class Mod_MsgDeal extends Mod_SysMsgDeal {
             ));
         }
         return $this->succReply($aMailTemps);
+    }
+
+    protected function getMailTemp($aParams = array()) {
+        if(empty($aParams[Const_MailTemp::F_NAME])) {
+            return $this->errReply(null, 'mail template name is not defined!');
+        }
+        $aMailTemp = Store_MailTemp::getIns()->get($aParams[Const_MailTemp::F_NAME]);
+        if(empty($aMailTemp)){
+            return $this->errReply(null, 'mail template not found!');
+        }else{
+            return $this->succReply($aMailTemp);
+        }
     }
     
 }

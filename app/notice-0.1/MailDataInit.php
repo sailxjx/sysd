@@ -90,7 +90,7 @@ class MailDataInit extends Base {
                 Const_MailTemp::F_CTIME => date('Y-m-d H:i:s') ,
                 Const_MailTemp::F_INUSE => 1
             ));
-            $this->oRedis->sadd($sMailTempKey, $iMailId);
+            $this->oRedis->zadd($sMailTempKey, 1, $iMailId);
         }
         return true;
     }

@@ -9,6 +9,7 @@ abstract class Store_SysTable extends Mod_SysBase {
     
     protected static $sTable;
     protected static $aFields;
+    protected $sPkField;
     protected $aData = array();
     protected $oRedis;
     protected $sRKeyClass = 'Redis_SysKey'; //class to build the redis key
@@ -44,7 +45,7 @@ abstract class Store_SysTable extends Mod_SysBase {
             }
             static ::$aFields = $aFields;
         }
-        return static::$aFields;
+        return static ::$aFields;
     }
     
     /**
@@ -63,9 +64,9 @@ abstract class Store_SysTable extends Mod_SysBase {
         return false;
     }
     
-    public function get($iId, $mFields = null) {
+    public function get($sPkVal, $mFields = null) {
         $oRedis = $this->oRedis;
-        $sKey = $this->getTableKey($iId);
+        $sKey = $this->getTableKey($sPkVal);
         if (empty($mFields)) {
             return $oRedis->hgetall($sKey);
         }
@@ -92,23 +93,45 @@ abstract class Store_SysTable extends Mod_SysBase {
             return false;
         }
         $oRedis = $this->oRedis;
-        $aData['id'] = $this->getId();
+        $sPkField = $this->getPkField();
+        $aData[$sPkField] = $this->getPkVal();
+        if(empty($aData[$sPkField])){
+            return false;
+        }
         $sRExpKey = strtoupper(self::getTable()); //过期时间key
-        $sKey = $this->getTableKey($aData['id']);
+        $sKey = $this->getTableKey($aData[$sPkField]);
         $oRedis->hmset($sKey, $aData);
         $sRExpClass = $this->sRExpClass;
         if (isset($sRExpClass::$sRExpKey) && $sRExpClass::$sRExpKey > 0) { //只有在设置有效期常量时设置有效期
             $oRedis->expire($sKey, $sRExpClass::$sRExpKey);
         }
         $this->reset(); //重设fields供下次调用
-        return $aData['id'];
+        return $aData[$sPkField];
     }
     
-    protected function getTableKey($iId) {
+    protected function getPkField() {
+        return isset($this->sPkField) ? $this->sPkField : 'id';
+    }
+
+    protected function getPkVal() {
+        $sPkField = $this->getPkField();
+        if($sPkField == 'id'){
+            return $this->getId();
+        }else{
+            if (isset($this->aData[$sPkField])) {
+                return $this->aData[$sPkField];
+            }else{
+                trigger_error("pk [{$sPkField}] value not exist!", E_USER_WARNING);
+                return null;
+            }
+        }
+    }
+    
+    protected function getTableKey($sPkVal) {
         $sRTableFunc = self::getTable() . 'Table';
         $sRKeyClass = $this->sRKeyClass;
         return $sRKeyClass::$sRTableFunc(array(
-            'id' => $iId
+            'id' => $sPkVal
         ));
     }
     
@@ -116,14 +139,14 @@ abstract class Store_SysTable extends Mod_SysBase {
      * 获取table名
      */
     public static function getTable() {
-        if (!isset(static::$sTable)) {
+        if (!isset(static ::$sTable)) {
             list($sPre, $sTable) = explode('_', get_called_class());
             if (empty($sTable)) {
                 trigger_error('could not find the called table', E_USER_ERROR);
             }
-            static::$sTable = $sTable;
+            static ::$sTable = $sTable;
         }
-        return static::$sTable;
+        return static ::$sTable;
     }
     
     public function __set($sKey, $sVal) {

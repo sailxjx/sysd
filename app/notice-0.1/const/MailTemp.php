@@ -1,6 +1,5 @@
 <?php
 abstract class Const_MailTemp {
-    const F_ID = 'id';
     const F_NAME = 'name';
     const F_TEMP = 'temp';
     const F_CTIME = 'ctime';
