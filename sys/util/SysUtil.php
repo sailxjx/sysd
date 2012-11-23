@@ -17,7 +17,8 @@ abstract class Util_SysUtil {
         if (empty($sCName)) {
             return null;
         }
-        return Util::getConfig('PID_PATH') . $sCName . '.pid';
+        $iPid = posix_getpid();
+        return Util::getConfig('PID_PATH') . "{$sCName}_{$iPid}.pid";
     }
     
     public static function stopProcById($iPid) {
@@ -47,11 +48,11 @@ abstract class Util_SysUtil {
     }
     
     public static function getProcIdsByClass($sJClass) {
-        $sPidFile = self::getPidFileByClass($sJClass);
+        $sPidPath = Util::getConfig('PID_PATH')."{$sJClass}_*.pid";
+        $aPidFiles = glob($sPidPath);
         $aPids = array();
-        if (is_file($sPidFile)) {
-            $sPids = Util::getFileCon($sPidFile);
-            $aPids = explode(',', $sPids);
+        foreach ($aPidFiles as $sPidFile) {
+            $aPids[] = Util::getFileCon($sPidFile);
         }
         return $aPids;
     }
@@ -200,19 +201,11 @@ abstract class Util_SysUtil {
      * add pid in pid file
      * @return boolean
      */
-    public static function addPid($mPid = null, $sClassName = null) {
-        $sClassName = isset($sClassName) ? $sClassName : Core::getIns()->getJobClass();
-        $mPid = isset($mPid) ? $mPid : posix_getpid();
-        if (!is_array($mPid)) {
-            $mPid = array(
-                $mPid
-            );
-        }
+    public static function addPid() {
+        $sClassName = Core::getIns()->getJobClass();
+        $iPid = posix_getpid();
         $sPidFile = self::getPidFileByClass($sClassName);
-        $sPids = Util::getFileCon($sPidFile);
-        $aPids = !empty($sPids) ? explode(',', $sPids) : array();
-        $aPids = array_values(array_unique(array_merge($aPids, $mPid)));
-        return Util::setFileCon($sPidFile, implode(',', $aPids));
+        return Util::setFileCon($sPidFile, $iPid);
     }
     
     /**
@@ -269,17 +262,7 @@ abstract class Util_SysUtil {
         if (!is_file($sPidFile)) {
             return false;
         }
-        $sPids = file_get_contents($sPidFile);
-        $aPids = explode(',', $sPids);
-        $aPids = array_diff($aPids, array(
-            $iPid
-        ));
-        if (empty($aPids)) {
-            @unlink($sPidFile);
-        } else {
-            file_put_contents($sPidFile, implode(',', $aPids));
-        }
-        return true;
+        return @unlink($sPidFile);
     }
     
     /**

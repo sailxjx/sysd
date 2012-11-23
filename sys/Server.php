@@ -29,8 +29,7 @@ class Server extends Base {
                 $this->aPids[$iPid] = $sFunc;
                 continue;
             } else { //child
-                $iPid = posix_getpid();
-                Util_SysUtil::addPid($iPid);
+                Util_SysUtil::addPid();
                 return $this->{$sFunc}();
             }
         }

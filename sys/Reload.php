@@ -18,7 +18,7 @@ class Reload extends Base {
     }
     
     protected function reloadAll() {
-        $aJList = Util::getConfig('INIT_JOBS');
+        $aJList = array_merge(Util::getConfig('INIT_JOBS') , Util::getConfig('JOBS'));
         $aCList = array(); //Class list
         foreach ((array)$aJList as $sOCmd) {
             $aOCmd = explode(' ', trim($sOCmd));
@@ -37,13 +37,12 @@ class Reload extends Base {
             $this->oCore->showHelp();
             return false;
         }
-        $aPids = Util_SysUtil::getProcIdsByClass($sJClass);
-        $sPidFile = Util_SysUtil::getPidFileByClass($sJClass);
-        $this->reloadProcByIds($aPids, $sPidFile);
+        $aPid = Util_SysUtil::getProcIdsByClass($sJClass);
+        $this->reloadProcByIds($aPid);
         return true;
     }
     
-    protected function reloadProcByIds($aPids, $sPidFile) {
+    protected function reloadProcByIds($aPids) {
         $iMyPid = posix_getpid();
         foreach ($aPids as $iPid) {
             if ($iMyPid == $iPid) { //if this function is called by a restart command, it will not be killed

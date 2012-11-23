@@ -39,12 +39,11 @@ class Stop extends Base {
             return false;
         }
         $aPids = Util_SysUtil::getProcIdsByClass($sJClass);
-        $sPidFile = Util_SysUtil::getPidFileByClass($sJClass);
-        $this->stopProcByIds($aPids, $sPidFile);
+        $this->stopProcByIds($aPids);
         return true;
     }
     
-    protected function stopProcByIds($aPids, $sPidFile) {
+    protected function stopProcByIds($aPids) {
         $iMyPid = posix_getpid();
         foreach ($aPids as $iPid) {
             if ($iMyPid == $iPid) { //if this function is called by a restart command, it will not be killed
