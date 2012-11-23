@@ -60,8 +60,12 @@ abstract class Store_SysTable extends Mod_SysBase {
     /**
      * can not del data now
      */
-    public function del() {
-        return false;
+    public function del($sPkVal) {
+        $oRedis = $this->oRedis;
+        $sKey = $this->getTableKey($sPkVal);
+        $r = $oRedis->del($sKey);
+        $this->reset();
+        return $r;
     }
     
     public function get($sPkVal, $mFields = null) {

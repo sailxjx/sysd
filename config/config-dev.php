@@ -29,7 +29,7 @@ $config['INIT_JOBS'] = array(
 
 // sub job lists started by server
 $config['JOBS'] = array(
-    'MailDataInit -d --log-file=' . APP_PATH . 'var/log/maildatainit.log', //need not listen, only once
+    // 'MailDataInit -d --log-file=' . APP_PATH . 'var/log/maildatainit.log', //need not listen, only once
     'MailServer -d --log-file=' . APP_PATH . 'var/log/mailserver.log -w',
     'MailVent -d --log-file=' . APP_PATH . 'var/log/mailvent.log -w',
     'MailSink -d --log-file=' . APP_PATH . 'var/log/mailsink.log -w',

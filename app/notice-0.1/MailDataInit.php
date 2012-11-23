@@ -77,7 +77,6 @@ class MailDataInit extends Base {
         }
         $sMailTempPath = $sNoticePath . 'tmp/mailtemp/*';
         $aMailTempFiles = glob($sMailTempPath);
-        $sMailTempKey = Redis_Key::mailTemplates();
         $oSMailTemp = Store_MailTemp::getIns();
         foreach ((array)$aMailTempFiles as $sMailTempFile) {
             $sMailTemp = file_get_contents($sMailTempFile);
@@ -87,10 +86,9 @@ class MailDataInit extends Base {
             $iMailId = $oSMailTemp->set(array(
                 Const_MailTemp::F_NAME => $sMailTempName,
                 Const_MailTemp::F_TEMP => $sMailTemp,
-                Const_MailTemp::F_CTIME => date('Y-m-d H:i:s') ,
+                Const_MailTemp::F_UTIME => time(),
                 Const_MailTemp::F_INUSE => 1
             ));
-            $this->oRedis->zadd($sMailTempKey, 1, $iMailId);
         }
         return true;
     }

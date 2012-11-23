@@ -30,10 +30,19 @@ abstract class Const_Mail {
     const S_ERROR = 2;
     const S_FAIL = 3;
     const S_SUCC = 4;
-
+    
+    const C_SERVICE_NAME = 'name';
     const C_SERVICE_TEMP = 'temp';
     const C_SERVICE_SCORE = 'score';
     const TEMP_LOCAL = 'local';
     const TEMP_REMOTE = 'remote';
+    
+    public static function getServiceFields() {
+        return array(
+            self::C_SERVICE_NAME,
+            self::C_SERVICE_SCORE,
+            self::C_SERVICE_TEMP
+        );
+    }
     
 }

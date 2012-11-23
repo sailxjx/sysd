@@ -20,14 +20,14 @@ class Mod_SysMsgDeal extends Mod_SysBase {
         return $this->errReply('error', 'could not find the called function');
     }
     
-    protected function succReply($mData, $sMsg = 'succ') {
+    protected function succReply($mData = null, $sMsg = 'succ') {
         $aData['status'] = 1;
         $aData['msg'] = $sMsg;
         $aData['data'] = $mData;
         return json_encode($aData);
     }
     
-    protected function errReply($mData, $sMsg = 'error') {
+    protected function errReply($mData = null, $sMsg = 'error') {
         $aData['status'] = 0;
         $aData['msg'] = $sMsg;
         $aData['data'] = $mData;
