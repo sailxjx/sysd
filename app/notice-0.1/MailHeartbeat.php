@@ -5,14 +5,20 @@ class MailHeartbeat extends Base {
     protected $oRedis;
     
     protected function __construct() {
+        parent::__construct();
         $this->oRedis = Fac_SysDb::getIns()->loadRedis();
     }
     
     protected function main() {
-        while (1) {
-            $this->heartbeat();
-            sleep($this->iSleep);
-        }
+        $this->recvMail();
+        // while (1) {
+        //     $this->heartbeat();
+        //     sleep($this->iSleep);
+        // }
+    }
+
+    protected function recvMail() {
+        $oPOPMail = new Mod_POPMail('pop.163.com', 110, 'heartbeat51fanli', '123456abc');
     }
     
     protected function heartbeat() {
