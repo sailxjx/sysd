@@ -3,6 +3,13 @@ class MailHeartbeat extends Base {
     
     protected $iSleep = 300; // 300 seconds
     protected $oRedis;
+    protected $aMailBoxes;
+    protected $sHbMailTitle = 'Heartbeat Mail';
+    protected $aHbMailCon;
+    protected $aServiceErrors = array(
+        'easeye' => 1,
+        'webpower' => 2
+    );
     
     protected function __construct() {
         parent::__construct();
@@ -10,35 +17,46 @@ class MailHeartbeat extends Base {
     }
     
     protected function main() {
+        print_r($this->loadServices());exit;
         $this->recvMail();
-        // while (1) {
-        //     $this->heartbeat();
-        //     sleep($this->iSleep);
-        // }
     }
-
+    
     protected function recvMail() {
-        $oPOPMail = new Mod_POPMail('pop.163.com', 110, 'heartbeat51fanli', '123456abc');
+        $oPOPMail = new Mod_POPMail('pop.163.com', 110, 'heartbeat51fanli@163.com', '123456abc');
+        print_r($oPOPMail->listMail());
     }
     
-    protected function heartbeat() {
-        $this->getMailTemp();
+    protected function hbSend() {
+        $aMailBoxes = $this->loadMailBoxes();
+        foreach ($aMailBoxes as $sAddress => $aMailBox) {
+            
+        }
     }
     
-    protected function getMailTemp() {
-        $sMailTemp = $this->oRedis->hget(Redis_Key::mailTemplates() , 'safequestion');
-        $aParams = array(
-            'username' => 'jxxu',
-            'date' => date('Y-m-d') ,
-            'code' => rand(1, 9999)
-        );
-        extract($aParams);
-        eval("\$sMail = <<<EOF\n".$sMailTemp. "\nEOF;\n");
-        return $sMail;
+    protected function gethbMailParams() {
+        $aParams = array();
+    }
+    
+    protected function hbRecv() {
+        $aMailBoxes = $this->aMailBoxes;
     }
     
     protected function loadMailBoxes() {
-        return $this->oRedis->smembers(Redis_Key::mailSysBoxes());
+        $aMailBoxes = $this->oRedis->hgetall(Redis_Key::hbMailBoxes());
+        foreach ((array)$aMailBoxes as $sAddress => $sMailBox) {
+            $aMailBoxes[$sAddress] = json_decode($sMailBox, true);
+        }
+        $this->aMailBoxes = $aMailBoxes;
+        return $aMailBoxes;
+    }
+
+    protected function loadServices() {
+        $aMailServices = $this->oRedis->hgetall(Redis_Key::mailServices());
+        foreach ((array)$aMailServices as $sName=>$sMailService) {
+            $aMailServices[$sName] = json_decode($sMailService, true);
+        }
+        $this->aMailServices = $aMailServices;
+        return $this->aMailServices;
     }
     
 }

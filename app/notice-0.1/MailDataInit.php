@@ -20,8 +20,13 @@ class MailDataInit extends Base {
         )
     );
     
-    protected $aSysMailBoxes = array(
-        'jingxin.xu@51fanli.com'
+    protected $aHbMailBoxes = array(
+        'heartbeat51fanli@163.com' => array(
+            'server' => 'pop.163.com',
+            'port' => '110',
+            'user' => 'heartbeat51fanli',
+            'pass' => '123456abc'
+        ),
     );
     
     protected function __construct() {
@@ -31,7 +36,7 @@ class MailDataInit extends Base {
     
     protected function main() {
         $this->initServices();
-        $this->initSysMailBoxes();
+        $this->initHeartbeatMailBoxes();
         $this->initMailTemps();
     }
     
@@ -52,10 +57,10 @@ class MailDataInit extends Base {
      * init system mail boxes to send heartbeat mails
      *
      */
-    protected function initSysMailBoxes() {
-        $sSysMailBoxKey = Redis_Key::mailSysBoxes();
-        foreach ($this->aSysMailBoxes as $sMailBox) {
-            $this->oRedis->sadd($sSysMailBoxKey, $sMailBox);
+    protected function initHeartbeatMailBoxes() {
+        $sSysMailBoxKey = Redis_Key::hbMailBoxes();
+        foreach ($this->aHbMailBoxes as $sMailAddress => $aMailBox) {
+            $this->oRedis->hset($sSysMailBoxKey, $sMailAddress, json_encode($aMailBox));
         }
         return true;
     }
@@ -86,7 +91,7 @@ class MailDataInit extends Base {
             $iMailId = $oSMailTemp->set(array(
                 Const_MailTemp::F_NAME => $sMailTempName,
                 Const_MailTemp::F_TEMP => $sMailTemp,
-                Const_MailTemp::F_UTIME => time(),
+                Const_MailTemp::F_UTIME => time() ,
                 Const_MailTemp::F_INUSE => 1
             ));
         }
