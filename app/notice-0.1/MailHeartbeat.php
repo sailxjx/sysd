@@ -17,7 +17,6 @@ class MailHeartbeat extends Base {
     }
     
     protected function main() {
-        print_r($this->loadServices());exit;
         $this->recvMail();
     }
     
@@ -28,9 +27,32 @@ class MailHeartbeat extends Base {
     
     protected function hbSend() {
         $aMailBoxes = $this->loadMailBoxes();
+        $aMailServices = $this->loadServices();
+        $oSMail = Store_Mail::getIns();
         foreach ($aMailBoxes as $sAddress => $aMailBox) {
-            
+            foreach ($aMailServices as $sService => $aService) {
+                $iTime = time();
+                $aMail = array(
+                    Const_Mail::F_SENDER => 'sysd',
+                    Const_Mail::F_RECEIVER => 'heartbeat',
+                    Const_Mail::F_EMAIL => $sAddress,
+                    Const_Mail::F_TITLE => $this->sHbMailTitle,
+                    Const_Mail::F_CONTENT => $this->getContent($iTime) ,
+                    Const_Mail::F_CTIME => $iTime,
+                    Const_Mail::F_EXTRA => 'heartbeat',
+                    Const_Mail::F_SERVICETYPE => $sService,
+                    Const_Mail::F_MAILPARAMS => $this->getMailParams()
+                );
+            }
         }
+    }
+    
+    protected function getContent($iTime) {
+        
+    }
+
+    protected function getMailParams() {
+
     }
     
     protected function gethbMailParams() {
@@ -49,10 +71,10 @@ class MailHeartbeat extends Base {
         $this->aMailBoxes = $aMailBoxes;
         return $aMailBoxes;
     }
-
+    
     protected function loadServices() {
         $aMailServices = $this->oRedis->hgetall(Redis_Key::mailServices());
-        foreach ((array)$aMailServices as $sName=>$sMailService) {
+        foreach ((array)$aMailServices as $sName => $sMailService) {
             $aMailServices[$sName] = json_decode($sMailService, true);
         }
         $this->aMailServices = $aMailServices;
