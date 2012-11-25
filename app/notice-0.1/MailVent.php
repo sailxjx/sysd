@@ -56,7 +56,9 @@ class MailVent extends Task_Vent {
             Const_Mail::F_SERVICETYPE,
             Const_Mail::F_TRYSERVICE,
         ));
-        $aMail[Const_Mail::F_SERVICETYPE] = $this->getRecommendServiceType($aMail);
+        if ($aMail[Const_Mail::F_EXTRA] != Const_Mail::EXTRA_HEARTBEAT) {
+            $aMail[Const_Mail::F_SERVICETYPE] = $this->getRecommendServiceType($aMail);
+        }
         $aMail[Const_Mail::F_CONTENT] = $this->getMailCon($aMail);
         Store_Mail::getIns()->set($aMail);
         return $aMail;
@@ -90,12 +92,14 @@ class MailVent extends Task_Vent {
         switch ($aService[Const_Mail::C_SERVICE_TEMP]) {
             case Const_Mail::TEMP_LOCAL:
                 $sMailCon = $this->buildMailConFromLocal($aMail);
-            break;
+                break;
+
             case Const_Mail::TEMP_REMOTE:
                 $sMailCon = $this->buildMailConFromRemote($aMail);
-            break;
+                break;
+
             default:
-            break;
+                break;
         }
         return $sMailCon;
     }
@@ -149,7 +153,7 @@ class MailVent extends Task_Vent {
             } else {
                 foreach ($aVCs as $sVC => $iWeight) {
                     $sVC = Redis_Key::convKeyToFunc($sVC);
-                    for ($i = 0;$i < $iWeight;$i++) {
+                    for ($i = 0; $i < $iWeight; $i++) {
                         $this->mVCs[] = $sVC;
                     }
                 }

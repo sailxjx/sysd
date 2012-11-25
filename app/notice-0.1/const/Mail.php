@@ -36,6 +36,8 @@ abstract class Const_Mail {
     const C_SERVICE_SCORE = 'score';
     const TEMP_LOCAL = 'local';
     const TEMP_REMOTE = 'remote';
+
+    const EXTRA_HEARTBEAT = 'heartbeat';
     
     public static function getServiceFields() {
         return array(

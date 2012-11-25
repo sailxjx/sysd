@@ -17,7 +17,7 @@ class Mod_POPMail {
     const E_AUTH_PASS_ERROR = 4;
     const E_CMD_LIST_ERROR = 5;
     const E_CMD_RETR_ERROR = 6;
-
+    
     public function __construct($sServer, $iPort, $sUser, $sPass) {
         $this->sServer = $sServer;
         $this->iPort = $iPort;
@@ -26,42 +26,44 @@ class Mod_POPMail {
     }
     
     public function __destruct() {
-        if (isset($this->oSock)) {
-            fputs($this->oSock, "QUIT\r\n");
-        }
+        $this->quit();
     }
     
     protected function connect() {
-        if (!$this->oSock) {
-            $oSock = fsockopen($this->sServer, $this->iPort, $this->iSockErr, $this->sSockErr, $this->iSockTimeOut);
-            if (!$oSock) {
-                throw new Exception("pop server connection failed", self::E_CONNECT_FAILED);
-            }
-            stream_set_blocking($oSock, true);
-            $sMsg = fgets($oSock, 512);
-            if (substr($sMsg, 0, 3) != '+OK') {
-                throw new Exception($sMsg, self::E_CONNECT_ABORT);
-            }
-            $this->oSock = $oSock;
+        $oSock = fsockopen($this->sServer, $this->iPort, $this->iSockErr, $this->sSockErr, $this->iSockTimeOut);
+        if (!$oSock) {
+            throw new Exception("pop server connection failed", self::E_CONNECT_FAILED);
         }
+        stream_set_blocking($oSock, true);
+        $sMsg = fgets($oSock, 512);
+        if (substr($sMsg, 0, 3) != '+OK') {
+            throw new Exception($sMsg, self::E_CONNECT_ABORT);
+        }
+        $this->oSock = $oSock;
         return $this->oSock;
     }
-
-    protected function authCheck () {
-        if (!$this->bCheckedIn) {
-            $oSock = $this->connect();
-            fputs($oSock, 'USER '.$this->sUser."\r\n");
-            $sMsg = fgets($oSock, 512);
-            if(substr($sMsg, 0, 3)!='+OK'){
-                throw new Exception($sMsg, self::E_AUTH_USER_ERROR);
-            }
-            fputs($oSock, 'PASS '.$this->sPass."\r\n");
-            $sMsg = fgets($oSock, 512);
-            if(substr($sMsg, 0,3)!='+OK'){
-                throw new Exception($sMsg, self::E_AUTH_PASS_ERROR);
-            }
-            $this->bCheckedIn = true;
+    
+    protected function quit() {
+        if (isset($this->oSock)) {
+            fputs($this->oSock, "QUIT\r\n");
+            unset($this->oSock);
         }
+        return true;
+    }
+    
+    protected function authCheck() {
+        $oSock = $this->connect();
+        fputs($oSock, 'USER ' . $this->sUser . "\r\n");
+        $sMsg = fgets($oSock, 512);
+        if (substr($sMsg, 0, 3) != '+OK') {
+            throw new Exception($sMsg, self::E_AUTH_USER_ERROR);
+        }
+        fputs($oSock, 'PASS ' . $this->sPass . "\r\n");
+        $sMsg = fgets($oSock, 512);
+        if (substr($sMsg, 0, 3) != '+OK') {
+            throw new Exception($sMsg, self::E_AUTH_PASS_ERROR);
+        }
+        $this->bCheckedIn = true;
         return $this->oSock;
     }
     
@@ -69,13 +71,14 @@ class Mod_POPMail {
         $oSock = $this->authCheck();
         fputs($oSock, "LIST\r\n");
         $sMsg = fgets($oSock, 512);
-        if (substr($sMsg, 0,3)!='+OK') {
+        if (substr($sMsg, 0, 3) != '+OK') {
             throw new Exception($sMsg, self::E_CMD_LIST_ERROR);
         }
         $aMailList = array();
-        while (substr($sLine = fgets($oSock, 512), 0, 1) !== '.') {
+        while (substr($sLine = fgets($oSock, 512) , 0, 1) !== '.') {
             $aMailList[] = $sLine;
         }
+        $this->quit();
         return $aMailList;
     }
     
@@ -83,16 +86,17 @@ class Mod_POPMail {
         $oSock = $this->authCheck();
         fputs($oSock, "RETR $iNo\r\n");
         $sMsg = fgets($oSock, 512);
-        if(substr($sMsg, 0, 3)!='+OK'){
+        if (substr($sMsg, 0, 3) != '+OK') {
             throw new Exception($sMsg, self::E_CMD_RETR_ERROR);
         }
         $sMail = '';
-        while (substr($sLine = fgets($oSock, 1024), 0, 1) !== '.') {
-            $sMail .= $sLine;
+        while (substr($sLine = fgets($oSock, 1024) , 0, 1) !== '.') {
+            $sMail.= $sLine;
         }
-        if (strpos($sMail,'Content-Transfer-Encoding: quoted-printable')!==false) {
+        if (strpos($sMail, 'Content-Transfer-Encoding: quoted-printable') !== false) {
             $sMail = quoted_printable_decode($sMail);
         }
+        $this->quit();
         return $sMail;
     }
 }

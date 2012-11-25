@@ -28,6 +28,8 @@ class MailDataInit extends Base {
             'pass' => '123456abc'
         ),
     );
+
+    protected $iHbMailInterval = 300;
     
     protected function __construct() {
         parent::__construct();
@@ -58,10 +60,11 @@ class MailDataInit extends Base {
      *
      */
     protected function initHeartbeatMailBoxes() {
-        $sSysMailBoxKey = Redis_Key::hbMailBoxes();
+        $sSysMailBoxKey = Redis_Key::mailHbBoxes();
         foreach ($this->aHbMailBoxes as $sMailAddress => $aMailBox) {
             $this->oRedis->hset($sSysMailBoxKey, $sMailAddress, json_encode($aMailBox));
         }
+        $this->oRedis->set(Redis_Key::mailHbInterval(), $this->iHbMailInterval);
         return true;
     }
     

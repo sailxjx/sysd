@@ -20,7 +20,12 @@ class MailSink extends Task_Sink {
         while ($sMsg = $oTask->recv()) {
             Util::output('recv msg: ' . $sMsg);
             list($iMailId, $sTo) = explode($this->sSplite, $sMsg);
-            $this->setTryService($iMailId);
+            $aMail = $this->setTryService($iMailId);
+            if ($aMail[Const_Mail::F_EXTRA] == Const_Mail::EXTRA_HEARTBEAT) {// patch for heartbeat
+                if ($sTo != 'succ') {
+                    $sTo = 'fail';
+                }
+            }
             $oQMail->move('send', $sTo, $iMailId, time());
         }
     }
@@ -30,7 +35,8 @@ class MailSink extends Task_Sink {
         $aMail = $oSMail->get($iMailId, array(
             Const_Mail::F_ID,
             Const_Mail::F_SERVICETYPE,
-            Const_Mail::F_TRYSERVICE
+            Const_Mail::F_TRYSERVICE,
+            Const_Mail::F_EXTRA
         ));
         $aTryService = json_decode($aMail[Const_Mail::F_TRYSERVICE], true);
         $aTryService = empty($aTryService) ? array() : $aTryService;
