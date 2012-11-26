@@ -1,7 +1,6 @@
 <?php
 class MailHeartbeat extends Base {
     
-    protected $iSleep = 300; // 300 seconds
     protected $oRedis;
     protected $aMailBoxes;
     protected $sMailHbTitle = 'Heartbeat Mail';
@@ -140,9 +139,11 @@ class MailHeartbeat extends Base {
                 }
                 $aReadMailIds[$sAddress] = array_unique(array_merge($aMailDiff, $aList));
                 $aMails[$sAddress] = $aRetrMail;
+                $this->oRedis->hincrby(Redis_Key::mailHbSendStatus(), 'succ_'.date('Y-m-d_H'), 1);
             }
             catch(Exception $e) {
                 Util::output($e->getMessage());
+                $this->oRedis->hincrby(Redis_Key::mailHbSendStatus(), 'fail_'.date('Y-m-d_H'), 1);
                 return $this->recvMails();
             }
         }
