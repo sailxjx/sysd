@@ -13,4 +13,7 @@ class Const_Log {
     const F_DATA = '%d';
     const F_CODE = '%c';
 
+    const POS_MAILQUEUE = 001;
+    const POS_HEARTBEAT = 002;
+
 }

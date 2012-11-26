@@ -49,14 +49,8 @@ class MailVent extends Task_Vent {
      */
     protected function decMail($iMailId) {
         $oRedis = $this->oRedis;
-        $aMail = Store_Mail::getIns()->get($iMailId, array(
-            Const_Mail::F_ID,
-            Const_Mail::F_MAILPARAMS,
-            Const_Mail::F_CONTENT,
-            Const_Mail::F_SERVICETYPE,
-            Const_Mail::F_TRYSERVICE,
-        ));
-        if ($aMail[Const_Mail::F_EXTRA] != Const_Mail::EXTRA_HEARTBEAT) {
+        $aMail = Store_Mail::getIns()->get($iMailId);
+        if (empty($aMail[Const_Mail::F_EXTRA]) || $aMail[Const_Mail::F_EXTRA] != Const_Mail::EXTRA_HEARTBEAT) {
             $aMail[Const_Mail::F_SERVICETYPE] = $this->getRecommendServiceType($aMail);
         }
         $aMail[Const_Mail::F_CONTENT] = $this->getMailCon($aMail);
@@ -67,7 +61,7 @@ class MailVent extends Task_Vent {
     protected function getRecommendServiceType(&$aMail) {
         $aServices = $this->aServices;
         $sServiceType = '';
-        $aMailTryService = json_decode($aMail[Const_Mail::F_TRYSERVICE], true);
+        $aMailTryService = isset($aMail[Const_Mail::F_TRYSERVICE]) ? json_decode($aMail[Const_Mail::F_TRYSERVICE], true): array();
         $aMailTryService = empty($aMailTryService) ? array() : $aMailTryService;
         if (!empty($aMail[Const_Mail::F_SERVICETYPE]) && isset($aServices[$aMail[Const_Mail::F_SERVICETYPE]]) && !in_array($aMail[Const_Mail::F_SERVICETYPE], $aMailTryService)) { // has servicetype and servicetype is available
             $sServiceType = $aMail[Const_Mail::F_SERVICETYPE];
@@ -92,24 +86,40 @@ class MailVent extends Task_Vent {
         switch ($aService[Const_Mail::C_SERVICE_TEMP]) {
             case Const_Mail::TEMP_LOCAL:
                 $sMailCon = $this->buildMailConFromLocal($aMail);
-                break;
-
+            break;
             case Const_Mail::TEMP_REMOTE:
                 $sMailCon = $this->buildMailConFromRemote($aMail);
-                break;
-
+            break;
             default:
-                break;
+            break;
         }
         return $sMailCon;
     }
     
     protected function buildMailConFromLocal(&$aMail) {
-        return $aMail[Const_Mail::F_MAILPARAMS];
+        $sMailTemp = $aMail[Const_Mail::F_MAILTEMPLATE];
+        $aMailTemp = Store_MailTemp::getIns()->get($sMailTemp);
+        $aMailParams = json_decode($aMail[Const_Mail::F_MAILPARAMS], true);
+        if (empty($aMailTemp)) {
+            return $aMail[Const_Mail::F_CONTENT];
+        }
+        $aParams = array();
+        foreach ($aMailParams[Const_Mail::P_PARAMS] as $k => $v) {
+            $aParams['{$'.$k.'}'] = $v;
+        }
+        $sCon = str_replace(array_keys($aParams), array_values($aParams), $aMailTemp[Const_MailTemp::F_TEMP]);
+        return $sCon;
     }
     
     protected function buildMailConFromRemote(&$aMail) {
-        return $aMail[Const_Mail::F_MAILPARAMS];
+        $sMailTemp = $aMail[Const_Mail::F_MAILTEMPLATE];
+        $aMailTemp = Store_MailTemp::getIns()->get($sMailTemp);
+        $aMailCon = json_decode($aMail[Const_Mail::F_MAILPARAMS], true);
+        if (empty($aMailTemp)) {
+            return $aMail[Const_Mail::F_MAILPARAMS];
+        }
+        list($aMailCon[Const_Mail::P_CAMPAIGNID], $aMailCon[Const_Mail::P_GROUPID], $aMailCon[Const_Mail::P_MAILINGID]) = explode(',', $aMailTemp[Const_MailTemp::F_WEBPOWERID]);
+        return json_encode($aMailCon);
     }
     
     protected function loadChannelSet() {
@@ -153,7 +163,7 @@ class MailVent extends Task_Vent {
             } else {
                 foreach ($aVCs as $sVC => $iWeight) {
                     $sVC = Redis_Key::convKeyToFunc($sVC);
-                    for ($i = 0; $i < $iWeight; $i++) {
+                    for ($i = 0;$i < $iWeight;$i++) {
                         $this->mVCs[] = $sVC;
                     }
                 }

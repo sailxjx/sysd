@@ -76,7 +76,7 @@ class Mod_POPMail {
         }
         $aMailList = array();
         while (substr($sLine = fgets($oSock, 512) , 0, 1) !== '.') {
-            $aMailList[] = $sLine;
+            $aMailList[] = trim($sLine);
         }
         $this->quit();
         return $aMailList;

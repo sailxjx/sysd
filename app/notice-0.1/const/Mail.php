@@ -24,16 +24,23 @@ abstract class Const_Mail {
     const F_SERVICETYPE = 'servicetype'; //服务商标识
     const F_TRYSERVICE = 'tryservice'; //已尝试过的服务商
     const F_MAILPARAMS = 'mailparams'; //邮件替换参数
-    
+    const F_MAILTEMPLATE = 'template';
+
     const S_WAIT = 0;
     const S_SEND = 1;
     const S_ERROR = 2;
     const S_FAIL = 3;
     const S_SUCC = 4;
+
+    const P_CAMPAIGNID = 'campaignid'; // webpower only
+    const P_GROUPID = 'groupid'; // webpower only
+    const P_MAILINGID = 'mailingid'; // webpower only
+    const P_PARAMS = 'params';
     
     const C_SERVICE_NAME = 'name';
     const C_SERVICE_TEMP = 'temp';
     const C_SERVICE_SCORE = 'score';
+    const C_SERVICE_ERRTIMES = 'errtimes';
     const TEMP_LOCAL = 'local';
     const TEMP_REMOTE = 'remote';
 
@@ -43,7 +50,8 @@ abstract class Const_Mail {
         return array(
             self::C_SERVICE_NAME,
             self::C_SERVICE_SCORE,
-            self::C_SERVICE_TEMP
+            self::C_SERVICE_TEMP,
+            self::C_SERVICE_ERRTIMES
         );
     }
     

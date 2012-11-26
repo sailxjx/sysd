@@ -95,7 +95,8 @@ class MailDataInit extends Base {
                 Const_MailTemp::F_NAME => $sMailTempName,
                 Const_MailTemp::F_TEMP => $sMailTemp,
                 Const_MailTemp::F_UTIME => time() ,
-                Const_MailTemp::F_INUSE => 1
+                Const_MailTemp::F_INUSE => 1,
+                Const_MailTemp::F_WEBPOWERID => '2,96,958'
             ));
         }
         return true;

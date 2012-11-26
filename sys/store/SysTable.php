@@ -7,8 +7,7 @@
  */
 abstract class Store_SysTable extends Mod_SysBase {
     
-    protected static $sTable;
-    protected static $aFields;
+    protected $aFields;
     protected $sPkField;
     protected $aData = array();
     protected $oRedis;
@@ -25,13 +24,11 @@ abstract class Store_SysTable extends Mod_SysBase {
      * @return \Store_SysTable
      */
     private function init() {
-        self::getTable();
-        self::getFields();
         return $this;
     }
     
-    public static function getFields() {
-        if (!isset(static ::$aFields)) {
+    public function getFields() {
+        if (!isset($this->aFields)) {
             $sTable = self::getTable();
             $aFields = array();
             if (reqClass("Const_{$sTable}")) {
@@ -43,9 +40,9 @@ abstract class Store_SysTable extends Mod_SysBase {
                     }
                 }
             }
-            static ::$aFields = $aFields;
+            $this->aFields = $aFields;
         }
-        return static ::$aFields;
+        return $this->aFields;
     }
     
     /**
@@ -143,18 +140,16 @@ abstract class Store_SysTable extends Mod_SysBase {
      * 获取table名
      */
     public static function getTable() {
-        if (!isset(static ::$sTable)) {
-            list($sPre, $sTable) = explode('_', get_called_class());
-            if (empty($sTable)) {
-                trigger_error('could not find the called table', E_USER_ERROR);
-            }
-            static ::$sTable = $sTable;
+        list($sPre, $sTable) = explode('_', get_called_class());
+        if (empty($sTable)) {
+            trigger_error('could not find the called table', E_USER_ERROR);
         }
-        return static ::$sTable;
+        return $sTable;
     }
     
     public function __set($sKey, $sVal) {
-        if (!isset(static ::$aFields[$sKey])) {
+        $aFields = $this->getFields();
+        if (!isset($aFields[$sKey])) {
             trigger_error('set an illegal key in table fields [' . $sKey . ']', E_USER_WARNING);
             return false;
         }

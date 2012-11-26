@@ -76,13 +76,13 @@ class Mod_MsgDeal extends Mod_SysMsgDeal {
         }
     }
 
-    protected function setMailService ($aParams) {
+    protected function setMailService($aParams) {
         if(empty($aParams[Const_Mail::C_SERVICE_NAME])|| empty($aParams[Const_Mail::C_SERVICE_TEMP])) {
             return $this->errReply(null, 'missing mail service params');
         }
         $oRedis = $this->oRedis;
         $sServiceKey = Redis_Key::mailServices();
-        if($aParams['action'] == 'del'){
+        if(isset($aParams['action']) && $aParams['action'] == 'del'){
             $oRedis->hdel($sServiceKey, $aParams[Const_Mail::C_SERVICE_NAME]);
             return $this->succReply(null, 'mail service delete succ');
         }
@@ -91,8 +91,11 @@ class Mod_MsgDeal extends Mod_SysMsgDeal {
         if(empty($aData)){
             return $this->errReply(null, 'missing mail service data');
         }
+        if($aData[Const_Mail::C_SERVICE_SCORE] >= 0 ){
+            $aData[Const_Mail::C_SERVICE_ERRTIMES] = 0;
+        }
         $oRedis->hset($sServiceKey, $aData[Const_Mail::C_SERVICE_NAME], json_encode($aData));
-        return $this->succReply($r, 'mail service edit succ');
+        return $this->succReply(null, 'mail service edit succ');
     }
     
 }
