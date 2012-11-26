@@ -10,7 +10,7 @@ class Mod_SysMsgDeal extends Mod_SysBase {
     public function deal($sMsg) {
         $aMsg = json_decode($sMsg, true);
         $sFunc = $aMsg['func'];
-        $aParams = $aMsg['params'];
+        $aParams = isset($aMsg['params'])?$aMsg['params']:array();
         if (method_exists($this, $sFunc)) {
             return call_user_func(array(
                 $this,
@@ -70,6 +70,15 @@ class Mod_SysMsgDeal extends Mod_SysBase {
             return $this->succReply($aRParams);
         } else {
             return $this->errReply($aJob, 'run job error');
+        }
+    }
+
+    protected function getNightlyVersion() {
+        $sVerFile = APP_PATH . 'var/version';
+        if($sVersion = Util::getFileCon($sVerFile)){
+            return $this->succReply($sVersion);
+        }else{
+            return $this->errReply($sVersion);
         }
     }
     
