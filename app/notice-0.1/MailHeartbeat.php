@@ -144,6 +144,7 @@ class MailHeartbeat extends Base {
             catch(Exception $e) {
                 Util::output($e->getMessage());
                 $this->oRedis->hincrby(Redis_Key::mailHbSendStatus(), 'fail_'.date('Y-m-d_H'), 1);
+                sleep($this->getHbInterval());
                 return $this->recvMails();
             }
         }
