@@ -1,0 +1,12 @@
+#!/bin/bash
+
+EXEC=/home/tristan/coding/sysd/launcher
+case $1 in
+    start|stop|restart)
+        echo "launcher $1"
+        $EXEC $1
+        ;;
+    *)
+        echo "launcher start|stop|restart"
+        ;;
+esac

@@ -143,14 +143,14 @@ class MailHeartbeat extends Base {
             }
             catch(Exception $e) {
                 Util::output($e->getMessage());
-                continue;
+                return $this->recvMails();
             }
         }
         $this->aReadMailIds = $aReadMailIds;
         $this->oRedis->set(Redis_Key::mailPopReadIds() , json_encode($aReadMailIds));
         return $aMails;
     }
-    
+
     protected function loadMailBoxes() {
         $aMailBoxes = $this->oRedis->hgetall(Redis_Key::mailHbBoxes());
         foreach ((array)$aMailBoxes as $sAddress => $sMailBox) {
