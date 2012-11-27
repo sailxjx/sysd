@@ -68,8 +68,11 @@ class MailHeartbeat extends Base {
     protected function hbRecv() {
         $aMailBoxes = $this->aMailBoxes;
         $oSMail = Store_Mail::getIns();
-        $aPopMails = $this->recvMails();
         $aSendMails = empty($this->aSendMails)?array():$this->aSendMails;
+        if(empty($aSendMails)){
+            return false;
+        }
+        $aPopMails = $this->recvMails();
         $aMailServices = $this->loadServices();
         $bSaveService = false;
         foreach ($aSendMails as $iIndex => $iMailId) {
