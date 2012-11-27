@@ -91,6 +91,7 @@ class MailHeartbeat extends Base {
             foreach ($aAddrPopMails as $sPopMailCon) {
                 if (strpos($sPopMailCon, $sMailCon) !== false) {
                     Util::output("mail {$iMailId} checked succ");
+                    unset($this->aSendMails[$iIndex]);
                     $aMailServices[$sChannel][Const_Mail::C_SERVICE_ERRTIMES] = 0;
                     $bSaveService = true;
                     break;
