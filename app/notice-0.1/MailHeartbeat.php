@@ -99,8 +99,10 @@ class MailHeartbeat extends Base {
             }
             if (isset($this->aSendMails[$iIndex])) {
                 Mod_Log::getIns()->warning('MAILHEARTBEAT: [%t]; "%m"; %d; %c;', date('Y-m-d H:i:s') , "Channel {$sChannel} is missing a mail: {$iMailId}", '{}', Const_Log::POS_HEARTBEAT);
-                $aMailServices[$sChannel][Const_Mail::C_SERVICE_ERRTIMES] = 
-                isset($aMailServices[$sChannel][Const_Mail::C_SERVICE_ERRTIMES])?($aMailServices[$sChannel][Const_Mail::C_SERVICE_ERRTIMES]+1):1;
+                if(isset($aMailServices[$sChannel])) {
+                    $aMailServices[$sChannel][Const_Mail::C_SERVICE_ERRTIMES] = 
+                    isset($aMailServices[$sChannel][Const_Mail::C_SERVICE_ERRTIMES])?($aMailServices[$sChannel][Const_Mail::C_SERVICE_ERRTIMES]+1):1;
+                }
                 $bSaveService = true;
             }
             unset($this->aSendMails[$iIndex]);
