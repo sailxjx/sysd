@@ -34,7 +34,8 @@ class Mod_MsgDeal extends Mod_SysMsgDeal {
                 Const_MailTemp::F_NAME,
                 Const_MailTemp::F_WEBPOWERID,
                 Const_MailTemp::F_INUSE,
-                Const_MailTemp::F_UTIME
+                Const_MailTemp::F_UTIME,
+                Const_MailTemp::F_DESC,
             ));
         }
         return $this->succReply($aMailTemps);
