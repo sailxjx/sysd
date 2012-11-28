@@ -23,8 +23,8 @@ $aPost = array(
     'receiver' => 'liushuang',
     'title' => 'batch test',
     'username' => '::-)呵呵',
-    'template' => 'getuserpwd',
-    'age' => 1
+    'template' => 'test',
+    'age' => 1,
 );
 $aParams = array(
     'params' => array(
@@ -37,7 +37,7 @@ $aData = array_merge($aPost, array(
     'mailparams' => json_encode($aParams)
 ));
 // $aData['servicetype'] = 'webpower';
-for ($i = 0;$i < 10;$i++) {
-    $aData['sender'] = 'bash' . $i;
+// for ($i = 0;$i < 10;$i++) {
+//    $aData['sender'] = 'bash' . $i;
     sendMail($aData, $oRedis);
-}
+// }

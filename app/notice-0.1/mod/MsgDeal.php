@@ -92,6 +92,7 @@ class Mod_MsgDeal extends Mod_SysMsgDeal {
         if (empty($aData)) {
             return $this->errReply(null, 'missing mail service data');
         }
+        $aData[Const_Mail::C_SERVICE_SCORE] = intval($aData[Const_Mail::C_SERVICE_SCORE]);
         if ($aData[Const_Mail::C_SERVICE_SCORE] >= 0) {
             $aData[Const_Mail::C_SERVICE_ERRTIMES] = 0;
         }

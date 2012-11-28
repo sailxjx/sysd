@@ -53,7 +53,7 @@ class MailVent extends Task_Vent {
         if (empty($aMail[Const_Mail::F_EXTRA]) || $aMail[Const_Mail::F_EXTRA] != Const_Mail::EXTRA_HEARTBEAT) {
             $aMail[Const_Mail::F_SERVICETYPE] = $this->getRecommendServiceType($aMail);
         }
-        $aMail[Const_Mail::F_CONTENT] = $this->getMailCon($aMail);
+        $this->getMailCon($aMail);
         Store_Mail::getIns()->set($aMail);
         return $aMail;
     }
@@ -83,32 +83,39 @@ class MailVent extends Task_Vent {
         }
         $aService = $aServices[$aMail[Const_Mail::F_SERVICETYPE]];
         $sMailCon = '';
+        $sMailTitle = '';
         switch ($aService[Const_Mail::C_SERVICE_TEMP]) {
             case Const_Mail::TEMP_LOCAL:
-                $sMailCon = $this->buildMailConFromLocal($aMail);
+                $this->buildMailConFromLocal($aMail);
             break;
             case Const_Mail::TEMP_REMOTE:
-                $sMailCon = $this->buildMailConFromRemote($aMail);
+                $this->buildMailConFromRemote($aMail);
             break;
             default:
             break;
         }
-        return $sMailCon;
+        return $aMail[Const_Mail::F_CONTENT];
     }
-    
+
     protected function buildMailConFromLocal(&$aMail) {
         $sMailTemp = $aMail[Const_Mail::F_MAILTEMPLATE];
         $aMailTemp = Store_MailTemp::getIns()->get($sMailTemp);
         $aMailParams = json_decode($aMail[Const_Mail::F_MAILPARAMS], true);
         if (empty($aMailTemp)) {
-            return $aMail[Const_Mail::F_CONTENT];
+            return false;
+        }
+        if(empty($aMailTemp[Const_MailTemp::F_TITLE])) {
+            $sMailTempTitle = empty($aMail[Const_Mail::F_TITLE])?'返利网邮件':$aMail[Const_Mail::F_TITLE];
+        }else{
+            $sMailTempTitle = $aMailTemp[Const_MailTemp::F_TITLE];
         }
         $aParams = array();
         foreach ($aMailParams[Const_Mail::P_PARAMS] as $k => $v) {
             $aParams['{$'.$k.'}'] = $v;
         }
-        $sCon = str_replace(array_keys($aParams), array_values($aParams), $aMailTemp[Const_MailTemp::F_TEMP]);
-        return $sCon;
+        $aMail[Const_Mail::F_CONTENT] = str_replace(array_keys($aParams), array_values($aParams), $aMailTemp[Const_MailTemp::F_TEMP]);
+        $aMail[Const_Mail::F_TITLE] = str_replace(array_keys($aParams), array_values($aParams), $sMailTempTitle);
+        return true;
     }
     
     protected function buildMailConFromRemote(&$aMail) {
@@ -116,10 +123,11 @@ class MailVent extends Task_Vent {
         $aMailTemp = Store_MailTemp::getIns()->get($sMailTemp);
         $aMailCon = json_decode($aMail[Const_Mail::F_MAILPARAMS], true);
         if (empty($aMailTemp)) {
-            return $aMail[Const_Mail::F_MAILPARAMS];
+            return false;
         }
         list($aMailCon[Const_Mail::P_CAMPAIGNID], $aMailCon[Const_Mail::P_GROUPID], $aMailCon[Const_Mail::P_MAILINGID]) = explode(',', $aMailTemp[Const_MailTemp::F_WEBPOWERID]);
-        return json_encode($aMailCon);
+        $aMail[Const_Mail::F_CONTENT] = json_encode($aMailCon);
+        return true;
     }
     
     protected function loadChannelSet() {
