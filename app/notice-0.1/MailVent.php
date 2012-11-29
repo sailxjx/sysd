@@ -136,7 +136,7 @@ class MailVent extends Task_Vent {
         $aServices = $oRedis->hgetall($sChanKey);
         foreach ($aServices as $k => $v) {
             $aV = json_decode($v, true);
-            if (intval($aV[Const_Mail::C_SERVICE_SCORE]) <= 0) {
+            if (intval($aV[Const_Mail::C_SERVICE_SCORE]) < 0) {
                 unset($aServices[$k]);
             } else {
                 $aServices[$k] = $aV;
