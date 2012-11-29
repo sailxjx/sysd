@@ -23,8 +23,8 @@ class MailVent extends Task_Vent {
         $aChannels = $this->loadChannels();
         $iCNum = count($aChannels);
         while (1) { // every loop will reload channel configs
-            $this->aServices = $this->loadChannelSet();
             $aMsgs = $this->listen();
+            $this->aServices = $this->loadChannelSet();
             foreach ($aMsgs as $sMsg => $iScore) {
                 $aMail = $this->decMail($sMsg);
                 if (empty($aMail[Const_Mail::F_SERVICETYPE])) {
