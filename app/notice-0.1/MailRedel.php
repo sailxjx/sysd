@@ -16,7 +16,7 @@ class MailRedel extends Base {
         while (1) {
             $aMsgs = $this->listen();
             foreach ($aMsgs as $sMsg) { //sMsg == $iMailId
-                Util::output('redeliver msg: ' . $sMsg);
+                Util::output('redeliver msg: ' . $sMsg, 'notice');
                 if (($iRdTime = $oRMail->redeliver($sMsg)) === false) {
                     $oQMail->move('error', 'fail', $sMsg, time());
                 } else {

@@ -27,6 +27,13 @@ $config['INIT_JOBS'] = array(
     'Server -d --log-file=' . APP_PATH . 'var/log/server.log'
 );
 
+// debug (a lot of information, useful for development/testing)
+// verbose (many rarely useful info, but not a mess like the debug level)
+// notice (moderately verbose, what you want in production probably)
+// warning (only very important / critical messages are logged)
+
+$config['LOG_LEVEL'] = 'debug';
+
 // sub job lists started by server
 $config['JOBS'] = array(
     // 'MailDataInit -d --log-file=' . APP_PATH . 'var/log/maildatainit.log', //need not listen, only once

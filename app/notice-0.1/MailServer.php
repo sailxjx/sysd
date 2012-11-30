@@ -8,7 +8,7 @@
 class MailServer extends Task_Base {
     
     protected function main() {
-        Util::output('begin to listen request from clients');
+        Util::output('begin to listen request from clients', 'notice');
         $this->server();
     }
     
@@ -19,9 +19,9 @@ class MailServer extends Task_Base {
             if (empty($aMsg)) {
                 continue;
             }
-            Util::output($aMsg);
+            Util::output($aMsg, 'debug');
             $iMailId = $this->addMail($aMsg);
-            Util::output('new mail id: ' . $iMailId);
+            Util::output('new mail id: ' . $iMailId, 'notice');
             $this->queue($iMailId);
         }
         return true;

@@ -8,6 +8,13 @@
 abstract class Util {
     
     protected static $aConfigs;
+    protected static $aLogLevels = array(
+        'debug',
+        'verbose',
+        'notice',
+        'warning'
+    );
+    protected static $iLogLevel;
     
     /**
      * 读取配置文件
@@ -30,6 +37,21 @@ abstract class Util {
             return self::$aConfigs;
         }
         
+    }
+    
+    public static function getLogLevel() {
+        if (!isset(self::$iLogLevel)) {
+            $sLogLevel = Util::getConfig('LOG_LEVEL');
+            $sLogLevel = isset($sLogLevel) ? $sLogLevel : null;
+            $iIdxKey = array_search($sLogLevel, self::$aLogLevels);
+            if ($iIdxKey === false) {
+                $iLogLevel = '1';
+            } else {
+                $iLogLevel = $iIdxKey;
+            }
+            self::$iLogLevel = $iLogLevel;
+        }
+        return self::$iLogLevel;
     }
     
     public static function reloadConfig() {
@@ -82,7 +104,17 @@ abstract class Util {
     public static function output() {
         $aArgs = func_get_args();
         $sCon = '';
+        $iLogLevel = self::getLogLevel();
         foreach ($aArgs as $mArg) {
+            if (is_string($mArg)) {
+                if (($iIdxLevel = array_search($mArg, self::$aLogLevels)) !== false) {
+                    if ($iLogLevel > $iIdxLevel) {
+                        return false;
+                    } else {
+                        continue;
+                    }
+                }
+            }
             $sCon.= print_r($mArg, true);
         }
         echo self::formatLog($sCon);
@@ -102,6 +134,8 @@ abstract class Util {
     
     public static function report($iCode = 0, $sMsg = '') {
         //@todo error report
+        
+        
     }
     
     public static function getMyIp($sIfName = 'eth0') {

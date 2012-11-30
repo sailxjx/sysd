@@ -23,7 +23,7 @@ class Server extends Base {
         foreach ($this->aDaemons as $sFunc) {
             $iPid = pcntl_fork();
             if ($iPid === - 1) {
-                Util::output('could not fork: ' . $sFunc);
+                Util::output('could not fork: ' . $sFunc, 'warning');
                 exit;
             } elseif ($iPid) { //parent
                 $this->aPids[$iPid] = $sFunc;
@@ -40,13 +40,13 @@ class Server extends Base {
     protected function waitForChild() {
         while (1) {
             if ($iCPid = pcntl_wait($iStatus)) {
-                Util::output("job {$iCPid} has exited!");
+                Util::output("job {$iCPid} has exited!", 'warning');
                 sleep(1); //wait for signal handle
                 $sFunc = $this->aPids[$iCPid];
                 if (method_exists($this, $sFunc)) {
                     $iPid = pcntl_fork();
                     if ($iPid == - 1) {
-                        Util::output('could not fork: ' . $sFunc);
+                        Util::output('could not fork: ' . $sFunc, 'warning');
                         exit;
                     } elseif ($iPid) {
                         $this->aPids[$iPid] = $sFunc;
@@ -76,7 +76,7 @@ class Server extends Base {
         $oSockRep->bind($this->aDsn['reply']);
         $oPoll->add($oSockRep, ZMQ::POLL_IN | ZMQ::POLL_OUT);
         $aRead = $aWrite = array();
-        Util::output('begin listening messages from: ' . implode(',', $this->aDsn));
+        Util::output('begin listening messages from: ' . implode(',', $this->aDsn), 'notice');
         while (1) {
             try {
                 $ie = $oPoll->poll($aRead, $aWrite);
@@ -84,10 +84,10 @@ class Server extends Base {
                     foreach ($aRead as $oSock) {
                         if ($oSock === $oSockRep) {
                             $sMsg = $oSock->recv();
-                            Util::output('get message: ' . $sMsg);
+                            Util::output('get message: ' . $sMsg, 'verbose');
                             $sReply = $this->getReply($sMsg);
                             $sReply = is_scalar($sReply) ? $sReply : json_encode($sReply);
-                            Util::output('reply: ' . $sReply);
+                            Util::output('reply: ' . $sReply, 'verbose');
                             $oSock->send($sReply);
                         }
                     }
@@ -98,7 +98,7 @@ class Server extends Base {
                     pcntl_signal_dispatch();
                     continue;
                 } else {
-                    Util::output("poll failed: " . $e->getMessage());
+                    Util::output("poll failed: " . $e->getMessage(), 'warning');
                 }
             }
         }
