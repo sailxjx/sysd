@@ -93,9 +93,6 @@ class Mod_POPMail {
         while (substr($sLine = fgets($oSock, 1024) , 0, 1) !== '.') {
             $sMail.= $sLine;
         }
-        if (strpos($sMail, 'Content-Transfer-Encoding: quoted-printable') !== false) {
-            $sMail = quoted_printable_decode($sMail);
-        }
         $this->quit();
         return $sMail;
     }
