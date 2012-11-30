@@ -126,6 +126,7 @@ class MailVent extends Task_Vent {
             return false;
         }
         list($aMailCon[Const_Mail::P_CAMPAIGNID], $aMailCon[Const_Mail::P_GROUPID], $aMailCon[Const_Mail::P_MAILINGID]) = explode(',', $aMailTemp[Const_MailTemp::F_WEBPOWERID]);
+        $aMailCon[Const_Mail::P_PARAMS]['email'] = empty($aMailCon[Const_Mail::P_PARAMS]['email'])?$aMail[Const_Mail::F_EMAIL]:$aMailCon[Const_Mail::P_PARAMS]['email'];
         $aMail[Const_Mail::F_CONTENT] = json_encode($aMailCon);
         return true;
     }
