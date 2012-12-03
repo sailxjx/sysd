@@ -13,7 +13,6 @@ abstract class Queue_SysQueue extends Mod_SysBase {
         'afterMove'
     );
     protected $sRKeyClass = 'Redis_SysKey'; //class to build the redis key
-    protected $sRExpClass = 'Redis_SysExpire'; //class to get the redis expire
     
     public function __construct() {
         $this->getQueue();

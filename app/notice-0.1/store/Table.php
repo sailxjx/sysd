@@ -8,6 +8,5 @@
 abstract class Store_Table extends Store_SysTable {
     
     protected $sRKeyClass = 'Redis_Key'; //class to build the redis key
-    protected $sRExpClass = 'Redis_Expire';
     
 }

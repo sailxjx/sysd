@@ -8,6 +8,5 @@
 abstract class Queue_Queue extends Queue_SysQueue {
     
     protected $sRKeyClass = 'Redis_Key'; //class to build the redis key
-    protected $sRExpClass = 'Redis_Expire'; //class to get the redis expire
     
 }

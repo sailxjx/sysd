@@ -26,6 +26,8 @@ abstract class Const_Mail {
     const F_MAILPARAMS = 'mailparams'; //邮件替换参数
     const F_MAILTEMPLATE = 'template';
 
+    const E_STORE = 0; // store expire time
+
     const S_WAIT = 0;
     const S_SEND = 1;
     const S_ERROR = 2;
@@ -53,6 +55,10 @@ abstract class Const_Mail {
             self::C_SERVICE_TEMP,
             self::C_SERVICE_ERRTIMES
         );
+    }
+
+    public static function getStoreExpire() {
+        return self::E_STORE;
     }
     
 }

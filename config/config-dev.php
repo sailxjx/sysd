@@ -12,19 +12,17 @@ $config['MYSQL'] = array(
     )
 );
 
+// redis server configs
 $config['REDIS'] = array(
     'host' => '127.0.0.1',
-    'port' => 6379
+    'port' => 6379,
+    'expire' => 864000 // default expire
 );
 
+// zmq server configs; not in use now
 $config['SERVER_ADDR'] = array(
     'master' => '127.0.0.1',
     'slave' => '127.0.0.1'
-);
-
-// init job list
-$config['INIT_JOBS'] = array(
-    'Server -d --log-file=' . APP_PATH . 'var/log/server.log'
 );
 
 // debug (a lot of information, useful for development/testing)
@@ -33,6 +31,11 @@ $config['INIT_JOBS'] = array(
 // warning (only very important / critical messages are logged)
 
 $config['LOG_LEVEL'] = 'debug';
+
+// init job list
+$config['INIT_JOBS'] = array(
+    'Server -d --log-file=' . APP_PATH . 'var/log/server.log'
+);
 
 // sub job lists started by server
 $config['JOBS'] = array(

@@ -8,11 +8,11 @@
 abstract class Store_SysTable extends Mod_SysBase {
     
     protected $aFields;
+    protected $iExpire;
     protected $sPkField;
     protected $aData = array();
     protected $oRedis;
     protected $sRKeyClass = 'Redis_SysKey'; //class to build the redis key
-    protected $sRExpClass = 'Redis_SysExpire'; //class to get the redis expire
     
     public function __construct() {
         $this->oRedis = Fac_SysDb::getIns()->loadRedis();
@@ -43,6 +43,19 @@ abstract class Store_SysTable extends Mod_SysBase {
             $this->aFields = $aFields;
         }
         return $this->aFields;
+    }
+
+    public function getExpire() {
+        if(!isset($this->iExpire)) {
+            $sTable = self::getTable();
+            $sConstTable = "Const_{$sTable}";
+            $iExpire = -1;
+            if (reqClass($sConstTable) && method_exists($sConstTable, "getStoreExpire")) {
+                $iExpire = call_user_func("{$sConstTable}::getStoreExpire");
+            }
+            $this->iExpire = $iExpire;
+        }
+        return $this->iExpire;
     }
     
     /**
@@ -102,9 +115,8 @@ abstract class Store_SysTable extends Mod_SysBase {
         $sRExpKey = strtoupper(self::getTable()); //过期时间key
         $sKey = $this->getTableKey($aData[$sPkField]);
         $oRedis->hmset($sKey, $aData);
-        $sRExpClass = $this->sRExpClass;
-        if (isset($sRExpClass::$sRExpKey) && $sRExpClass::$sRExpKey > 0) { //只有在设置有效期常量时设置有效期
-            $oRedis->expire($sKey, $sRExpClass::$sRExpKey);
+        if (($iExpire = $this->getExpire()) > 0) { //只有在设置有效期常量时设置有效期
+            $oRedis->expire($sKey, $iExpire);
         }
         $this->reset(); //重设fields供下次调用
         return $aData[$sPkField];

@@ -12,7 +12,6 @@ abstract class Mod_SysTask extends Mod_SysBase {
     protected $aChannels = array();
     protected $mChannel = 0;
     protected $sRKeyClass = 'Redis_SysKey'; //class to build the redis key
-    protected $sRExpClass = 'Redis_SysExpire'; //class to get the redis expire
     
     abstract public function send();
     
