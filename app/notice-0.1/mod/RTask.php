@@ -29,9 +29,12 @@ class Mod_RTask extends Mod_Task {
         return $this;
     }
     
-    public function recv() {
+    public function recv($bNoBlock = false) {
         $sMsgKey = $this->mChannel;
         while (!$sMsg = $this->oRedis->rpop(Redis_Key::$sMsgKey())) {
+            if ($bNoBlock) {
+                break;
+            }
             usleep($this->iUSec);
         }
         return $sMsg;

@@ -82,16 +82,16 @@ class SmsVent extends Task_Base {
     }
     
     protected function getSmsCon(&$aSms) {
-        if (!empty($aSms[Const_Sms::F_CONTENT])) {
+        if (isset($aSms[Const_Sms::F_CONTENT])) {
             return $aSms[Const_Sms::F_CONTENT];
         }
         $sSmsTemp = $aSms[Const_Sms::F_SMSTEMPLATE];
         if (empty($sSmsTemp)) {
-            return ' ';
+            return false;
         }
         $aSmsTemp = Store_SmsTemp::getIns()->get($sSmsTemp);
         if (empty($aSmsTemp)) {
-            return ' ';
+            return false;
         }
         $aParams = array();
         $aSmsParams = json_decode($aSms[Const_Sms::F_SMSPARAMS], true);

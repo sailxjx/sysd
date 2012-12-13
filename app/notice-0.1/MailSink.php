@@ -6,7 +6,7 @@
  * @author: jxxu
  * GTalk: sailxjx@gmail.com
  */
-class MailSink extends Task_Sink {
+class MailSink extends Task_Base {
     
     protected $iRemNum = 100;
     
