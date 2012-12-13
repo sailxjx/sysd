@@ -45,6 +45,7 @@ $config['JOBS'] = array(
     // 'MailRedel -d --log-file=' . APP_PATH . 'var/log/mailredel.log -w',
     // 'MailWorker -d --log-file=' . APP_PATH . 'var/log/mailworker.log --daemon-num=3 -w',
     'SmsServer -d --log-file=' . APP_PATH . 'var/log/smsserver.log -w',
+    'SmsVent -d --log-file=' . APP_PATH . 'var/log/smsvent.log -w',
 );
 // return configs
 return $config;

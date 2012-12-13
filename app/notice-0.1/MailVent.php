@@ -32,7 +32,7 @@ class MailVent extends Task_Vent {
                 } else {
                     if ($oQMail->move('wait', 'send', $sMsg, time())) {
                         $oTask->channel($aChannels[$i % $iCNum])->msg($sMsg)->send();
-                        Util::output('sending msgs: ', $sMsg, 'notice');
+                        Util::output('sending mail: ', $sMsg, 'notice');
                         $i++;
                     }
                 }

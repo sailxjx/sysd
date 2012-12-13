@@ -136,5 +136,29 @@ class Mod_MsgDeal extends Mod_SysMsgDeal {
             return $this->succReply($aSmsTemp);
         }
     }
+
+    protected function setSmsTemp($aParams = array()){
+        if (empty($aParams[Const_SmsTemp::F_NAME])) {
+            return $this->errReply(null, 'sms template name is not defined!');
+        }
+        $oSSmsTemp = Store_SmsTemp::getIns();
+        if ($aParams['action'] == 'del') {
+            if ($oSSmsTemp->del($aParams[Const_SmsTemp::F_NAME])) {
+                return $this->succReply(null, 'delete template success');
+            } else {
+                return $this->errReply(null, 'delete template error');
+            }
+        } else {
+            unset($aParams['action']);
+        }
+        $aData = $aParams;
+        $aData[Const_SmsTemp::F_INUSE] = isset($aData[Const_SmsTemp::F_INUSE]) ? $aData[Const_SmsTemp::F_INUSE] : 1;
+        $aData[Const_SmsTemp::F_UTIME] = time();
+        if ($oSSmsTemp->set($aData)) {
+            return $this->succReply(null, 'sms template saved');
+        } else {
+            return $this->errReply(null, 'sms template edit failed');
+        }
+    }
     
 }
