@@ -34,7 +34,6 @@ class Mod_MsgDeal extends Mod_SysMsgDeal {
                 Const_MailTemp::F_NAME,
                 Const_MailTemp::F_WEBPOWERID,
                 Const_MailTemp::F_INUSE,
-                Const_MailTemp::F_UTIME,
                 Const_MailTemp::F_DESC,
             ));
         }
@@ -109,6 +108,33 @@ class Mod_MsgDeal extends Mod_SysMsgDeal {
             $aHbBoxes[$sAddr] = json_decode($sBox, true);
         }
         return $this->succReply($aHbBoxes);
+    }
+    
+    protected function getSmsTempSum() {
+        $oRedis = $this->oRedis;
+        $aSmsIds = $oRedis->zrange(Redis_Key::smsTemplates() , 0, -1);
+        $oSSmsTemp = Store_SmsTemp::getIns();
+        $aSmsTemps = array();
+        foreach ($aSmsIds as $iSmsId) {
+            $aSmsTemps[] = $oSSmsTemp->get($iSmsId, array(
+                Const_SmsTemp::F_NAME,
+                Const_SmsTemp::F_INUSE,
+                Const_SmsTemp::F_DESC
+            ));
+        }
+        return $this->succReply($aSmsTemps);
+    }
+    
+    protected function getSmsTemp($aParams) {
+        if (empty($aParams[Const_SmsTemp::F_NAME])) {
+            return $this->errReply(null, 'sms template name is not defined!');
+        }
+        $aSmsTemp = Store_SmsTemp::getIns()->get($aParams[Const_SmsTemp::F_NAME]);
+        if (empty($aSmsTemp)) {
+            return $this->errReply(null, 'sms template not found!');
+        } else {
+            return $this->succReply($aSmsTemp);
+        }
     }
     
 }

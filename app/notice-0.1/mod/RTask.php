@@ -12,7 +12,11 @@ class Mod_RTask extends Mod_Task {
     protected $aChannels = array(
         Const_Task::C_MAILSERVER => 'mailServer',
         Const_Task::C_MAILLIST => 'mailList',
-        Const_Task::C_MAILRESULT => 'mailResult'
+        Const_Task::C_MAILRESULT => 'mailResult',
+        Const_Task::C_SMSSERVER => 'smsServer',
+        Const_Task::C_SMSLIST_H => 'smsListHigh',
+        Const_Task::C_SMSLIST_L => 'smsListLow',
+        Const_Task::C_SMSRESULT => 'smsResult'
     );
     protected $iUSec = 100000; //usleep time
     

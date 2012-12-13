@@ -39,12 +39,12 @@ $config['INIT_JOBS'] = array(
 
 // sub job lists started by server
 $config['JOBS'] = array(
-    // 'MailDataInit -d --log-file=' . APP_PATH . 'var/log/maildatainit.log', //need not listen, only once
-    'MailServer -d --log-file=' . APP_PATH . 'var/log/mailserver.log -w',
-    'MailVent -d --log-file=' . APP_PATH . 'var/log/mailvent.log -w',
-    'MailSink -d --log-file=' . APP_PATH . 'var/log/mailsink.log -w',
-    'MailRedel -d --log-file=' . APP_PATH . 'var/log/mailredel.log -w',
-    'MailWorker -d --log-file=' . APP_PATH . 'var/log/mailworker.log --daemon-num=3 -w'
+    // 'MailServer -d --log-file=' . APP_PATH . 'var/log/mailserver.log -w',
+    // 'MailVent -d --log-file=' . APP_PATH . 'var/log/mailvent.log -w',
+    // 'MailSink -d --log-file=' . APP_PATH . 'var/log/mailsink.log -w',
+    // 'MailRedel -d --log-file=' . APP_PATH . 'var/log/mailredel.log -w',
+    // 'MailWorker -d --log-file=' . APP_PATH . 'var/log/mailworker.log --daemon-num=3 -w',
+    'SmsServer -d --log-file=' . APP_PATH . 'var/log/smsserver.log -w',
 );
 // return configs
 return $config;

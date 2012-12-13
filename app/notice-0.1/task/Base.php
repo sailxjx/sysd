@@ -11,6 +11,7 @@ abstract class Task_Base extends Base {
     protected $sMod;
     protected $oTask;
     protected $sSplite = '_';
+    protected $iInterval = 100000;
     
     protected function __construct() {
         parent::__construct();

@@ -7,7 +7,9 @@ abstract class Redis_Key extends Redis_SysKey {
         'mailtable' => 'mail:table:{$id}',
         'sitemsgtable' => 'sitemsg:table:{$id}',
         'mailtemptable' => 'mail:temp:table:{$id}',
-        'mailchannelset' => 'mail:channel:set'
+        'mailchannelset' => 'mail:channel:set',
+        'smstable' => 'sms:table:{$id}',
+        'smstemptable' => 'sms:temp:table:{$id}',
     );
     
 }
