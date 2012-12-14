@@ -8,11 +8,12 @@ function sendSms($sMobile, $sTemplate, $aParams = array()) {
     $aSms = array(
         'mobile' => $sMobile,
         'template' => $sTemplate,
-        'type' => 10,
-        'smsparams' => json_encode($aSmsParams)
+        'type' => 1,
+        'smsparams' => json_encode($aSmsParams),
+        'servicetype' => 'zxt'
     );
     return $oRedis->lpush('notice:sms:server', json_encode($aSms));
 }
-sendSms('15000000000', 'smstest', array(
+sendSms('15021374552', 'smstest', array(
     'username' => 'xjx'
 ));

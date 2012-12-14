@@ -19,16 +19,8 @@ class Stop extends Base {
     }
     
     protected function stopAll() {
-        $aJList = array_merge(Util::getConfig('INIT_JOBS') , Util::getConfig('JOBS'));
-        $aCList = array(); //Class list
-        foreach ((array)$aJList as $sOCmd) {
-            $aOCmd = explode(' ', trim($sOCmd));
-            $aCList[] = !empty($aOCmd[0]) ? $aOCmd[0] : null;
-        }
-        $aCList = array_filter(array_unique($aCList));
-        foreach ((array)$aCList as $sJClass) {
-            $this->stopOne($sJClass);
-        }
+        $aPids = Util_SysUtil::getAllProcIds();
+        $this->stopProcByIds($aPids);
         return true;
     }
     

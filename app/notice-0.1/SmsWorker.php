@@ -22,7 +22,7 @@ class SmsWorker extends Task_Base {
                 $sMsg = $oTask->channel(Const_Task::C_SMSLIST_LOW)->recv(true);
             }
             if (empty($sMsg)) {
-                sleep($this->iInterval);
+                usleep($this->iInterval);
                 continue;
             }
             Util::output('recv sms: ' . $sMsg);

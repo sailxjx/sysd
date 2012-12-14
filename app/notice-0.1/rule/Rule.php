@@ -19,9 +19,9 @@ abstract class Rule_Rule extends Mod_SysBase {
     abstract protected function getRdNumQueue();
     
     public function redeliver($iNoteId) {
-        $iRdNum = $this->oRedis->zincrby($this->sNumRKey, 1, $iNoteId); //redeliver times
+        $iRdNum = $this->oRedis->zscore($this->sNumRKey, $iNoteId) + 1; //redeliver times
         $mRdRule = isset($this->aRdRule[$iRdNum]) ? $this->aRdRule[$iRdNum] : null;
-        if (!isset($mRdRule)) {// can not find the rule, search in extra rules
+        if (!isset($mRdRule)) { // can not find the rule, search in extra rules
             foreach ($this->aRdRule['extra'] as $sRKey => $mRule) { // - both side of - is included
                 if (strpos($sRKey, '-') !== false) {
                     $aRange = explode('-', $sRKey);
@@ -29,7 +29,7 @@ abstract class Rule_Rule extends Mod_SysBase {
                         $mRdRule = $mRule;
                         break;
                     }
-                } elseif (strpos($sRKey, '+') !== false) {// + not included
+                } elseif (strpos($sRKey, '+') !== false) { // + not included
                     $aRange = explode('+', $sRKey);
                     if ($aRange[0] < $iRdNum) {
                         $mRdRule = $mRule;
@@ -38,7 +38,11 @@ abstract class Rule_Rule extends Mod_SysBase {
                 }
             }
         }
-        return isset($mRdRule)?$mRdRule:false;
+        return isset($mRdRule) ? $mRdRule : false;
+    }
+
+    public function incrRedel($iNoteId) {
+        return $this->oRedis->zincrby($this->sNumRKey, 1, $iNoteId);
     }
     
 }

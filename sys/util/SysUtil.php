@@ -48,7 +48,17 @@ abstract class Util_SysUtil {
     }
     
     public static function getProcIdsByClass($sJClass) {
-        $sPidPath = Util::getConfig('PID_PATH')."{$sJClass}_*.pid";
+        $sPidPath = Util::getConfig('PID_PATH') . "{$sJClass}_*.pid";
+        $aPidFiles = glob($sPidPath);
+        $aPids = array();
+        foreach ($aPidFiles as $sPidFile) {
+            $aPids[] = Util::getFileCon($sPidFile);
+        }
+        return $aPids;
+    }
+    
+    public static function getAllProcIds() {
+        $sPidPath = Util::getConfig('PID_PATH') . "*.pid";
         $aPidFiles = glob($sPidPath);
         $aPids = array();
         foreach ($aPidFiles as $sPidFile) {

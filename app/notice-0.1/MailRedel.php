@@ -2,7 +2,7 @@
 /**
  * redeliver mails from error queue
  */
-class MailRedel extends Base {
+class MailRedel extends Task_Base {
     
     protected $iRemNum = 100;
     
@@ -20,7 +20,9 @@ class MailRedel extends Base {
                 if (($iRdTime = $oRMail->redeliver($sMsg)) === false) {
                     $oQMail->move('error', 'fail', $sMsg, time());
                 } else {
-                    $oQMail->move('error', 'wait', $sMsg, time() + $iRdTime);
+                    if($oQMail->move('error', 'wait', $sMsg, time() + $iRdTime)){
+                        $oRMail->incrRedel($sMsg);
+                    }
                 }
             }
         }
@@ -29,7 +31,7 @@ class MailRedel extends Base {
     protected function listen() {
         $oRedis = Fac_SysDb::getIns()->loadRedis();
         while (!$aMsgs = $oRedis->zrange(Redis_Key::mailError() , 0, $this->iRemNum)) {
-            usleep(100000);
+            usleep($this->iInterval);
         }
         return $aMsgs;
     }

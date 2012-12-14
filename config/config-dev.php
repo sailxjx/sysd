@@ -46,6 +46,9 @@ $config['JOBS'] = array(
     // 'MailWorker -d --log-file=' . APP_PATH . 'var/log/mailworker.log --daemon-num=3 -w',
     'SmsServer -d --log-file=' . APP_PATH . 'var/log/smsserver.log -w',
     'SmsVent -d --log-file=' . APP_PATH . 'var/log/smsvent.log -w',
+    // 'SmsWorker -d --log-file=' . APP_PATH . 'var/log/smsworker.log -w',
+    'SmsSink -d --log-file=' . APP_PATH . 'var/log/smssink.log -w',
+    'SmsRedel -d --log-file=' . APP_PATH . 'var/log/smsredel.log -w',
 );
 // return configs
 return $config;

@@ -22,6 +22,7 @@ class Const_Sms {
     const C_SERVICE_SCORE = 'score';
     const C_SERVICE_DESC = 'desc';
     const C_SERVICE_POOL = 'pool';
+    const C_SERVICE_URL = 'url';
 
     const C_POOL_HIGH = 'high';
     const C_POOL_LOW = 'low';

@@ -104,8 +104,7 @@ class SmsVent extends Task_Base {
     
     protected function loadServicePools() {
         $oRedis = Fac_SysDb::getIns()->loadRedis();
-        $sSvsKey = Redis_Key::smsServices();
-        $aServices = $oRedis->hgetall($sSvsKey);
+        $aServices = Store_Sms::getIns()->getService();
         foreach ($aServices as $sSvsName => $sService) {
             $aService = json_decode($sService, true);
             if (intval($aService[Const_Sms::C_SERVICE_SCORE]) < 0) {

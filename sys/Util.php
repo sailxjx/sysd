@@ -63,7 +63,12 @@ abstract class Util {
         $oSXml = simplexml_load_file($sXmlFile);
         return json_decode(json_encode($oSXml) , true);
     }
-    
+
+    public static function xmlStringToArray($sXml) {
+        $oSXml = simplexml_load_string(trim($sXml));
+        return json_decode(json_encode($oSXml), true);
+    }
+
     public static function objToArray($obj) {
         $arr = array();
         foreach ((array)$obj as $sKey => $mVal) {

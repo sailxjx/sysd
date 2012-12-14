@@ -8,17 +8,26 @@ class SmsDataInit extends Base {
         'changty' => array(
             'score' => 1,
             'desc' => '畅天游',
+            'url' => 'http://si.800617.com:4400/SendSmsSr.aspx?un=shzyxx-1&pwd=d1ef7e&mobile={$mobile}&msg={$content}',
             'pool' => 'high'
         ) ,
         'montnets' => array(
             'score' => 2,
             'desc' => '梦网',
+            'url' => 'http://61.145.229.29:7902/MWGate/wmgw.asmx/MongateCsSpSendSmsNew?userId=J20220&password=886513&pszMobis={$mobile}&pszMsg={$content}%20&iMobiCount={$count}&pszSubPort=10690%20333%2051100',
             'pool' => 'low'
         ) ,
         'emay' => array(
             'score' => 3,
             'desc' => '亿美',
+            'url' => 'http://sdkhttp.eucp.b2m.cn/sdkproxy/sendsms.action?cdkey=3SDK-EMS-0130-MBVOK&password=898705&phone={$mobile}&message={$content}',
             'pool' => 'high'
+        ) ,
+        'zxt' => array(
+            'score' => 4,
+            'desc' => '资信通',
+            'url' => 'http://221.179.180.158:9002/QxtSms/QxtFirewall?OperID=51fanli&OperPass=23397282&SendTime=&ValidTime=&AppendID=&DesMobile={$mobile}&Content={$content}&ContentType=15',
+            'pool' => 'low'
         )
     );
     protected $oRedis;
