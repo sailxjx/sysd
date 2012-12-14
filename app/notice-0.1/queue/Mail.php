@@ -83,8 +83,4 @@ class Queue_Mail extends Queue_Queue {
         return Mod_Log::getIns()->$sQueue('MAIL: [%t]; "%m"; %d; %c;', date('Y-m-d H:i:s') , "set {$iMailId} from {$sFrom} to {$sTo}", '{}', Const_Log::POS_MAILQUEUE);
     }
     
-    public function getMailQueues() {
-        return $this->aQueues;
-    }
-    
 }

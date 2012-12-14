@@ -2,7 +2,7 @@
 class Mod_MsgDeal extends Mod_SysMsgDeal {
     
     protected function getMailSum() {
-        $aQueues = Queue_Mail::getIns()->getMailQueues();
+        $aQueues = Queue_Mail::getIns()->getQueues();
         $sPreQueue = Queue_Mail::getIns()->getQueue();
         $oRedis = $this->oRedis;
         $oRedis->multi();
@@ -136,8 +136,8 @@ class Mod_MsgDeal extends Mod_SysMsgDeal {
             return $this->succReply($aSmsTemp);
         }
     }
-
-    protected function setSmsTemp($aParams = array()){
+    
+    protected function setSmsTemp($aParams = array()) {
         if (empty($aParams[Const_SmsTemp::F_NAME])) {
             return $this->errReply(null, 'sms template name is not defined!');
         }
@@ -159,6 +159,32 @@ class Mod_MsgDeal extends Mod_SysMsgDeal {
         } else {
             return $this->errReply(null, 'sms template edit failed');
         }
+    }
+    
+    protected function getSmsSum() {
+        $aQueues = Queue_Sms::getIns()->getQueues();
+        $sPreQueue = Queue_Sms::getIns()->getQueue();
+        $oRedis = $this->oRedis;
+        $oRedis->multi();
+        foreach ($aQueues as $sQueue => $aQueue) {
+            $sKey = $sPreQueue . ucfirst($sQueue);
+            $oRedis->zcard(Redis_Key::$sKey());
+        }
+        $aSmses = $oRedis->exec();
+        if (empty($aSmses)) {
+            return $this->errReply(null, 'sms not exist');
+        } else {
+            return $this->succReply(array_combine(array_keys($aQueues) , $aSmses));
+        }
+    }
+    
+    protected function getQueueSum() {
+        $aMailSum = json_decode($this->getMailSum() , true);
+        $aSmsSum = json_decode($this->getSmsSum() , true);
+        $aData['queues'] = array_unique(array_keys($aMailSum['data']) + array_keys($aSmsSum['data']));
+        $aData['mail'] = $aMailSum['data'];
+        $aData['sms'] = $aSmsSum['data'];
+        return $this->succReply($aData);
     }
     
 }

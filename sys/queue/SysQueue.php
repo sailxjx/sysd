@@ -140,6 +140,10 @@ abstract class Queue_SysQueue extends Mod_SysBase {
         }
         return $this->sQueue;
     }
+
+    public function getQueues() {
+        return $this->aQueues;
+    }
     
     /**
      * 设置队列值

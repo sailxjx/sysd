@@ -1,14 +1,14 @@
 <?php
 abstract class Util_SmsSender {
     public static function changty($aSms) {
-        return true;
+        return rand(0, 1);
     }
     
     public static function montnets($aSms) {
-        return true;
+        return rand(0, 1);
     }
     
     public static function emay($aSms) {
-        return true;
+        return rand(0, 1);
     }
 }
