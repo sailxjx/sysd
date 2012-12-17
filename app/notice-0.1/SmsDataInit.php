@@ -26,7 +26,13 @@ class SmsDataInit extends Base {
         'zxt' => array(
             'score' => 4,
             'desc' => '资信通',
-            'url' => 'http://221.179.180.158:9002/QxtSms/QxtFirewall?OperID=51fanli&OperPass=23397282&SendTime=&ValidTime=&AppendID=&DesMobile={$mobile}&Content={$content}&ContentType=15',
+            'url' => 'http://218.241.67.233:9002/QxtSms/QxtFirewall?OperID=51fanli&OperPass=23397282&SendTime=&ValidTime=&AppendID=&DesMobile={$mobile}&Content={$content}&ContentType=8',
+            'pool' => 'low'
+        ) ,
+        'baiwu' => array(
+            'score' => 5,
+            'desc' => '百悟',
+            'url' => 'http://123.196.114.68:8080/sms_send2.do?corp_id=1cbq002&corp_pwd=yhsaqx&corp_service=10657516yd&mobile={$mobile}&msg_content={$content}',
             'pool' => 'low'
         )
     );

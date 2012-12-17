@@ -80,7 +80,7 @@ class Queue_Mail extends Queue_Queue {
     
     protected function sendLog($aArgs, $sQueue = 'normal') {
         list($sFrom, $sTo, $iMailId, $iNewScore) = $aArgs;
-        return Mod_Log::getIns()->$sQueue('MAIL: [%t]; "%m"; %d; %c;', date('Y-m-d H:i:s') , "set {$iMailId} from {$sFrom} to {$sTo}", '{}', Const_Log::POS_MAILQUEUE);
+        return Mod_Log::getIns()->$sQueue('MAIL: [%t]; MOVE:%m;', date('Y-m-d H:i:s') , "set {$iMailId} from {$sFrom} to {$sTo}");
     }
     
 }

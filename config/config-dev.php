@@ -39,14 +39,14 @@ $config['INIT_JOBS'] = array(
 
 // sub job lists started by server
 $config['JOBS'] = array(
-    // 'MailServer -d --log-file=' . APP_PATH . 'var/log/mailserver.log -w',
-    // 'MailVent -d --log-file=' . APP_PATH . 'var/log/mailvent.log -w',
-    // 'MailSink -d --log-file=' . APP_PATH . 'var/log/mailsink.log -w',
-    // 'MailRedel -d --log-file=' . APP_PATH . 'var/log/mailredel.log -w',
+    'MailServer -d --log-file=' . APP_PATH . 'var/log/mailserver.log -w',
+    'MailVent -d --log-file=' . APP_PATH . 'var/log/mailvent.log -w',
+    'MailSink -d --log-file=' . APP_PATH . 'var/log/mailsink.log -w',
+    'MailRedel -d --log-file=' . APP_PATH . 'var/log/mailredel.log -w',
     // 'MailWorker -d --log-file=' . APP_PATH . 'var/log/mailworker.log --daemon-num=3 -w',
     'SmsServer -d --log-file=' . APP_PATH . 'var/log/smsserver.log -w',
     'SmsVent -d --log-file=' . APP_PATH . 'var/log/smsvent.log -w',
-    // 'SmsWorker -d --log-file=' . APP_PATH . 'var/log/smsworker.log -w',
+    'SmsWorker -d --log-file=' . APP_PATH . 'var/log/smsworker.log -w',
     'SmsSink -d --log-file=' . APP_PATH . 'var/log/smssink.log -w',
     'SmsRedel -d --log-file=' . APP_PATH . 'var/log/smsredel.log -w',
 );

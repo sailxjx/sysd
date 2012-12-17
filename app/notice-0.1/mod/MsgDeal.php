@@ -187,4 +187,46 @@ class Mod_MsgDeal extends Mod_SysMsgDeal {
         return $this->succReply($aData);
     }
     
+    protected function getSmsChannels() {
+        $oRedis = $this->oRedis;
+        $aServices = $oRedis->hgetall(Redis_Key::smsServices());
+        return $this->succReply($aServices);
+    }
+    
+    protected function getSmsChannel($aParams) {
+        $sName = isset($aParams[Const_Sms::C_SERVICE_NAME]) ? $aParams[Const_Sms::C_SERVICE_NAME] : null;
+        if (empty($sName)) {
+            return $this->errReply(null, 'sms channel name should not be null');
+        }
+        $sChannel = $this->oRedis->hget(Redis_Key::smsServices() , $sName);
+        if (empty($sChannel)) {
+            return $this->errReply(null, "channel {$sName} not found!");
+        }
+        $aChannel = json_decode($sChannel, true);
+        if (empty($aChannel[Const_Sms::C_SERVICE_NAME])) {
+            $aChannel[Const_Sms::C_SERVICE_NAME] = $sName;
+        }
+        return $this->succReply($aChannel);
+    }
+    
+    protected function setSmsChannel($aParams) {
+        if (empty($aParams[Const_Sms::C_SERVICE_NAME]) || empty($aParams[Const_Sms::C_SERVICE_URL])) {
+            return $this->errReply(null, 'missing sms service params');
+        }
+        $oRedis = $this->oRedis;
+        $sServiceKey = Redis_Key::smsServices();
+        if (isset($aParams['action']) && $aParams['action'] == 'del') {
+            $oRedis->hdel($sServiceKey, $aParams[Const_Sms::C_SERVICE_NAME]);
+            return $this->succReply(null, 'sms service delete succ');
+        }
+        $aServiceFields = Const_Sms::getServiceFields();
+        $aData = array_intersect_key($aParams, array_combine($aServiceFields, $aServiceFields));
+        if (empty($aData)) {
+            return $this->errReply(null, 'missing sms service data');
+        }
+        $aData[Const_Sms::C_SERVICE_SCORE] = intval($aData[Const_Sms::C_SERVICE_SCORE]);
+        $oRedis->hset($sServiceKey, $aData[Const_Sms::C_SERVICE_NAME], json_encode($aData));
+        return $this->succReply(null, 'sms service edit succ');
+    }
+    
 }

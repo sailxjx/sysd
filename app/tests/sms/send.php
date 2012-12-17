@@ -10,7 +10,7 @@ function sendSms($sMobile, $sTemplate, $aParams = array()) {
         'template' => $sTemplate,
         'type' => 1,
         'smsparams' => json_encode($aSmsParams),
-        'servicetype' => 'zxt'
+        'servicetype' => 'baiwu'
     );
     return $oRedis->lpush('notice:sms:server', json_encode($aSms));
 }

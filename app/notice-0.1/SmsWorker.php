@@ -1,7 +1,7 @@
 <?php
 class SmsWorker extends Task_Base {
     protected $iScale = 2;
-
+    
     protected function main() {
         $this->work();
     }
@@ -39,11 +39,12 @@ class SmsWorker extends Task_Base {
     
     protected function sendSms($iSmsId) {
         $aSms = Store_Sms::getIns()->get($iSmsId);
-        if(empty($aSms[Const_Sms::F_MOBILE]) || empty($aSms[Const_Sms::F_CONTENT]) || empty($aSms[Const_Sms::F_SERVICETYPE])) {
+        if (empty($aSms[Const_Sms::F_MOBILE]) || empty($aSms[Const_Sms::F_CONTENT]) || empty($aSms[Const_Sms::F_SERVICETYPE])) {
             return false;
         }
-        $sFunc = "Util_SmsSender::".$aSms[Const_Sms::F_SERVICETYPE];
-        if(!method_exists('Util_SmsSender', $aSms[Const_Sms::F_SERVICETYPE])){
+        $sMethod = 'send' . ucfirst($aSms[Const_Sms::F_SERVICETYPE]);
+        $sFunc = "Util_SmsSender::" . $sMethod;
+        if (!method_exists('Util_SmsSender', $sMethod)) {
             return false;
         }
         return call_user_func($sFunc, $aSms);
