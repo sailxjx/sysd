@@ -12,6 +12,7 @@ class Const_Sms {
     const F_SERVICETYPE = 'servicetype';
     const F_SMSPARAMS = 'smsparams';
     const F_SMSTEMPLATE = 'template';
+    const F_RETRY = 'retry';
 
     const S_WAIT = 0;
     const S_SEND = 1;
@@ -27,6 +28,7 @@ class Const_Sms {
 
     const C_POOL_HIGH = 'high';
     const C_POOL_LOW = 'low';
+    const C_POOL_RETRY = 'retry';
 
     const P_PARAMS = 'params';
 

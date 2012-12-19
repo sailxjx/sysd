@@ -1,9 +1,11 @@
 <?php
+
 class SmsVent extends Task_Base {
     protected $oRedis;
     protected $aPoolChannels = array(
         Const_Sms::C_POOL_HIGH => Const_Task::C_SMSLIST_HIGH,
-        Const_Sms::C_POOL_LOW => Const_Task::C_SMSLIST_LOW
+        Const_Sms::C_POOL_LOW => Const_Task::C_SMSLIST_LOW,
+        Const_Sms::C_POOL_RETRY => Const_Task::C_SMSLIST_RETRY
     );
     protected $aSvsPools;
     protected function main() {
@@ -14,16 +16,18 @@ class SmsVent extends Task_Base {
     protected function vent() {
         $oTask = $this->oTask;
         $oQSms = Queue_Sms::getIns();
+        
         while (1) {
             $aMsgs = $this->listen();
             $this->aSvsPools = $this->loadServicePools();
+            
             foreach ($aMsgs as $iSmsId => $iScore) {
                 $aSms = $this->decSms($iSmsId);
                 if (empty($aSms[Const_Sms::F_SERVICETYPE])) {
                     $oQSms->move('wait', 'fail', $iSmsId, time());
                 } else {
                     if ($oQSms->move('wait', 'send', $iSmsId, time())) {
-                        $oTask->channel($this->aPoolChannels[$this->getPool($aSms)])->msg($iSmsId)->send();
+                        $oTask->channel($this->aPoolChannels[$this->getPool($aSms) ])->msg($iSmsId)->send();
                         Util::output('sending sms: ', $iSmsId, 'notice');
                     }
                 }
@@ -33,11 +37,13 @@ class SmsVent extends Task_Base {
     
     protected function listen() {
         $oRedis = $this->oRedis;
+        
         while (!$aMsgs = $oRedis->zrangebyscore(Redis_Key::smsWait() , '-inf', time() , array(
             'withscores' => true
         ))) {
             usleep($this->iInterval);
         }
+        
         return $aMsgs;
     }
     
@@ -46,6 +52,7 @@ class SmsVent extends Task_Base {
         $aSms[Const_Sms::F_CONTENT] = $this->getSmsCon($aSms);
         $aSms[Const_Sms::F_SERVICETYPE] = $this->getServiceType($aSms);
         Store_Sms::getIns()->set($aSms);
+        
         return $aSms;
     }
     
@@ -55,12 +62,14 @@ class SmsVent extends Task_Base {
         $sPool = $this->getPool($aSms);
         $aServices = $aSvsPools[$sPool];
         if (empty($aServices)) {
+            
             return false;
         }
         $sServiceType = false;
         if (!empty($aSms[Const_Sms::F_SERVICETYPE]) && isset($aServices[$aSms[Const_Sms::F_SERVICETYPE]]) && !in_array($aSms[Const_Sms::F_SERVICETYPE], $aTryServices)) {
             $sServiceType = $aSms[Const_Sms::F_SERVICETYPE];
         } else {
+            
             foreach ($aServices as $sService => $aService) {
                 if (!in_array($sService, $aTryServices)) {
                     $sServiceType = $sService;
@@ -68,43 +77,54 @@ class SmsVent extends Task_Base {
                 }
             }
         }
+        
         return $sServiceType;
     }
-
+    
     protected function getPool(&$aSms) {
         $iType = isset($aSms[Const_Sms::F_TYPE]) ? $aSms[Const_Sms::F_TYPE] : 0;
-        if ($iType >= 8) {
-            $sPool = Const_Sms::C_POOL_HIGH;
+        if (!empty($aSms[Const_Sms::F_RETRY])) {
+            $sPool = Const_Sms::C_POOL_RETRY;
         } else {
-            $sPool = Const_Sms::C_POOL_LOW;
+            if ($iType >= 8) {
+                $sPool = Const_Sms::C_POOL_HIGH;
+            } else {
+                $sPool = Const_Sms::C_POOL_LOW;
+            }
         }
         return $sPool;
     }
     
     protected function getSmsCon(&$aSms) {
         if (isset($aSms[Const_Sms::F_CONTENT])) {
+            
             return $aSms[Const_Sms::F_CONTENT];
         }
         $sSmsTemp = $aSms[Const_Sms::F_SMSTEMPLATE];
         if (empty($sSmsTemp)) {
+            
             return false;
         }
         $aSmsTemp = Store_SmsTemp::getIns()->get($sSmsTemp);
         if (empty($aSmsTemp)) {
+            
             return false;
         }
         $aParams = array();
         $aSmsParams = json_decode($aSms[Const_Sms::F_SMSPARAMS], true);
+        
         foreach ($aSmsParams[Const_Sms::P_PARAMS] as $k => $v) {
             $aParams['{$' . $k . '}'] = $v;
         }
         $sCon = str_replace(array_keys($aParams) , array_values($aParams) , $aSmsTemp[Const_SmsTemp::F_TEMP]);
+        
         return $sCon;
     }
     
     protected function loadServicePools() {
         $oRedis = Fac_SysDb::getIns()->loadRedis();
         $aServices = Store_Sms::getIns()->getService();
+        
         foreach ($aServices as $sSvsName => $sService) {
             $aService = json_decode($sService, true);
             if (intval($aService[Const_Sms::C_SERVICE_SCORE]) < 0) {
@@ -112,21 +132,34 @@ class SmsVent extends Task_Base {
             } else {
                 $aServices[$sSvsName] = $aService;
             }
+            if (is_string($aService[Const_Sms::C_SERVICE_POOL])) {
+                $aServices[$sSvsName][Const_Sms::C_SERVICE_POOL] = explode(',', $aService[Const_Sms::C_SERVICE_POOL]);
+            }
         }
         uasort($aServices, function ($a, $b) {
             if ($a[Const_Sms::C_SERVICE_SCORE] > $b[Const_Sms::C_SERVICE_SCORE]) {
+                
                 return 1;
             }
+            
             return 0;
         });
         $aPools = array();
+        
         foreach ($aServices as $sSvsName => $aService) {
-            if (empty($aService[Const_Sms::C_SERVICE_POOL]) || !isset($this->aPoolChannels[$aService[Const_Sms::C_SERVICE_POOL]])) {
+            if (empty($aService[Const_Sms::C_SERVICE_POOL])) {
                 continue;
             }
-            $aPools[$aService[Const_Sms::C_SERVICE_POOL]][$sSvsName] = $aService;
+            
+            foreach ($aService[Const_Sms::C_SERVICE_POOL] as $sPool) {
+                if (!isset($this->aPoolChannels[$sPool])) {
+                    continue;
+                }
+                $aPools[$sPool][$sSvsName] = $aService;
+            }
         }
         $this->aSvsPools = $aPools;
+        
         return $aPools;
     }
 }

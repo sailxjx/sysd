@@ -16,6 +16,7 @@ class Mod_RTask extends Mod_Task {
         Const_Task::C_SMSSERVER => 'smsServer',
         Const_Task::C_SMSLIST_HIGH => 'smsListHigh',
         Const_Task::C_SMSLIST_LOW => 'smsListLow',
+        Const_Task::C_SMSLIST_RETRY => 'smsListRetry',
         Const_Task::C_SMSRESULT => 'smsResult'
     );
     protected $iUSec = 100000; //usleep time
@@ -26,17 +27,23 @@ class Mod_RTask extends Mod_Task {
     
     protected function reset() {
         $this->aMsg = array();
+        
+        
         return $this;
     }
     
     public function recv($bNoBlock = false) {
         $sMsgKey = $this->mChannel;
+        
+        
         while (!$sMsg = $this->oRedis->rpop(Redis_Key::$sMsgKey())) {
             if ($bNoBlock) {
                 break;
             }
             usleep($this->iUSec);
         }
+        
+        
         return $sMsg;
     }
     
@@ -45,15 +52,21 @@ class Mod_RTask extends Mod_Task {
             $this->msg($sMsg);
         }
         if (empty($this->aMsg)) {
+            
+            
             return false;
         }
         $this->oRedis->multi();
         $sMsgKey = $this->mChannel;
+        
+        
         foreach ($this->aMsg as $sMsg) {
             $this->oRedis->lpush(Redis_Key::$sMsgKey() , $sMsg);
         }
         $this->reset();
+        
+        
         return $this->oRedis->exec();
     }
-
+    
 }

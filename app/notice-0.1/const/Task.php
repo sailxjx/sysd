@@ -7,6 +7,7 @@ abstract class Const_Task {
     //sms channels
     const C_SMSLIST_HIGH = 3;
     const C_SMSLIST_LOW = 4;
-    const C_SMSSERVER = 5;
-    const C_SMSRESULT = 6;
+    const C_SMSLIST_RETRY = 5;
+    const C_SMSSERVER = 6;
+    const C_SMSRESULT = 7;
 }
