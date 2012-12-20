@@ -39,7 +39,7 @@ class Fac_SysDb {
      * @return PDO
      * @throws Exception
      */
-    public function loadPdo($sCKey) {
+    public function loadPdo($sCKey = 'MYSQL') {
         if (!isset($this->aPdos[$sCKey])) {
             $aConf = Util::getConfig($sCKey);
             if (empty($aConf)) {

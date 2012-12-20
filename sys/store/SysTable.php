@@ -13,6 +13,8 @@ abstract class Store_SysTable extends Mod_SysBase {
     protected $aData = array();
     protected $oRedis;
     protected $sRKeyClass = 'Redis_SysKey'; //class to build the redis key
+    protected $aSyncFields = array(); //indexes need to be syncing to mysql
+    protected $sSyncTable;
     
     public function __construct() {
         $this->oRedis = Fac_SysDb::getIns()->loadRedis();
@@ -188,6 +190,43 @@ abstract class Store_SysTable extends Mod_SysBase {
             $this->aData['id'] = $oRedis->incr($sIdKey);
         }
         return $this->aData['id'];
+    }
+
+    public function syncDb($mId) {
+        $aTable = $this->get($mId);
+        $sTable = $this->getSyncTable();
+        if(empty($aTable) || empty($this->aSyncFields) || empty($this->sSyncTable)){
+            return false;
+        }
+        $oPdo = Fac_SysDb::getIns()->loadPdo();
+        $aPos = array();
+        $aData = array();
+        $aFields = array();
+        $sPk = $this->getPkField();
+        foreach ($this->aSyncFields as $sField) {
+            if ($sField == $sPk) {
+                $aData[] = $mId;
+            }else{
+                $aData[] = isset($aTable[$sField])?$aTable[$sField]:'';
+            }
+            $aFields[] = $sField;
+            $aPos[] = '?';
+        }
+        $aFields[] = 'store';
+        $aPos[] = '?';
+        $aData[] = json_encode($aTable);
+        $sSql = "INSERT INTO {$sTable} (".implode(',', $aFields).") VALUES (".implode(',', $aPos).")";
+        $oStat = $oPdo->prepare($sSql);
+        $oStat->execute($aData);
+        $r = $oStat->rowCount();
+        if($r){
+            $this->del($mId);
+        }
+        return $r;
+    }
+
+    protected function getSyncTable() {
+        return isset($this->sSyncTable) ? $this->sSyncTable : null;
     }
     
 }

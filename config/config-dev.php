@@ -3,9 +3,9 @@ $config = require 'share.php';
 
 // database configs
 $config['MYSQL'] = array(
-    'dsn' => 'mysql:host=192.168.100.60;dbname=51fanli_user',
+    'dsn' => 'mysql:host=192.168.1.128;dbname=notify',
     'user' => 'root',
-    'pwd' => 'root',
+    'pwd' => '123456',
     'options' => array() ,
     'statments' => array(
         'SET CHARACTER SET utf8'
@@ -43,7 +43,7 @@ $config['JOBS'] = array(
     'MailVent -d --log-file=' . APP_PATH . 'var/log/mailvent.log -w',
     'MailSink -d --log-file=' . APP_PATH . 'var/log/mailsink.log -w',
     'MailRedel -d --log-file=' . APP_PATH . 'var/log/mailredel.log -w',
-    // 'MailWorker -d --log-file=' . APP_PATH . 'var/log/mailworker.log --daemon-num=3 -w',
+    'MailWorker -d --log-file=' . APP_PATH . 'var/log/mailworker.log -w',
     'SmsServer -d --log-file=' . APP_PATH . 'var/log/smsserver.log -w',
     'SmsVent -d --log-file=' . APP_PATH . 'var/log/smsvent.log -w',
     'SmsWorker -d --log-file=' . APP_PATH . 'var/log/smsworker.log -w',
