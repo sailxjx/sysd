@@ -38,5 +38,9 @@ class Mod_Log extends Mod_SysBase {
         $sKey = "log" . ucfirst($sQueue);
         return Redis_Key::$sKey();
     }
+
+    public function popLog($sQueue = 'normal') {
+        return $this->oRedis->rpop($this->getRedisKey($sQueue));
+    }
     
 }

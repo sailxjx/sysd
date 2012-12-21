@@ -16,4 +16,8 @@ class Const_Log {
     const POS_MAILQUEUE = 001;
     const POS_HEARTBEAT = 002;
 
+    const LEVEL_NORMAL = 0;
+    const LEVEL_WARNING = 1;
+    const LEVEL_ERROR = 2;
+
 }
