@@ -110,7 +110,7 @@ class MailVent extends Task_Vent {
             $sMailTempTitle = $aMailTemp[Const_MailTemp::F_TITLE];
         }
         $aParams = array();
-        foreach ($aMailParams[Const_Mail::P_PARAMS] as $k => $v) {
+        foreach ($aMailParams as $k => $v) {
             $aParams['{$'.$k.'}'] = $v;
         }
         $aMail[Const_Mail::F_CONTENT] = str_replace(array_keys($aParams), array_values($aParams), $aMailTemp[Const_MailTemp::F_TEMP]);
@@ -121,11 +121,13 @@ class MailVent extends Task_Vent {
     protected function buildMailConFromRemote(&$aMail) {
         $sMailTemp = $aMail[Const_Mail::F_MAILTEMPLATE];
         $aMailTemp = Store_MailTemp::getIns()->get($sMailTemp);
-        $aMailCon = json_decode($aMail[Const_Mail::F_MAILPARAMS], true);
+        $aMailParams = json_decode($aMail[Const_Mail::F_MAILPARAMS], true);
         if (empty($aMailTemp)) {
             return false;
         }
+        $aMailCon = array();
         list($aMailCon[Const_Mail::P_CAMPAIGNID], $aMailCon[Const_Mail::P_GROUPID], $aMailCon[Const_Mail::P_MAILINGID]) = explode(',', $aMailTemp[Const_MailTemp::F_WEBPOWERID]);
+        $aMailCon[Const_Mail::P_PARAMS] = $aMailParams;
         $aMailCon[Const_Mail::P_PARAMS]['email'] = empty($aMailCon[Const_Mail::P_PARAMS]['email'])?$aMail[Const_Mail::F_EMAIL]:$aMailCon[Const_Mail::P_PARAMS]['email'];
         $aMail[Const_Mail::F_CONTENT] = json_encode($aMailCon);
         return true;

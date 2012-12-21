@@ -12,6 +12,12 @@ $config['MYSQL'] = array(
     )
 );
 
+$config['SQLSRV'] = array(
+    'dsn' => 'odbc:webdsn',
+    'user' => 'trace',
+    'pwd' => 'trace'
+);
+
 // redis server configs
 $config['REDIS'] = array(
     'host' => '127.0.0.1',

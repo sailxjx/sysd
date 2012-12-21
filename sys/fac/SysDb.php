@@ -45,6 +45,7 @@ class Fac_SysDb {
             if (empty($aConf)) {
                 trigger_error('error, db config not found', E_USER_ERROR);
             }
+            $aConf['options'] = isset($aConf['options']) ? $aConf['options'] : array();
             $oPdo = new PDO($aConf['dsn'], $aConf['user'], $aConf['pwd'], $aConf['options']);
             if (!empty($aConf['statments'])) {
                 foreach ($aConf['statments'] as $sStmt) {
