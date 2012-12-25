@@ -37,13 +37,13 @@ abstract class Util_SmsSender {
     }
     
     public static function sendZxt($aSms) {
-        return false;
         $aParams = array();
         $aParams['mobile'] = $aSms[Const_Sms::F_MOBILE];
         $aParams['content'] = rawurlencode(iconv('UTF-8', 'gbk', $aSms[Const_Sms::F_CONTENT]));
         $aSmsService = json_decode(Store_Sms::getIns()->getService('zxt') , true);
         $r = self::callApi($aSmsService[Const_Sms::C_SERVICE_URL], $aParams);
-        return true;
+        $aResult = Util::xmlStringToArray($r);
+        return ($aResult['code'] == '03') ? true : false;
     }
     
     public static function sendBaiwu($aSms) {
@@ -52,7 +52,7 @@ abstract class Util_SmsSender {
         $aParams['content'] = rawurlencode(iconv('UTF-8', 'gbk', $aSms[Const_Sms::F_CONTENT]));
         $aSmsService = json_decode(Store_Sms::getIns()->getService('baiwu') , true);
         $r = self::callApi($aSmsService[Const_Sms::C_SERVICE_URL], $aParams, 'post');
-        if (strpos(trim($r), '0#') === 0) { // begin with 0#
+        if (strpos(trim($r) , '0#') === 0) { // begin with 0#
             return true;
         }
         return false;
@@ -73,12 +73,12 @@ abstract class Util_SmsSender {
                 list($sUrl, $sQuery) = explode('?', $sUrl);
                 $oMCurl->setAttr(CURLOPT_POST, true);
                 $oMCurl->setAttr(CURLOPT_POSTFIELDS, $sQuery);
-                break;
+            break;
             default:
-                break;
+            break;
         }
         $sResponse = $oMCurl->setUrl($sUrl)->exec()->getRes();
-        Mod_Log::getIns()->normal('SMS: [%t]; SEND:%m; RETR: %r', date('Y-m-d H:i:s') , $sOriUrl ,$sResponse);
+        Mod_Log::getIns()->normal('SMS: [%t]; SEND:%m; RETR: %r', date('Y-m-d H:i:s') , $sOriUrl, $sResponse);
         return $sResponse;
     }
 }
