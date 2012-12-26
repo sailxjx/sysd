@@ -3,9 +3,9 @@ $config = require 'share.php';
 
 // database configs
 $config['MYSQL'] = array(
-    'dsn' => 'mysql:host=192.168.1.128;dbname=notify',
+    'dsn' => 'mysql:host=127.0.0.1;dbname=notify',
     'user' => 'root',
-    'pwd' => '123456',
+    'pwd' => '',
     'options' => array() ,
     'statments' => array(
         'SET CHARACTER SET utf8'
