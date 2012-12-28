@@ -7,10 +7,20 @@ class Mod_SysOrm extends Mod_SysBase {
     protected $sDbSlave = 'MYSQL';
     protected $sDbMaster = 'MYSQL';
     protected $sDbType = 'mysql';
-    protected $aFields;
-    protected $aOpts = array('=', '>', '<', '>=', '<=', '<>', '!=', 'IN', 'LIKE');
+    protected $aFields = array();
+    protected $aOpts = array(
+        '=',
+        '>',
+        '<',
+        '>=',
+        '<=',
+        '<>',
+        '!=',
+        'IN',
+        'LIKE'
+    );
     protected $aFilters = array();
-    protected $aParams;
+    protected $aParams = array();
     /**
      * db slave
      */
@@ -32,6 +42,12 @@ class Mod_SysOrm extends Mod_SysBase {
     protected function __construct() {
         $this->loadDb();
         $this->loadTableFields();
+    }
+    
+    protected function reset() {
+        $this->aFields = array();
+        $this->aFilters = array();
+        $this->aParams = array();
     }
     
     // abstract protected function setTable($sTable) {
@@ -86,9 +102,7 @@ class Mod_SysOrm extends Mod_SysBase {
     }
     
     protected function fetch($sSql, $aParams = array() , $iFetchType = self::FETCH_TYPE_ALL) {
-        $oPdo = $this->getPdo();
-        $oStmt = $oPdo->prepare($sSql);
-        $oStmt->execute($aParams);
+        list($r, $oStmt) = $this->execute($sSql, $aParams);
         $mData = array();
         switch ($iFetchType) {
             case self::FETCH_TYPE_COLUMN:
@@ -96,7 +110,7 @@ class Mod_SysOrm extends Mod_SysBase {
             break;
             case self::FETCH_TYPE_ROW:
                 $mData = $oStmt->fetch(PDO::FETCH_ASSOC);
-                break;
+            break;
             case self::FETCH_TYPE_ALL:
             default:
                 $mData = $oStmt->fetchAll(PDO::FETCH_ASSOC);
@@ -104,63 +118,104 @@ class Mod_SysOrm extends Mod_SysBase {
         }
         return $mData;
     }
-
+    
     protected function execute($sSql, $aParams = array()) {
         $oPdo = $this->getPdo();
         $oStmt = $oPdo->prepare($sSql);
-        return $oStmt->execute($aParams);
+        $r = $oStmt->execute($aParams);
+        $this->reset();
+        return array(
+            $r,
+            $oStmt
+        );
     }
     
     public function find() {
-        $sSql = 'SELECT ' . $this->genFields().' FROM ' . $this->sTable . ' ' .  $this->genFilters();
+        $sSql = 'SELECT ' . $this->genFields() . ' FROM ' . $this->sTable . ' ' . $this->genFilters();
         return $this->fetch($sSql, $this->aParams, self::FETCH_TYPE_ROW);
     }
-
+    
     public function findAll() {
-        $sSql = 'SELECT ' . $this->genFields().' FROM ' . $this->sTable . ' ' .  $this->genFilters();
-        return $this->fetch($sSql, $this->aParams, self::FETCH_TYPE_ALL);   
+        $sSql = 'SELECT ' . $this->genFields() . ' FROM ' . $this->sTable . ' ' . $this->genFilters();
+        return $this->fetch($sSql, $this->aParams, self::FETCH_TYPE_ALL);
     }
-
+    
     public function insert() {
         $aSaveFields = $this->genSaveFields();
-        $sSql = "INSERT INTO {$this->sTable} (".implode(',', array_keys($aSaveFields)).") VALUES (".implode(',', array_values($aSaveFields)).")";
-        return $this->execute($sSql, $this->aParams);
+        $sSql = $this->genSql('INSERT INTO', $this->sTable, '(' . implode(',', array_keys($aSaveFields)) . ')', 'VALUES', '(' . implode(',', array_values($aSaveFields)) . ')');
+        list($r) = $this->execute($sSql, $this->aParams);
+        return $r;
     }
-
+    
     public function update() {
-
+        $aSaveFields = $this->genSaveFields();
+        $aSetFields = array();
+        foreach ($aSaveFields as $k => $v) {
+            $aSetFields[] = "{$k} = {$v}";
+        }
+        $sSql = $this->genSql('UPDATE', $this->sTable, 'SET', implode(',', $aSetFields) , $this->genFilters());
+        list($r) = $this->execute($sSql, $this->aParams);
+        return $r;
     }
     
     public function save() {
-        
+        $aSaveFields = $this->genSaveFields();
+        $sSql = $this->genSql('REPLACE INTO', $this->sTable, '(' . implode(',', array_keys($aSaveFields)) . ')', 'VALUES', '(' . implode(',', array_values($aSaveFields)) . ')', $this->genFilters());
+        list($r) = $this->execute($sSql, $this->aParams);
+        return $r;
     }
-
+    
+    public function lastInsertId() {
+        return $this->getPdo()->lastInsertId();
+    }
+    
     public function del() {
-
+        $sSql = $this->genSql('DELETE FROM', $this->sTable, $this->genFilters());
+        list($r) = $this->execute($sSql, $this->aParams);
+        return $r;
     }
-
+    
     public function limit($sLimit) {
         return $this;
     }
     
-    public function filter($sKey, $sValue, $sOpt = '=') {
+    public function filter() {
+        $args = func_get_args();
+        $i = count($args);
+        $sOpt = '=';
+        switch ($i) {
+            case 2:
+                list($sKey, $sValue) = $args;
+            break;
+            case 3:
+                list($sKey, $sOpt, $sValue) = $args;
+            break;
+            default:
+                trigger_error('ORM: wrong number of params[' . var_export($args, true) . '] to filter', E_USER_ERROR);
+                return false;
+        }
         $sOpt = strtoupper($sOpt);
         if (!in_array($sOpt, $this->aOpts)) {
             trigger_error("ORM: operater[{$sOpt}] is not found", E_USER_WARNING);
             return $this;
         }
-        $this->aFilters[] = array($sKey, $sValue, $sOpt);
+        $this->aFilters[] = array(
+            $sKey,
+            $sOpt,
+            $sValue
+        );
         return $this;
     }
-
+    
     protected function genSql() {
-
+        $args = func_get_args();
+        return implode(' ', $args);
     }
-
+    
     protected function genFields() {
         return '*';
     }
-
+    
     protected function genFilters() {
         $aFilters = $this->aFilters;
         if (empty($aFilters)) {
@@ -169,12 +224,12 @@ class Mod_SysOrm extends Mod_SysBase {
         $sFilter = 'WHERE ';
         $aFilTmp = array();
         foreach ($aFilters as $aFilter) {
-            $aFilTmp[] = "{$aFilter[0]} {$aFilter[2]} ?";
-            $this->aParams[] = $aFilter[1];
+            $aFilTmp[] = "{$aFilter[0]} {$aFilter[1]} ?";
+            $this->aParams[] = $aFilter[2];
         }
         return $sFilter . implode(' AND ', $aFilTmp);
     }
-
+    
     protected function genSaveFields() {
         $aFields = $this->aFields;
         $aSaveFields = array();
@@ -192,6 +247,33 @@ class Mod_SysOrm extends Mod_SysBase {
     
     protected function getCache($sKey) {
         return $this->getRedis()->get($sKey);
+    }
+    
+    public function set() {
+        $args = func_get_args();
+        $i = count($args);
+        switch ($i) {
+            case 1:
+                if (is_array($args[0])) {
+                    foreach ($args[0] as $k => $v) {
+                        $this->{$k} = $v;
+                    }
+                } else {
+                    trigger_error("ORM: wrong number of params[" . var_export($args, true) . "] in set", E_USER_ERROR);
+                }
+            break;
+            case 2:
+                if (!is_string($args[0]) || !is_scalar($args[1])) {
+                    trigger_error("ORM: wrong type of params[" . var_export($args, true) . "] in set", E_USER_ERROR);
+                } else {
+                    $this->{$args[0]} = $args[1];
+                }
+            break;
+            default:
+                trigger_error("ORM: wrong number of params[" . var_export($args, true) . "] in set", E_USER_ERROR);
+            break;
+        }
+        return $this;
     }
     
     public function __set($sField, $mVal) {
