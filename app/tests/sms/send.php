@@ -8,9 +8,9 @@ function sendSms($sMobile, $sTemplate, $aParams = array()) {
     $aSms = array(
         'mobile' => $sMobile,
         'template' => $sTemplate,
-        'type' => 1,
+        'type' => 10,
         'smsparams' => json_encode($aSmsParams),
-        'servicetype' => 'zxt'
+        'servicetype' => 'emay'
     );
     return $oRedis->lpush('notice:sms:server', json_encode($aSms));
 }
