@@ -10,7 +10,8 @@ $orm->servicetype = 'emay';
 //     ))->save());
 // var_dump($orm->filter('id', 10)->update());
 // var_dump($orm->filter('id', 10)->del());
-print_r($orm->filter('template', 'happybirthday')->findAll());
+print_r($orm
+    ->filter('template', 'happybirthday')->findAll());
 // print_r($orm->find());
 exit;
 print_r($orm);

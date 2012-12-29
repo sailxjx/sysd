@@ -23,14 +23,6 @@ class Mod_SysOrm extends Mod_SysBase {
     protected $aFilters = array();
     protected $aParams = array();
     /**
-     * db slave
-     */
-    protected $oDbSlave;
-    /**
-     * db master
-     */
-    protected $oDbMaster;
-    /**
      * use redis for cache
      */
     protected $oRedis;
@@ -47,6 +39,7 @@ class Mod_SysOrm extends Mod_SysBase {
     
     protected function reset() {
         $this->aFields = array();
+        $this->aFindFields = array();
         $this->aFilters = array();
         $this->aParams = array();
     }
@@ -56,7 +49,7 @@ class Mod_SysOrm extends Mod_SysBase {
     // }
     
     protected function getPdo($bMaster = true) {
-        $sDb = $bMaster ? $this->sDbMaster:$this->sDbSlave;
+        $sDb = $bMaster ? $this->sDbMaster : $this->sDbSlave;
         if (!isset($this->aPdos[$sDb])) {
             $this->aPdos[$sDb] = Fac_SysDb::getIns()->loadPdo($sDb);
         }
@@ -180,6 +173,28 @@ class Mod_SysOrm extends Mod_SysBase {
         return $this;
     }
     
+    public function field($mFields) {
+        $aFields = array();
+        if (is_array($mFields)) {
+            $aFields = $mFields;
+        } elseif (is_string($mFields)) {
+            $aFields = explode(',', $mFields);
+        } else {
+            trigger_error("ORM: error fields[" . var_export($mFields, true) . "] type", E_USER_WARNING);
+        }
+        foreach ($aFields as $k => $v) {
+            $aFields[$k] = trim($v);
+        }
+        $aDescFields = array_keys($this->aTableDesc);
+        $aInters = array_intersect($aFields, $aDescFields);
+        $aDiffs = array_diff($aFields, $aDescFields);
+        if (!empty($aDiffs)) {
+            trigger_error('ORM: set unsupported fields[' . var_export($aDiffs, true) . '] in field()', E_USER_WARNING);
+        }
+        $this->aFindFields = array_filter(array_unique(array_merge($this->aFindFields, $aInters)));
+        return $this;
+    }
+    
     public function filter() {
         $args = func_get_args();
         $i = count($args);
@@ -214,7 +229,15 @@ class Mod_SysOrm extends Mod_SysBase {
     }
     
     protected function genFields() {
-        return '*';
+        $aFindFields = $this->aFindFields;
+        if (empty($aFindFields)) {
+            $aFindFields = array_keys($this->aTableDesc);
+        }
+        $aFields = array();
+        foreach ($aFindFields as $sField) {
+            $aFields[] = "`{$sField}`";
+        }
+        return implode(',', $aFields);
     }
     
     protected function genFilters() {
