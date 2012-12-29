@@ -1,4 +1,7 @@
 <?php
+/**
+ * p.s. 返回结果为空时都认为发送成功
+ */
 abstract class Util_SmsSender {
     public static function sendChangty($aSms) {
         $aParams = array();
@@ -6,6 +9,9 @@ abstract class Util_SmsSender {
         $aParams['content'] = rawurlencode(iconv('UTF-8', 'gb2312', $aSms[Const_Sms::F_CONTENT]));
         $aSmsService = json_decode(Store_Sms::getIns()->getService('changty') , true);
         $r = self::callApi($aSmsService[Const_Sms::C_SERVICE_URL], $aParams);
+        if (empty($r)) {
+            return true;
+        }
         $aResult = Util::xmlStringToArray($r);
         return ($aResult['Result'] == 1) ? true : false;
     }
@@ -17,6 +23,9 @@ abstract class Util_SmsSender {
         $aParams['content'] = rawurlencode($aSms[Const_Sms::F_CONTENT]);
         $aSmsService = json_decode(Store_Sms::getIns()->getService('montnets') , true);
         $r = self::callApi($aSmsService[Const_Sms::C_SERVICE_URL], $aParams, 'post');
+        if (empty($r)) {
+            return true;
+        }
         $aResult = Util::xmlStringToArray($r);
         $iLength = strlen($aResult[0]);
         if ($iLength > 10 && $iLength < 25) {
@@ -32,6 +41,9 @@ abstract class Util_SmsSender {
         $aParams['content'] = rawurlencode($aSms[Const_Sms::F_CONTENT]);
         $aSmsService = json_decode(Store_Sms::getIns()->getService('emay') , true);
         $r = self::callApi($aSmsService[Const_Sms::C_SERVICE_URL], $aParams);
+        if (empty($r)) {
+            return true;
+        }
         $aResult = Util::xmlStringToArray($r);
         return ($aResult['error'] == 0) ? true : false;
     }
@@ -42,6 +54,9 @@ abstract class Util_SmsSender {
         $aParams['content'] = rawurlencode(iconv('UTF-8', 'gbk', $aSms[Const_Sms::F_CONTENT]));
         $aSmsService = json_decode(Store_Sms::getIns()->getService('zxt') , true);
         $r = self::callApi($aSmsService[Const_Sms::C_SERVICE_URL], $aParams);
+        if (empty($r)) {
+            return true;
+        }
         $aResult = Util::xmlStringToArray($r);
         return ($aResult['code'] == '03') ? true : false;
     }
@@ -52,6 +67,9 @@ abstract class Util_SmsSender {
         $aParams['content'] = rawurlencode(iconv('UTF-8', 'gbk', $aSms[Const_Sms::F_CONTENT]));
         $aSmsService = json_decode(Store_Sms::getIns()->getService('baiwu') , true);
         $r = self::callApi($aSmsService[Const_Sms::C_SERVICE_URL], $aParams, 'post');
+        if (empty($r)) {
+            return true;
+        }
         if (strpos(trim($r) , '0#') === 0) { // begin with 0#
             return true;
         }
