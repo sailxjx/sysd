@@ -27,7 +27,7 @@ class MailVent extends Task_Vent {
             $this->aServices = $this->loadChannelSet();
             foreach ($aMsgs as $sMsg => $iScore) {
                 $aMail = $this->decMail($sMsg);
-                if (empty($aMail[Const_Mail::F_SERVICETYPE])) {
+                if (empty($aMail[Const_Mail::F_SERVICETYPE]) || empty($aMail[Const_Mail::F_CONTENT])) {
                     $oQMail->move('wait', 'fail', $sMsg, time());
                 } else {
                     if ($oQMail->move('wait', 'send', $sMsg, time())) {
