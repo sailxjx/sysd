@@ -16,6 +16,7 @@ class MailServer extends Task_Base {
         $oTask = $this->oTask->channel(Const_Task::C_MAILSERVER);
         while ($sMsg = $oTask->recv()) {
             $aMsg = json_decode($sMsg, true);
+            $this->decMail($aMsg);
             if (empty($aMsg)) {
                 continue;
             }
@@ -35,6 +36,16 @@ class MailServer extends Task_Base {
     
     protected function queue($id) {
         Queue_Mail::getIns()->wait($id, time())->add();
+    }
+
+    protected function decMail(&$aMail) {
+        $aMailParams = json_decode($aMail[Const_Mail::F_MAILPARAMS], true);
+        if (isset($aMailParams[Const_Mail::P_PARAMS]) && is_array($aMailParams[Const_Mail::P_PARAMS])) {
+            $aMailParams = array_merge($aMailParams,$aMailParams[Const_Mail::P_PARAMS]);
+            unset($aMailParams[Const_Mail::P_PARAMS]);
+            $aMail[Const_Mail::F_MAILPARAMS] = json_encode($aMailParams);
+        }
+        return $aMail;
     }
     
 }

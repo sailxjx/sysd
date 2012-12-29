@@ -94,7 +94,7 @@ class MailVent extends Task_Vent {
             default:
             break;
         }
-        return $aMail[Const_Mail::F_CONTENT];
+        return isset($aMail[Const_Mail::F_CONTENT]) ? $aMail[Const_Mail::F_CONTENT] : '';
     }
 
     protected function buildMailConFromLocal(&$aMail) {

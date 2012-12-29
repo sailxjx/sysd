@@ -12,9 +12,13 @@ function sendMail($aData, $oRedis) {
 
 $oRedis = new Redis();
 $oRedis->connect('127.0.0.1', 6379);
+$aParams = array(
+        'hbcode'=>'admin'
+);
 $aData = array(
     'email' => 'jingxin.xu@51fanli.com',
-    'template' => 'happybirthday',
-    'servicetype' => 'webpower'
+    'template' => 'heartbeat',
+    'servicetype' => 'easeye',
+    'mailparams'=>json_encode($aParams)
 );
 sendMail($aData, $oRedis);
