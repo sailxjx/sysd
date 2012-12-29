@@ -8,6 +8,7 @@ class Mod_SysOrm extends Mod_SysBase {
     protected $sDbMaster = 'MYSQL';
     protected $sDbType = 'mysql';
     protected $aFields = array();
+    protected $aFindFields = array();
     protected $aOpts = array(
         '=',
         '>',
@@ -54,7 +55,8 @@ class Mod_SysOrm extends Mod_SysBase {
     //     $this->sTable = $sTable;
     // }
     
-    protected function getPdo($sDb = 'MYSQL') {
+    protected function getPdo($bMaster = true) {
+        $sDb = $bMaster ? $this->sDbMaster:$this->sDbSlave;
         if (!isset($this->aPdos[$sDb])) {
             $this->aPdos[$sDb] = Fac_SysDb::getIns()->loadPdo($sDb);
         }
@@ -82,7 +84,6 @@ class Mod_SysOrm extends Mod_SysBase {
         $sTableFields = $this->getCache($sTableCKey);
         if (empty($sTableFields)) {
             $sSql = "DESC {$sTable}";
-            //$sSql = "SELECT * from SysColumns WHERE id=Object_Id('dv_user')";
             $aTableDescTmp = $this->fetch($sSql);
             if (empty($aTableDescTmp)) {
                 trigger_error("ORM: Table[{$sTable}] field is empty", E_USER_ERROR);
