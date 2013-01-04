@@ -20,6 +20,7 @@ class Mod_SysOrm extends Mod_SysBase {
         'IN',
         'LIKE'
     );
+    protected $aOrders = array();
     protected $aFilters = array();
     protected $aParams = array();
     /**
@@ -40,6 +41,7 @@ class Mod_SysOrm extends Mod_SysBase {
     protected function reset() {
         $this->aFields = array();
         $this->aFindFields = array();
+        $this->aOrders = array();
         $this->aFilters = array();
         $this->aParams = array();
     }
@@ -222,10 +224,26 @@ class Mod_SysOrm extends Mod_SysBase {
         );
         return $this;
     }
+
+    protected function order($sField, $sMod = 'ASC') {
+        $sMod = strtoupper($sMod);
+        if (!in_array($sMod, array('ASC', 'DESC'))) {
+            trigger_error("ORM: wrong order option[{$sMod}]", E_USER_WARNING);
+            return false;
+        }
+        $this->aOrders[] = $sField. ' ' . $sMod;
+    }
     
     protected function genSql() {
         $args = func_get_args();
         return implode(' ', $args);
+    }
+
+    protected function genOrder() {
+        if (empty($this->aOrders)) {
+            return '';
+        }
+        return 'ORDER BY '.implode(',', $this->aOrders);
     }
     
     protected function genFields() {
