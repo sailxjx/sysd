@@ -113,7 +113,7 @@ class SmsVent extends Task_Base {
         $aParams = array();
         $aSmsParams = json_decode($aSms[Const_Sms::F_SMSPARAMS], true);
         
-        foreach ($aSmsParams[Const_Sms::P_PARAMS] as $k => $v) {
+        foreach ($aSmsParams as $k => $v) {
             $aParams['{$' . $k . '}'] = $v;
         }
         $sCon = str_replace(array_keys($aParams) , array_values($aParams) , $aSmsTemp[Const_SmsTemp::F_TEMP]);
