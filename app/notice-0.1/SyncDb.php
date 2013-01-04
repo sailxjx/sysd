@@ -69,7 +69,7 @@ class SyncDb extends Base {
                 $iStart = $oRedis->get($sStartKey);
                 $iStart = empty($iStart) ? 0 : $iStart;
                 $iStop = $iStart + $this->iStep - 1;
-                $aIds = $oRedis->zrevrange($sRKey, $iStart, $iStop);
+                $aIds = $oRedis->zrange($sRKey, $iStart, $iStop);
                 $iCnt = count($aIds);
                 foreach ($aIds as $iId) {
                     $iRow = $oStore->syncDb($iId);
