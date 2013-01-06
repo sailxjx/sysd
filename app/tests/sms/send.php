@@ -6,12 +6,12 @@ function sendSms($sMobile, $sTemplate, $aParams = array()) {
     $aSms = array(
         'mobile' => $sMobile,
         'template' => $sTemplate,
-        'type' => 10,
+        'type' => 1,
         'smsparams' => json_encode($aSmsParams),
         'servicetype' => 'montnets'
     );
     return $oRedis->lpush('notice:sms:server', json_encode($aSms));
 }
-sendSms('15021374553', 'smstest', array(
+sendSms('18888888888', 'smstest', array(
     'username' => 'admin'
 ));

@@ -173,20 +173,28 @@ abstract class Util_SysUtil {
     }
     
     public static function runJob($sCmd, $sClassName, $aOptions = array() , $aParams = array()) {
+        $sRunCmd = self::getRunCmd($sCmd, $sClassName, $aOptions, $aParams);
+        if (empty($sRunCmd)) {
+            return false;
+        }
+        if (self::runCmd($sRunCmd)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function getRunCmd($sCmd, $sClassName, $aOptions = array() , $aParams = array()) {
         if (empty($sClassName) || empty($sCmd)) {
             return false;
         }
         $sRunCmd = APP_PATH . "launcher {$sCmd} {$sClassName}";
         $aRunParams = array();
         foreach ($aParams as $k => $v) {
-            $aRunParams[] = self::convParamKeyToArgsKey($k) . '="' . $v . '"';
+            $aRunParams[] = self::convParamKeyToArgsKey($k) . '=' . $v;
         }
         $sRunCmd.= ' ' . implode(' ', $aOptions) . ' ' . implode(' ', $aRunParams);
-        if (self::runCmd($sRunCmd)) {
-            return true;
-        } else {
-            return false;
-        }
+        return $sRunCmd;
     }
     
     /**
@@ -203,8 +211,8 @@ abstract class Util_SysUtil {
      * @param string $sClass
      * @return int
      */
-    public static function getSysProcNumByClass($sClass) {
-        return shell_exec("ps -ef|grep '{$sClass}'|grep -v grep|wc -l");
+    public static function getSysProcNumByCmd($sCmd) {
+        return shell_exec("ps -ef|grep '{$sCmd}'|grep -v grep|wc -l");
     }
     
     /**

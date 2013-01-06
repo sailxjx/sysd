@@ -69,7 +69,8 @@ class Listener extends Base {
             if (empty($sClass) || $this->getSetErrTimes($iIndex) >= $this->iMaxRetry) {
                 continue;
             }
-            $iNum = Util_SysUtil::getSysProcNumByClass($sClass);
+            $sRunCmd = Util_SysUtil::getRunCmd($sCmd, $sClass, $aOptions, $aParams);
+            $iNum = Util_SysUtil::getSysProcNumByCmd($sRunCmd);
             $iMaxNum = isset($aParams[Const_SysCommon::P_DAEMON_NUM]) ? intval($aParams[Const_SysCommon::P_DAEMON_NUM]) : 1;
             $iMinNum = isset($aParams[Const_SysCommon::P_MIN_DAEMON_NUM]) ? intval($aParams[Const_SysCommon::P_MIN_DAEMON_NUM]) : 1;
             if ($iNum >= $iMinNum) {
