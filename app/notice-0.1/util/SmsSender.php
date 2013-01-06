@@ -58,7 +58,10 @@ abstract class Util_SmsSender {
             return true;
         }
         $aResult = Util::xmlStringToArray($r);
-        return ($aResult['code'] == '03') ? true : false;
+        if ($aResult['code'] == '03' || $aResult['code'] == '1') {
+            return true;
+        }
+        return false;
     }
     
     public static function sendBaiwu($aSms) {
