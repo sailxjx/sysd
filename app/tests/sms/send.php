@@ -12,6 +12,6 @@ function sendSms($sMobile, $sTemplate, $aParams = array()) {
     );
     return $oRedis->lpush('notice:sms:server', json_encode($aSms));
 }
-sendSms('15021374552', 'smstest', array(
+sendSms('15021374553', 'smstest', array(
     'username' => 'admin'
 ));

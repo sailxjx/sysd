@@ -23,8 +23,14 @@ class SmsVent extends Task_Base {
             
             foreach ($aMsgs as $iSmsId => $iScore) {
                 $aSms = $this->decSms($iSmsId);
+                if (!Util_Check::isLegalMobile($aSms[Const_Sms::F_MOBILE])) { //号码校验
+                    Mod_Log::getIns()->error('SMS: [%t]; SMSID: %i ; ILLEGAL NUMBER: %m', date('Y-m-d H:i:s') , $iSmsId, $aSms[Const_Sms::F_MOBILE]);
+                    $oQSms->move('wait', 'fail', $iSmsId, time());
+                    continue;
+                }
                 if (empty($aSms[Const_Sms::F_SERVICETYPE])) {
                     $oQSms->move('wait', 'fail', $iSmsId, time());
+                    continue;
                 } else {
                     if ($oQSms->move('wait', 'send', $iSmsId, time())) {
                         $oTask->channel($this->aPoolChannels[$this->getPool($aSms) ])->msg($iSmsId)->send();
